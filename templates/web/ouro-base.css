@@ -1,0 +1,73 @@
+/*
+ * What every Ouro UI component needs, in any app: required whether the app keeps its
+ * own shadcn theme or uses ouro-theme.css.
+ *
+ * - The color pairs shadcn's themes lack: success, warning and a foreground for
+ *   destructive, with defaults that pass 4.5:1 on shadcn's stock themes. An app or a
+ *   theme overrides them like any other variable.
+ * - Motion: a Motion spring(0.4, 0.15) as CSS, quick ease durations, the press scale and
+ *   the dimming behind sheets and dialogs. These are not colors, so they keep the
+ *   --ouro- prefix.
+ * - The press transition and the spinner keyframes.
+ *
+ * Load it before the app's theme so a theme's values win.
+ */
+@theme inline {
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+}
+
+:root {
+  --destructive-foreground: #ffffff;
+  --success: #157d3c;
+  --success-foreground: #ffffff;
+  --warning: #b05109;
+  --warning-foreground: #ffffff;
+  --ouro-spring-duration: 750ms;
+  --ouro-ease-spring: linear(0, 0.0663, 0.2105, 0.3763, 0.5332, 0.6669, 0.7733, 0.8533, 0.9107, 0.9499, 0.9754, 0.9911, 1, 1.0044, 1.0061, 1.0062, 1.0055, 1.0045, 1.0035, 1.0026, 1.0018, 1.0012, 1.0008, 1, 1);
+  --ouro-duration-fast: 100ms;
+  --ouro-duration-base: 200ms;
+  --ouro-duration-slow: 400ms;
+  --ouro-press-scale: 0.97;
+  /* The dimming layer behind sheets and dialogs, at full opacity when open. */
+  --ouro-backdrop-color: #18181b;
+  --ouro-backdrop-max: 0.4;
+}
+
+.dark {
+  --destructive-foreground: #000000;
+  --success: #4ade80;
+  --success-foreground: #000000;
+  --warning: #fbbf24;
+  --warning-foreground: #000000;
+  --ouro-backdrop-color: #000000;
+}
+
+/*
+ * Press feedback for controls: the release springs back with the theme spring, and
+ * colors ease quickly. Each control adds the scale itself with a `motion-safe:` class,
+ * so reduced motion never scales.
+ */
+@utility press {
+  transition:
+    scale var(--ouro-spring-duration) var(--ouro-ease-spring),
+    background-color var(--ouro-duration-fast) ease-out,
+    border-color var(--ouro-duration-fast) ease-out,
+    color var(--ouro-duration-fast) ease-out,
+    opacity var(--ouro-duration-fast) ease-out;
+}
+
+/* Spinner motion, namespaced so it never collides with an app's keyframes. */
+@keyframes ouro-spin {
+  to {
+    rotate: 1turn;
+  }
+}
+@keyframes ouro-pulse {
+  50% {
+    opacity: 0.4;
+  }
+}
