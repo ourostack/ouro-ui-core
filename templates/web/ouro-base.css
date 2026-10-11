@@ -8,6 +8,7 @@
  * - Motion: a Motion spring(0.4, 0.15) as CSS, quick ease durations, the press scale and
  *   the dimming behind sheets and dialogs. These are not colors, so they keep the
  *   --ouro- prefix.
+ * - --ouro-layer: the z-index of sheet and dialog portals.
  * - The press transition and the spinner keyframes.
  *
  * Load it before the app's theme so a theme's values win.
@@ -35,6 +36,13 @@
   /* The dimming layer behind sheets and dialogs, at full opacity when open. */
   --ouro-backdrop-color: #18181b;
   --ouro-backdrop-max: 0.4;
+  /*
+   * The stacking level of sheet and dialog portals, 50 as in shadcn's overlays. To raise
+   * it, add a :root rule of your own after the Ouro tokens, outside any @layer, such as
+   * :root { --ouro-layer: 60; }. Don't edit this line: shadcn add resets it. At an equal
+   * level the portal still wins, because it is the last child of <body>.
+   */
+  --ouro-layer: 50;
 }
 
 .dark {
