@@ -9,7 +9,7 @@
  *   the dimming behind sheets and dialogs. These are not colors, so they keep the
  *   --ouro- prefix.
  * - --ouro-layer: the z-index of sheet and dialog portals.
- * - The press transition and the spinner keyframes.
+ * - The press transition and the keyframes for spinners, indeterminate progress and skeletons.
  *
  * Load it before the app's theme so a theme's values win.
  */
@@ -77,5 +77,25 @@
 @keyframes ouro-pulse {
   50% {
     opacity: 0.4;
+  }
+}
+
+/* Indeterminate Progress: a bar slides across its track. */
+@keyframes ouro-progress {
+  from {
+    translate: -100% 0;
+  }
+  to {
+    translate: 300% 0;
+  }
+}
+
+/* Skeleton shimmer: a lighter band sweeps across the placeholder. */
+@keyframes ouro-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
   }
 }
