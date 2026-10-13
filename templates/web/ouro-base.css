@@ -29,9 +29,14 @@
   --warning-foreground: #ffffff;
   --ouro-spring-duration: 750ms;
   --ouro-ease-spring: linear(0, 0.0663, 0.2105, 0.3763, 0.5332, 0.6669, 0.7733, 0.8533, 0.9107, 0.9499, 0.9754, 0.9911, 1, 1.0044, 1.0061, 1.0062, 1.0055, 1.0045, 1.0035, 1.0026, 1.0018, 1.0012, 1.0008, 1, 1);
-  --ouro-duration-fast: 100ms;
-  --ouro-duration-base: 200ms;
-  --ouro-duration-slow: 400ms;
+  --ouro-ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* enter and exit */
+  --ouro-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1); /* movement on screen */
+  --ouro-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1); /* sheets */
+  --ouro-duration-press: 160ms; /* press feedback */
+  --ouro-duration-fast: 150ms; /* tooltips, colour, small-popup exits */
+  --ouro-duration-base: 200ms; /* popovers, menus, selects, accordions */
+  --ouro-duration-slow: 300ms; /* dialogs, backdrops */
+  --ouro-duration-sheet: 500ms; /* sheets only */
   --ouro-press-scale: 0.97;
   /* The dimming layer behind sheets and dialogs, at full opacity when open. */
   --ouro-backdrop-color: #18181b;
@@ -55,17 +60,17 @@
 }
 
 /*
- * Press feedback for controls: the release springs back with the theme spring, and
- * colors ease quickly. Each control adds the scale itself with a `motion-safe:` class,
+ * Press feedback for controls: the scale arrives and releases in 160ms on the ease-out
+ * token, and colors ease quickly. Each control adds the scale itself with a `motion-safe:` class,
  * so reduced motion never scales.
  */
 @utility press {
   transition:
-    scale var(--ouro-spring-duration) var(--ouro-ease-spring),
-    background-color var(--ouro-duration-fast) ease-out,
-    border-color var(--ouro-duration-fast) ease-out,
-    color var(--ouro-duration-fast) ease-out,
-    opacity var(--ouro-duration-fast) ease-out;
+    scale var(--ouro-duration-press) var(--ouro-ease-out),
+    background-color var(--ouro-duration-fast) ease,
+    border-color var(--ouro-duration-fast) ease,
+    color var(--ouro-duration-fast) ease,
+    opacity var(--ouro-duration-fast) ease;
 }
 
 /* Spinner motion, namespaced so it never collides with an app's keyframes. */
