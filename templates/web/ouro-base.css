@@ -9,11 +9,23 @@
  *   the dimming behind sheets and dialogs. These are not colors, so they keep the
  *   --ouro- prefix.
  * - --ouro-layer: the z-index of sheet and dialog portals.
+ * - --input and --radius, with shadcn's stock values, for an app whose theme has neither:
+ *   fields draw their border in --input and round their corners on the --radius scale.
+ *   shadcn add writes a variable only when the app's stylesheet lacks it, and a theme
+ *   loaded after this file wins, so an app that has them keeps its own.
  * - The press transition and the keyframes for spinners, indeterminate progress and skeletons.
  *
  * Load it before the app's theme so a theme's values win.
  */
 @theme inline {
+  --color-input: var(--input);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
@@ -22,6 +34,8 @@
 }
 
 :root {
+  --input: oklch(0.922 0 0);
+  --radius: 0.625rem;
   --destructive-foreground: #ffffff;
   --success: #157d3c;
   --success-foreground: #ffffff;
@@ -51,6 +65,7 @@
 }
 
 .dark {
+  --input: oklch(1 0 0 / 15%);
   --destructive-foreground: #000000;
   --success: #4ade80;
   --success-foreground: #000000;
