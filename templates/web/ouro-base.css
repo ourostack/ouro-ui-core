@@ -59,6 +59,7 @@
   --ouro-duration-press: 160ms; /* press feedback */
   --ouro-duration-fast: 150ms; /* tooltips, colour, small-popup exits */
   --ouro-duration-base: 200ms; /* popovers, menus, selects, accordions */
+  --ouro-duration-draw: 240ms; /* a stroke drawn along its path: the checkbox tick, a checklist strike */
   --ouro-duration-slow: 300ms; /* dialogs, backdrops */
   --ouro-duration-sheet: 500ms; /* sheets only */
   --ouro-press-scale: 0.97;
