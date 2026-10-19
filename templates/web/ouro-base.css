@@ -14,6 +14,16 @@
  *   shadcn add writes a variable only when the app's stylesheet lacks it, and a theme
  *   loaded after this file wins, so an app that has them keeps its own.
  * - The press transition and the keyframes for spinners, indeterminate progress and skeletons.
+ * - The shadow under each side of a sheet, --ouro-shadow-sheet-<side>, which shadcn's
+ *   --shadow-* scale has no upward or sideways step for.
+ *
+ * Every other shadow and font is shadcn's standard token, read at runtime, so a theme that sets
+ * them restyles the components: --shadow-lg (popovers, menus, selects, comboboxes, navigation
+ * menus, toasts), --shadow-xl (dialogs), --shadow-sm (the slider and switch thumbs, the segmented
+ * control's indicator), --shadow-md and --shadow-xs; --font-heading (Heading and the dialog,
+ * sheet and popover titles, which inherit the text's font when it is unset) and --font-mono
+ * (Kbd, which falls back to ui-monospace). Tailwind's own theme defines the shadows and
+ * --font-mono, so this file adds none of them.
  *
  * Load it before the app's theme so a theme's values win.
  */
@@ -55,6 +65,11 @@
   /* The dimming layer behind sheets and dialogs, at full opacity when open. */
   --ouro-backdrop-color: #18181b;
   --ouro-backdrop-max: 0.4;
+  /* The shadow under a sheet, by the side it comes from: a hairline on its open edge and a soft shadow. */
+  --ouro-shadow-sheet-bottom: 0 -1px 0 color-mix(in oklab, var(--border) 60%, transparent), 0 -8px 32px rgb(0 0 0 / 0.12);
+  --ouro-shadow-sheet-top: 0 1px 0 color-mix(in oklab, var(--border) 60%, transparent), 0 8px 32px rgb(0 0 0 / 0.12);
+  --ouro-shadow-sheet-left: 8px 0 32px rgb(0 0 0 / 0.12);
+  --ouro-shadow-sheet-right: -8px 0 32px rgb(0 0 0 / 0.12);
   /*
    * The stacking level of sheet and dialog portals, 50 as in shadcn's overlays. To raise
    * it, add a :root rule of your own after the Ouro tokens, outside any @layer, such as
