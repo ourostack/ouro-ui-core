@@ -1,7 +1,7 @@
 /*
  * Ouro HX "Chart" theme as plain CSS: parchment and ink, like a sea chart. shadcn/ui's tokens,
  * --font-sans, --font-mono, --font-heading and the --shadow-* scale, in light and dark. Load
- * ouro-base.css with it. Preview: https://ui.ouro.bot/voyage/
+ * ouro-base.css with it. Preview: https://ui.ouro.bot/
  * Dark mode: a .dark class on <html> as in shadcn, or, with neither .light nor .dark there,
  * the system's setting (prefers-color-scheme).
  * Fonts: Geist, Geist Mono, Chart Fell, from ../../fonts/ (SIL Open Font License; LICENSE.txt there).
