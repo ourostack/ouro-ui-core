@@ -30,6 +30,14 @@
   --success-foreground: #ffffff;
   --warning: #b05109;
   --warning-foreground: #ffffff;
+  --avatar-1: #c4314b;
+  --avatar-2: #ca5010;
+  --avatar-3: #986f0b;
+  --avatar-4: #498205;
+  --avatar-5: #038387;
+  --avatar-6: #0f6cbd;
+  --avatar-7: #8764b8;
+  --avatar-8: #c239b3;
   --ouro-spring-duration: 750ms;
   --ouro-ease-spring: linear(0, 0.0663, 0.2105, 0.3763, 0.5332, 0.6669, 0.7733, 0.8533, 0.9107, 0.9499, 0.9754, 0.9911, 1, 1.0044, 1.0061, 1.0062, 1.0055, 1.0045, 1.0035, 1.0026, 1.0018, 1.0012, 1.0008, 1, 1);
   --ouro-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -58,6 +66,14 @@
   --success-foreground: #000000;
   --warning: #fbbf24;
   --warning-foreground: #000000;
+  --avatar-1: #ee8a99;
+  --avatar-2: #f4a46c;
+  --avatar-3: #f2c661;
+  --avatar-4: #8bd17b;
+  --avatar-5: #4bc4c8;
+  --avatar-6: #6cb8f6;
+  --avatar-7: #c3a6ec;
+  --avatar-8: #ef85e2;
   --ouro-backdrop-color: #000000;
 }
 
@@ -69,6 +85,14 @@
     --success-foreground: #000000;
     --warning: #fbbf24;
     --warning-foreground: #000000;
+    --avatar-1: #ee8a99;
+    --avatar-2: #f4a46c;
+    --avatar-3: #f2c661;
+    --avatar-4: #8bd17b;
+    --avatar-5: #4bc4c8;
+    --avatar-6: #6cb8f6;
+    --avatar-7: #c3a6ec;
+    --avatar-8: #ef85e2;
     --ouro-backdrop-color: #000000;
   }
 }
