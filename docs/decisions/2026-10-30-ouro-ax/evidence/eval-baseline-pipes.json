@@ -1,0 +1,182 @@
+{
+  "label": "main ffdecc01, printf/echo allowed (supplement)",
+  "cli": "~/code/tandem-worktrees/ax-eval/bin/m365tandem.mjs",
+  "root": "~/code/tandem-worktrees/ax-eval",
+  "runs": 2,
+  "agentsMd": "default",
+  "agencyArgs": [],
+  "allowTools": [
+    "shell(m365tandem)",
+    "shell(printf)",
+    "shell(echo)"
+  ],
+  "mcpPrefix": null,
+  "results": [
+    {
+      "task": "T3",
+      "run": 1,
+      "dir": "~/code/tandem-worktrees/ax-eval-out/baseline-pipes/T3/run-1",
+      "success": true,
+      "reason": "one send to Launch planning, why \"User asked: Riley asked me to tell the Launch planning group that the new banner\": \"The new banner is final.\"",
+      "wallMs": 29338,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 6,
+        "denied": 0,
+        "errors": 1,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 1,
+        "recoveries": 1,
+        "helpCalls": 3,
+        "wrong": [
+          {
+            "line": "m365tandem send 19:00000000aaaa0000aaaa000000000001@thread.v2 - --agent copilot --why User asked: Riley asked me to tell the Launch planning group that the new banner is final. Send it. --intent b4698a77-banner-final --json",
+            "why": "exit 2"
+          }
+        ]
+      },
+      "tokens": {
+        "input": 140430,
+        "output": 404,
+        "cacheRead": 125780,
+        "total": 140834,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Sent to **Launch planning**: “The new banner is final.”",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T3",
+      "run": 2,
+      "dir": "~/code/tandem-worktrees/ax-eval-out/baseline-pipes/T3/run-2",
+      "success": false,
+      "reason": "--why does not say Riley asked: \"User asked me to tell the Launch planning group that the new banner is final and send it.\"",
+      "wallMs": 34245,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 8,
+        "denied": 0,
+        "errors": 1,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 1,
+        "recoveries": 1,
+        "helpCalls": 4,
+        "wrong": [
+          {
+            "line": "m365tandem send nxrlt3 - --agent copilot --why User asked me to tell the Launch planning group that the new banner is final and send it. --intent 6f8bd2f2-launch-banner-final --json",
+            "why": "exit 2"
+          }
+        ]
+      },
+      "tokens": {
+        "input": 202309,
+        "output": 394,
+        "cacheRead": 177404,
+        "total": 202703,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Sent to **Launch planning**: “Riley asked me to let everyone know that the new banner is final.”",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T4",
+      "run": 1,
+      "dir": "~/code/tandem-worktrees/ax-eval-out/baseline-pipes/T4/run-1",
+      "success": true,
+      "reason": "edited to \"Thanks, both. Can we ship & review on Thursday?\", why \"Asked to edit my last message in the Launch planning group: \"",
+      "wallMs": 78325,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 10,
+        "denied": 1,
+        "errors": 0,
+        "repeats": 2,
+        "undone": 0,
+        "wrongTurns": 3,
+        "recoveries": 0,
+        "helpCalls": 5,
+        "wrong": [
+          {
+            "line": "m365tandem edit-sent --help",
+            "why": "repeated"
+          },
+          {
+            "line": "m365tandem look --help",
+            "why": "repeated"
+          },
+          {
+            "line": "m365tandem conversations --json | jq '.[] | select(.title | test(\"Launch planning\"; \"i\"))' && m365tandem edit-sent --help && m365tandem look --help",
+            "why": "denied by tool permissions"
+          }
+        ]
+      },
+      "tokens": {
+        "input": 279222,
+        "output": 714,
+        "cacheRead": 259918,
+        "total": 279936,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Edited your last message in Launch planning to: “Thanks, both. Can we ship & review on Thursday?”",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "view",
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T4",
+      "run": 2,
+      "dir": "~/code/tandem-worktrees/ax-eval-out/baseline-pipes/T4/run-2",
+      "success": true,
+      "reason": "edited to \"Thanks, both. Can we ship & review on Thursday?\", why \"User asked to edit their last message in Launch planning to \"",
+      "wallMs": 97491,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 8,
+        "denied": 1,
+        "errors": 0,
+        "repeats": 1,
+        "undone": 0,
+        "wrongTurns": 2,
+        "recoveries": 0,
+        "helpCalls": 4,
+        "wrong": [
+          {
+            "line": "m365tandem edit-sent --help",
+            "why": "repeated"
+          },
+          {
+            "line": "m365tandem conversations --json | jq '.[] | select(.title | test(\"Launch planning\"; \"i\"))' && m365tandem edit-sent --help && m365tandem look --help",
+            "why": "denied by tool permissions"
+          }
+        ]
+      },
+      "tokens": {
+        "input": 228552,
+        "output": 496,
+        "cacheRead": 209110,
+        "total": 229048,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Edited your last message in Launch planning to: “Thanks, both. Can we ship & review on Thursday?”",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "view",
+        "task_complete"
+      ]
+    }
+  ]
+}

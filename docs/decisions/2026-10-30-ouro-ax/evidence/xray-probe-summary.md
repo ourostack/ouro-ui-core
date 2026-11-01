@@ -1,0 +1,8 @@
+# Lane B (standard + X-ray) summary, 2026-10-30 ~17:35 PT
+Thesis: Ouro AX is a standard of checkable claims plus a black-box checker (ax-xray) for any CLI, HTTP API or MCP server; adoption is decided by the X-ray, not the library.
+Built: ouro-ui ax-probe/xray: ax/claims.json (35 claims: 22 CLI, 9 HTTP, 4 MCP; id, rule, rationale, source, check, fix), ax/xray.mjs (zero deps; text/JSON/MD/HTML; safe by construction: reads freely, others-see only with fake target / no --why / --dry-run), 9 tests, reports for Tandem main, branch and `gh`. Tandem #432 (CI green): probe/ax-xray/run.ts (mock only), unknown flag exits 2 with nearest flag, --dry-run on others-see, GET /api route index with satisfies-check, teaching 404s, watch <conversation>.
+Ship as: ax-claims + ax-xray registry items, CI step failing on `must` claims, a published report page per adopter.
+Measurement: main 5/10, 12 wrong turns, 771k tokens; v1 (fix first standard's failures, X-ray 75.6% -> 99%) 5/10, 7 wrong turns -> changed NO outcome; v2 (+ text as argument, wait on refs) 10/10, 3 wrong turns, 0 denied, 664k.
+KEY: first (principle-derived) claims matched 0 of main's 12 wrong turns. Two claims added from eval failures matched 7 of 12. No agent in 30 runs misspelt a flag or used --dry-run.
+Strength: checks any interface from outside, cheap, exact verdict + fix per surface; tracked main's independent --text fix. Weakness: a standard from principles alone measures the wrong things; claims must be added when an evaluation shows the failure and removed when they never change an outcome.
+Work measurement: the feedback loop. Evals + factory (wrong turns, waits) + plan supply failures -> X-ray turns each into a claim checked on every adopter -> claims point to plan items they unblocked.

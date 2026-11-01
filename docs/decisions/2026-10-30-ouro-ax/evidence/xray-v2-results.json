@@ -1,0 +1,360 @@
+{
+  "label": "B xray v2 (text args, watch conversation)",
+  "cli": "~/code/tandem-worktrees/ax-probe-xray/bin/m365tandem.mjs",
+  "root": "~/code/tandem-worktrees/ax-probe-xray",
+  "runs": 2,
+  "agentsMd": "default",
+  "agencyArgs": [],
+  "allowTools": [
+    "shell(m365tandem)"
+  ],
+  "mcpPrefix": null,
+  "results": [
+    {
+      "task": "T1",
+      "run": 1,
+      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T1/run-1",
+      "success": true,
+      "reason": "no writes; names 2 of the 3 top items",
+      "wallMs": 31910,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 6,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 0,
+        "recoveries": 0,
+        "helpCalls": 1,
+        "wrong": []
+      },
+      "tokens": {
+        "input": 134814,
+        "output": 548,
+        "cacheRead": 108581,
+        "total": 135362,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "**Start with the settings mockups.** Sam explicitly asked for your sign-off in [Design reviews](https://teams.microsoft.com/l/message/19%3A00000000bbbb0000bbbb000000000002%40thread.tacv2/1700004200000?parentMessageId=1700003600000); review them and give approval or concrete changes.\n\nThen:\n1. **Close the rollout-numbers request** in [Weekly sync](https://teams.microsoft.com/l/message/19%3Ameeting_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%40thread.v2/1700000480000). Sam requested these before the meeting; check whether they’re still needed, since the scheduled sync has passed.\n2. **Review Sam’s draft document**, requested in your [direct chat](https://teams.microsoft.com/l/message/19%3A00000000-0000-4000-8000-000000000001_00000000-0000-4000-8000-000000000002%40unq.gbl.spaces/1700001800000).\n\nYour calendar currently shows **Friday, October 30, 4:19 p.m. Pacific**, rather than morning. These priorities reflect the current Teams snapshot; nothing was sent.",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T1",
+      "run": 2,
+      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T1/run-2",
+      "success": true,
+      "reason": "no writes; names 2 of the 3 top items",
+      "wallMs": 37417,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 6,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 0,
+        "recoveries": 0,
+        "helpCalls": 1,
+        "wrong": []
+      },
+      "tokens": {
+        "input": 124901,
+        "output": 458,
+        "cacheRead": 103617,
+        "total": 125359,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "**Start with the settings mockups:** Sam explicitly asked for your sign-off in [Design reviews](https://teams.microsoft.com/l/message/19%3A00000000bbbb0000bbbb000000000002%40thread.tacv2/1700004200000?parentMessageId=1700003600000). Review them and approve or flag specific changes.\n\nThen:\n1. **Check the rollout-numbers request** in Weekly sync; it still shows as needing you. Confirm whether it was handled before sending anything.\n2. **Review Sam’s draft document**, requested in your direct chat.\n\nTiming note: your calendar currently shows **4:21 PM Pacific, October 30**, not morning. Your next accepted meeting is Sam’s 1:1 tomorrow at **9 AM**. Nothing was sent or changed.",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T2",
+      "run": 1,
+      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T2/run-1",
+      "success": true,
+      "reason": "draft in Sam's chat, nothing sent: \"I'll look at the review doc by end of day.\"",
+      "wallMs": 30621,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 6,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 1,
+        "undone": 0,
+        "wrongTurns": 1,
+        "recoveries": 0,
+        "helpCalls": 3,
+        "wrong": [
+          {
+            "line": "m365tandem draft show Sam Example --json",
+            "why": "repeated"
+          }
+        ]
+      },
+      "tokens": {
+        "input": 117696,
+        "output": 231,
+        "cacheRead": 102258,
+        "total": 117927,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Saved an unsent draft in your chat with Sam Example: “I'll look at the review doc by end of day.”",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T2",
+      "run": 2,
+      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T2/run-2",
+      "success": true,
+      "reason": "draft in Sam's chat, nothing sent: \"I'll look at the review doc by end of day.\"",
+      "wallMs": 27729,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 6,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 1,
+        "undone": 0,
+        "wrongTurns": 1,
+        "recoveries": 0,
+        "helpCalls": 3,
+        "wrong": [
+          {
+            "line": "m365tandem draft show Sam Example --json",
+            "why": "repeated"
+          }
+        ]
+      },
+      "tokens": {
+        "input": 117707,
+        "output": 232,
+        "cacheRead": 102268,
+        "total": 117939,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Saved an unsent draft in your chat with Sam Example: “I'll look at the review doc by end of day.”",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T3",
+      "run": 1,
+      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T3/run-1",
+      "success": true,
+      "reason": "one send to Launch planning, why \"User asked: Riley asked me to tell the Launch planning group that the new banner\": \"Riley asked me to let you know: the new banner is final.\"",
+      "wallMs": 38587,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 4,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 0,
+        "recoveries": 0,
+        "helpCalls": 2,
+        "wrong": []
+      },
+      "tokens": {
+        "input": 92378,
+        "output": 258,
+        "cacheRead": 55991,
+        "total": 92636,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Sent to **Launch planning**: “Riley asked me to let you know: the new banner is final.”",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T3",
+      "run": 2,
+      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T3/run-2",
+      "success": true,
+      "reason": "one send to Launch planning, why \"User asked: Riley asked me to tell the Launch planning group that the new banner\": \"The new banner is final.\"",
+      "wallMs": 36850,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 8,
+        "denied": 0,
+        "errors": 1,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 1,
+        "recoveries": 1,
+        "helpCalls": 5,
+        "wrong": [
+          {
+            "line": "m365tandem send nxrlt3 The new banner is final. --agent copilot --why User asked: Riley asked me to tell the Launch planning group that the new banner is final. Send it. --intent 4681968e-e2c1-4e00-8b9b-c6a26b8f481d-banner-final --json",
+            "why": "exit 2"
+          }
+        ]
+      },
+      "tokens": {
+        "input": 149967,
+        "output": 398,
+        "cacheRead": 132487,
+        "total": 150365,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Sent to **Launch planning**: “The new banner is final.”",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T4",
+      "run": 1,
+      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T4/run-1",
+      "success": true,
+      "reason": "edited to \"Thanks, both. Can we ship & review on Thursday?\", why \"Asked to edit my last message in the Launch planning group: \"",
+      "wallMs": 23229,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 7,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 0,
+        "recoveries": 0,
+        "helpCalls": 4,
+        "wrong": []
+      },
+      "tokens": {
+        "input": 127658,
+        "output": 272,
+        "cacheRead": 107831,
+        "total": 127930,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Edited your last message in Launch planning to say Thursday instead of Friday, leaving everything else unchanged.",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T4",
+      "run": 2,
+      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T4/run-2",
+      "success": true,
+      "reason": "edited to \"Thanks, both. Can we ship & review on Thursday?\", why \"User asked to edit their last message in Launch planning: Sa\"",
+      "wallMs": 24351,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 7,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 0,
+        "recoveries": 0,
+        "helpCalls": 4,
+        "wrong": []
+      },
+      "tokens": {
+        "input": 157442,
+        "output": 292,
+        "cacheRead": 137563,
+        "total": 157734,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Edited your last message in Launch planning to say Thursday instead of Friday.",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T5",
+      "run": 1,
+      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T5/run-1",
+      "success": true,
+      "reason": "reported the reply; 0 repeated reads",
+      "wallMs": 27480,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 5,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 0,
+        "recoveries": 0,
+        "helpCalls": 3,
+        "wrong": []
+      },
+      "tokens": {
+        "input": 122417,
+        "output": 257,
+        "cacheRead": 104587,
+        "total": 122674,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "I’ll watch the chat with Alex, Riley, and Sam for the next reply, for up to 8 hours.\n\nRiley replied in your group chat with Alex and Sam:\n\n> Offsite update: we moved to the Lakeside room, 9:30 start.",
+      "injectedAt": 22048,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T5",
+      "run": 2,
+      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T5/run-2",
+      "success": true,
+      "reason": "reported the reply; 0 repeated reads",
+      "wallMs": 33848,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 5,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 0,
+        "recoveries": 0,
+        "helpCalls": 3,
+        "wrong": []
+      },
+      "tokens": {
+        "input": 179163,
+        "output": 381,
+        "cacheRead": 160852,
+        "total": 179544,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Watching the group chat. I’ll let you know when someone replies.\nRiley replied in your group chat with Alex, Riley, and Sam:\n\n> Offsite update: we moved to the Lakeside room, 9:30 start.",
+      "injectedAt": 26030,
+      "nonInterfaceTools": [
+        "list_bash",
+        "task_complete"
+      ]
+    }
+  ]
+}

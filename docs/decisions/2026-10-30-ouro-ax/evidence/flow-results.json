@@ -1,0 +1,378 @@
+{
+  "label": "flow (work events + watch <conversation>)",
+  "cli": "~/code/tandem-worktrees/ax-probe-flow/bin/m365tandem.mjs",
+  "root": "~/code/tandem-worktrees/ax-probe-flow",
+  "runs": 2,
+  "agentsMd": "default",
+  "agencyArgs": [],
+  "allowTools": [
+    "shell(m365tandem)"
+  ],
+  "mcpPrefix": null,
+  "results": [
+    {
+      "task": "T1",
+      "run": 1,
+      "dir": "~/code/tandem-worktrees/ax-probe-flow-eval-out/T1/run-1",
+      "success": true,
+      "reason": "no writes; names 2 of the 3 top items",
+      "wallMs": 115319,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 6,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 0,
+        "recoveries": 0,
+        "helpCalls": 1,
+        "wrong": []
+      },
+      "tokens": {
+        "input": 124895,
+        "output": 552,
+        "cacheRead": 103614,
+        "total": 125447,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "**Start with the settings mockups:** Sam explicitly asked for your sign-off in [Design reviews](https://teams.microsoft.com/l/message/19%3A00000000bbbb0000bbbb000000000002%40thread.tacv2/1700004200000?parentMessageId=1700003600000). Review them and give approval or concrete blockers.\n\nThen:\n1. **Check the rollout-numbers request** in [Weekly sync](https://teams.microsoft.com/l/message/19%3Ameeting_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%40thread.v2/1700000480000). It’s still flagged for you, though the meeting has passed—confirm whether it remains outstanding.\n2. **Review Sam’s draft document** from [his direct message](https://teams.microsoft.com/l/message/19%3A00000000-0000-4000-8000-000000000001_00000000-0000-4000-8000-000000000002%40unq.gbl.spaces/1700001800000).\n\nYour clock shows **4:05 p.m. Pacific**, so this ordering reflects what’s outstanding now, rather than a morning schedule.",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T1",
+      "run": 2,
+      "dir": "~/code/tandem-worktrees/ax-probe-flow-eval-out/T1/run-2",
+      "success": true,
+      "reason": "no writes; names 2 of the 3 top items",
+      "wallMs": 83729,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 8,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 0,
+        "recoveries": 0,
+        "helpCalls": 1,
+        "wrong": []
+      },
+      "tokens": {
+        "input": 128999,
+        "output": 620,
+        "cacheRead": 103630,
+        "total": 129619,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "**First, close out the updated doc you promised Sam by Friday.** Today is Friday, and your next 1:1 is tomorrow at 9 AM. Confirm it was delivered; if not, prioritize finishing it. Sam also has an outstanding request to review a draft—don’t assume it’s the same document.\n\nThen tackle:\n1. **Settings mockup sign-off:** Sam explicitly asked for your approval in [Design reviews](https://teams.microsoft.com/l/message/19%3A00000000bbbb0000bbbb000000000002%40thread.tacv2/1700004200000?parentMessageId=1700003600000).\n2. **Rollout numbers:** Check whether Sam’s request in Weekly sync still needs a follow-up; the meeting has already passed.\n\nYour clock shows **4:07 PM Pacific, October 30**, so this is based on what needs attention now rather than a morning agenda.",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T2",
+      "run": 1,
+      "dir": "~/code/tandem-worktrees/ax-probe-flow-eval-out/T2/run-1",
+      "success": true,
+      "reason": "draft in Sam's chat, nothing sent: \"I'll look at the review doc by end of day.\"",
+      "wallMs": 44351,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 8,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 0,
+        "recoveries": 0,
+        "helpCalls": 3,
+        "wrong": []
+      },
+      "tokens": {
+        "input": 120361,
+        "output": 268,
+        "cacheRead": 103340,
+        "total": 120629,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Saved an unsent draft in your chat with Sam Example: “I'll look at the review doc by end of day.”",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T2",
+      "run": 2,
+      "dir": "~/code/tandem-worktrees/ax-probe-flow-eval-out/T2/run-2",
+      "success": true,
+      "reason": "draft in Sam's chat, nothing sent: \"I'll look at the review doc by end of day.\"",
+      "wallMs": 55842,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 7,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 1,
+        "undone": 0,
+        "wrongTurns": 1,
+        "recoveries": 0,
+        "helpCalls": 3,
+        "wrong": [
+          {
+            "line": "m365tandem draft show Sam Example --json",
+            "why": "repeated"
+          }
+        ]
+      },
+      "tokens": {
+        "input": 118140,
+        "output": 255,
+        "cacheRead": 102268,
+        "total": 118395,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Saved an unsent draft in your chat with Sam Example: “I'll look at the review doc by end of day.”",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T3",
+      "run": 1,
+      "dir": "~/code/tandem-worktrees/ax-probe-flow-eval-out/T3/run-1",
+      "success": false,
+      "reason": "0 completed sends to Launch planning (want 1); log: none",
+      "wallMs": 40514,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 3,
+        "denied": 1,
+        "errors": 0,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 1,
+        "recoveries": 0,
+        "helpCalls": 2,
+        "wrong": [
+          {
+            "line": "printf '%s' 'Riley asked me to let you know that the new banner is final.' | m365tandem send '19:00000000aaaa0000aaaa000000000001@thread.v2' - --agent copilot --why 'User asked: Riley asked me to tell the Launch planning group that the new banner is final. Send it.' --intent 'bb55709d-launch-banner-final' --json",
+            "why": "denied by tool permissions"
+          }
+        ]
+      },
+      "tokens": {
+        "input": 91743,
+        "output": 235,
+        "cacheRead": 77736,
+        "total": 91978,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Not sent: sending requires approval that isn’t available in this non-interactive session.",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T3",
+      "run": 2,
+      "dir": "~/code/tandem-worktrees/ax-probe-flow-eval-out/T3/run-2",
+      "success": false,
+      "reason": "0 completed sends to Launch planning (want 1); log: none",
+      "wallMs": 67389,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 4,
+        "denied": 1,
+        "errors": 0,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 1,
+        "recoveries": 0,
+        "helpCalls": 3,
+        "wrong": [
+          {
+            "line": "printf '%s' 'The new banner is final.' | m365tandem send '19:00000000aaaa0000aaaa000000000001@thread.v2' - --agent copilot --why 'Asked me to tell the Launch planning group that the new banner is final and send it.' --json",
+            "why": "denied by tool permissions"
+          }
+        ]
+      },
+      "tokens": {
+        "input": 115322,
+        "output": 291,
+        "cacheRead": 101099,
+        "total": 115613,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Not sent: sending requires approval that wasn’t available in this non-interactive session. Message for **Launch planning**: “The new banner is final.”",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T4",
+      "run": 1,
+      "dir": "~/code/tandem-worktrees/ax-probe-flow-eval-out/T4/run-1",
+      "success": false,
+      "reason": "the message was not edited",
+      "wallMs": 69013,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 5,
+        "denied": 1,
+        "errors": 0,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 1,
+        "recoveries": 0,
+        "helpCalls": 4,
+        "wrong": [
+          {
+            "line": "printf '%s' 'Thanks, both. Can we ship & review on Thursday?' | m365tandem edit-sent nxrlt3#1700002700000 - --agent copilot --why 'Asked to edit my last message in the Launch planning group: Sam says it should say Thursday, not Friday.' --json && m365tandem look nxrlt3#1700002700000 --json",
+            "why": "denied by tool permissions"
+          }
+        ]
+      },
+      "tokens": {
+        "input": 126619,
+        "output": 289,
+        "cacheRead": 107609,
+        "total": 126908,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "The edit was blocked by a permission approval requirement. Your message is unchanged; the intended text is: “Thanks, both. Can we ship & review on Thursday?”",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T4",
+      "run": 2,
+      "dir": "~/code/tandem-worktrees/ax-probe-flow-eval-out/T4/run-2",
+      "success": false,
+      "reason": "the message was not edited",
+      "wallMs": 43509,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 6,
+        "denied": 2,
+        "errors": 0,
+        "repeats": 1,
+        "undone": 0,
+        "wrongTurns": 3,
+        "recoveries": 0,
+        "helpCalls": 4,
+        "wrong": [
+          {
+            "line": "m365tandem edit-sent --help",
+            "why": "repeated"
+          },
+          {
+            "line": "m365tandem conversations --json | jq '.[] | select(.title | test(\"Launch planning\"; \"i\"))' && m365tandem edit-sent --help && m365tandem look --help",
+            "why": "denied by tool permissions"
+          },
+          {
+            "line": "printf '%s' 'Thanks, both. Can we ship & review on Thursday?' | m365tandem edit-sent nxrlt3#1700002700000 - --agent copilot --why \"User asked to edit their last message in Launch planning: Sam says Thursday, not Friday.\" --json",
+            "why": "denied by tool permissions"
+          }
+        ]
+      },
+      "tokens": {
+        "input": 171746,
+        "output": 455,
+        "cacheRead": 152483,
+        "total": 172201,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "The edit was blocked by a permission requirement, so your message is unchanged. Intended correction: “Thanks, both. Can we ship & review on Thursday?”",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "view",
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T5",
+      "run": 1,
+      "dir": "~/code/tandem-worktrees/ax-probe-flow-eval-out/T5/run-1",
+      "success": true,
+      "reason": "reported the reply; 0 repeated reads",
+      "wallMs": 41833,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 4,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 0,
+        "recoveries": 0,
+        "helpCalls": 2,
+        "wrong": []
+      },
+      "tokens": {
+        "input": 96864,
+        "output": 191,
+        "cacheRead": 80272,
+        "total": 97055,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Riley replied: “Offsite update: we moved to the Lakeside room, 9:30 start.”",
+      "injectedAt": 37057,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T5",
+      "run": 2,
+      "dir": "~/code/tandem-worktrees/ax-probe-flow-eval-out/T5/run-2",
+      "success": true,
+      "reason": "reported the reply; 0 repeated reads",
+      "wallMs": 38221,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 5,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 0,
+        "undone": 0,
+        "wrongTurns": 0,
+        "recoveries": 0,
+        "helpCalls": 3,
+        "wrong": []
+      },
+      "tokens": {
+        "input": 122470,
+        "output": 286,
+        "cacheRead": 104736,
+        "total": 122756,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "I’ll watch your chat with Alex, Riley, and Sam for the next reply, for up to 8 hours.\n\nRiley replied in your group chat: “Offsite update: we moved to the Lakeside room, 9:30 start.”",
+      "injectedAt": 33062,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    }
+  ]
+}

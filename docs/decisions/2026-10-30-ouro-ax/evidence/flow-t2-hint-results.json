@@ -1,0 +1,90 @@
+{
+  "label": "flow + draft why hint",
+  "cli": "~/code/tandem-worktrees/ax-probe-flow/bin/m365tandem.mjs",
+  "root": "~/code/tandem-worktrees/ax-probe-flow",
+  "runs": 2,
+  "agentsMd": "default",
+  "agencyArgs": [],
+  "allowTools": [
+    "shell(m365tandem)"
+  ],
+  "mcpPrefix": null,
+  "results": [
+    {
+      "task": "T2",
+      "run": 1,
+      "dir": "~/code/tandem-worktrees/ax-probe-flow-eval-t2/T2/run-1",
+      "success": true,
+      "reason": "draft in Sam's chat, nothing sent: \"I'll look at the review doc by end of day.\"",
+      "wallMs": 62209,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 6,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 1,
+        "undone": 0,
+        "wrongTurns": 1,
+        "recoveries": 0,
+        "helpCalls": 3,
+        "wrong": [
+          {
+            "line": "m365tandem draft show Sam Example --json",
+            "why": "repeated"
+          }
+        ]
+      },
+      "tokens": {
+        "input": 117569,
+        "output": 265,
+        "cacheRead": 102348,
+        "total": 117834,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Saved an unsent draft in your chat with Sam Example: “I'll look at the review doc by end of day.”",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    },
+    {
+      "task": "T2",
+      "run": 2,
+      "dir": "~/code/tandem-worktrees/ax-probe-flow-eval-t2/T2/run-2",
+      "success": true,
+      "reason": "draft in Sam's chat, nothing sent: \"I'll look at the review doc by end of day.\"",
+      "wallMs": 28441,
+      "agentExit": 0,
+      "metrics": {
+        "calls": 9,
+        "denied": 0,
+        "errors": 0,
+        "repeats": 1,
+        "undone": 0,
+        "wrongTurns": 1,
+        "recoveries": 0,
+        "helpCalls": 4,
+        "wrong": [
+          {
+            "line": "m365tandem draft show Sam Example --json",
+            "why": "repeated"
+          }
+        ]
+      },
+      "tokens": {
+        "input": 171028,
+        "output": 332,
+        "cacheRead": 145564,
+        "total": 171360,
+        "source": "session.usage_checkpoint (gpt-6.1-sol)"
+      },
+      "premiumRequests": 1,
+      "answer": "Saved an unsent draft in your chat with Sam Example: “I'll look at the review doc by end of day.”",
+      "injectedAt": null,
+      "nonInterfaceTools": [
+        "task_complete"
+      ]
+    }
+  ]
+}
