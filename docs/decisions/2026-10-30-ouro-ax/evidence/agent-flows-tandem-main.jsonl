@@ -1,0 +1,593 @@
+{"flow":"H1","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":true,"ms":4,"rubric":"discoverable"}
+{"flow":"H1","step":"top-help","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":0,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"H1","step":"top-help","surface":"agent-cli","cell":null,"check":"stderr.empty","pass":true,"ms":0,"rubric":"beautiful"}
+{"flow":"H1","step":"top-help","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":0,"rubric":"fast","measured":0,"threshold":1500}
+{"flow":"H1","step":"top-help","surface":"agent-cli","cell":null,"check":"max-bytes","pass":true,"ms":0,"rubric":"fast","measured":4013,"threshold":5000}
+{"flow":"H1","step":"top-help","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":0,"rubric":"beautiful","selector":"^Only you see these","evidence":"m365tandem: the person's own Teams client, for agents. Chats, channels, threads, meetings, ⏎ transcripts and people, kept in sync every few seconds. Use it first for anything in Teams. ⏎ Only you see these ⏎   today           Start here: next meeting, today's meetings, invites, top needs-you, drafts…"}
+{"flow":"H1","step":"top-help","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":0,"rubric":"beautiful","selector":"^Other people see these","evidence":"m365tandem: the person's own Teams client, for agents. Chats, channels, threads, meetings, ⏎ transcripts and people, kept in sync every few seconds. Use it first for anything in Teams. ⏎ Only you see these ⏎   today           Start here: next meeting, today's meetings, invites, top needs-you, drafts…"}
+{"flow":"H1","step":"top-help","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":0,"rubric":"beautiful","selector":"--json","evidence":"m365tandem: the person's own Teams client, for agents. Chats, channels, threads, meetings, ⏎ transcripts and people, kept in sync every few seconds. Use it first for anything in Teams. ⏎ Only you see these ⏎   today           Start here: next meeting, today's meetings, invites, top needs-you, drafts…"}
+{"flow":"H1","step":"top-help","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":0,"rubric":"beautiful","selector":"Exit codes","evidence":"m365tandem: the person's own Teams client, for agents. Chats, channels, threads, meetings, ⏎ transcripts and people, kept in sync every few seconds. Use it first for anything in Teams. ⏎ Only you see these ⏎   today           Start here: next meeting, today's meetings, invites, top needs-you, drafts…"}
+{"flow":"H1","step":"top-help","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":0,"rubric":"beautiful"}
+{"flow":"H1","step":"top-help","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":0,"rubric":"beautiful"}
+{"flow":"H1","step":"help-json","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":9,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"H1","step":"help-json","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":9,"rubric":"predictable","selector":"tool"}
+{"flow":"H1","step":"help-json","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":9,"rubric":"predictable","selector":"commands[].name"}
+{"flow":"H1","step":"help-json","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":9,"rubric":"predictable","selector":"commands[].effect"}
+{"flow":"H1","step":"help-json","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":9,"rubric":"predictable","selector":"commands[].usage"}
+{"flow":"H1","step":"help-json","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":9,"rubric":"predictable","selector":"exitCodes[].code"}
+{"flow":"H1","step":"help-json","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":9,"rubric":"predictable","selector":"errorShape.error.fix"}
+{"flow":"H1","step":"help-json","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":9,"rubric":"predictable","selector":"tool","threshold":"m365tandem","measured":"m365tandem"}
+{"flow":"H1","step":"help-json","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":9,"rubric":"fast","measured":9,"threshold":1500}
+{"flow":"H1","step":"help-json","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":9,"rubric":"beautiful"}
+{"flow":"H1","step":"help-json","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":9,"rubric":"beautiful"}
+{"flow":"H1","step":"send-help","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":1,"rubric":"predictable","measured":0,"threshold":0,"known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"H1","step":"send-help","surface":"agent-cli","cell":null,"check":"stderr.empty","pass":true,"ms":1,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"H1","step":"send-help","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":1,"rubric":"fast","measured":1,"threshold":1500,"known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"H1","step":"send-help","surface":"agent-cli","cell":null,"check":"max-bytes","pass":false,"ms":1,"rubric":"fast","measured":11080,"threshold":6000,"fix":"move intent recovery (--intent, --again) out of send's usage into one line pointing at help intents; keep send --help under 6 KB","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"H1","step":"send-help","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":1,"rubric":"beautiful","selector":"--why","evidence":"Other people see this: do it only when a human explicitly asked you to. ⏎ m365tandem send: Send a message as the person. ⏎ Usage ⏎   send <conversation> --text <text> --agent <name> --why \"<reason>\" [--markdown] [--intent <token>]","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"H1","step":"send-help","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":1,"rubric":"beautiful","selector":"--dry-run","evidence":"Other people see this: do it only when a human explicitly asked you to. ⏎ m365tandem send: Send a message as the person. ⏎ Usage ⏎   send <conversation> --text <text> --agent <name> --why \"<reason>\" [--markdown] [--intent <token>]","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"H1","step":"send-help","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":1,"rubric":"beautiful","selector":"Riley asked","evidence":"Other people see this: do it only when a human explicitly asked you to. ⏎ m365tandem send: Send a message as the person. ⏎ Usage ⏎   send <conversation> --text <text> --agent <name> --why \"<reason>\" [--markdown] [--intent <token>]","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"H1","step":"send-help","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"H1","step":"send-help","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"H1","step":"unknown-command","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":1,"rubric":"predictable","measured":2,"threshold":2}
+{"flow":"H1","step":"unknown-command","surface":"agent-cli","cell":null,"check":"stderr.oneLine","pass":true,"ms":1,"rubric":"forgiving","measured":1}
+{"flow":"H1","step":"unknown-command","surface":"agent-cli","cell":null,"check":"stderr.namesFix","pass":true,"ms":1,"rubric":"forgiving"}
+{"flow":"H1","step":"unknown-command","surface":"agent-cli","cell":null,"check":"stderr.noStack","pass":true,"ms":1,"rubric":"forgiving"}
+{"flow":"H1","step":"unknown-command","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":1,"rubric":"beautiful","selector":"send","evidence":"m365tandem: sned: there is no command \"sned\"; the commands are today, status, update, conversations, look, read, emoji, people, folders, teams, apps, focus, search, agenda, calendar, categories, meeting, transcript, recordings, activity, activity list, log, draft, draft clear, draft delete, show, op…"}
+{"flow":"H1","step":"unknown-command","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"H1","step":"unknown-command","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"H1","step":"*","surface":"agent-cli","cell":null,"check":"reads-stay-reads","pass":true,"ms":0,"rubric":"honest","measured":0,"threshold":0}
+{"flow":"W1","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":false,"ms":4,"rubric":"discoverable","measured":["attention"],"evidence":"not in m365tandem --help: attention","fix":"list attention in the top-level help (src/cli/help.ts)","known":"https://github.com/teams-microsoft/tandem/issues/540"}
+{"flow":"W1","step":"today","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":34,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W1","step":"today","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":34,"rubric":"predictable","selector":"attention.top[].ref"}
+{"flow":"W1","step":"today","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":34,"rubric":"predictable","selector":"attention.top[].why"}
+{"flow":"W1","step":"today","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":34,"rubric":"predictable","selector":"attention.top[].from"}
+{"flow":"W1","step":"today","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":34,"rubric":"predictable","selector":"nextCommands[]"}
+{"flow":"W1","step":"today","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":34,"rubric":"fast","measured":34,"threshold":2500}
+{"flow":"W1","step":"today","surface":"agent-cli","cell":null,"check":"max-bytes","pass":true,"ms":34,"rubric":"fast","measured":4759,"threshold":8000}
+{"flow":"W1","step":"today","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":34,"rubric":"beautiful"}
+{"flow":"W1","step":"today","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":34,"rubric":"beautiful"}
+{"flow":"W1","step":"activity","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":2,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W1","step":"activity","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":2,"rubric":"predictable","selector":"counts.unseen"}
+{"flow":"W1","step":"activity","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":2,"rubric":"predictable","selector":"items[]"}
+{"flow":"W1","step":"activity","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":2,"rubric":"fast","measured":2,"threshold":2500}
+{"flow":"W1","step":"activity","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":2,"rubric":"beautiful"}
+{"flow":"W1","step":"activity","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":2,"rubric":"beautiful"}
+{"flow":"W1","step":"attention","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":3,"rubric":"predictable","measured":0,"threshold":0,"known":"https://github.com/teams-microsoft/tandem/issues/543"}
+{"flow":"W1","step":"attention","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"[].conversationTitle","known":"https://github.com/teams-microsoft/tandem/issues/543"}
+{"flow":"W1","step":"attention","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"[].why","known":"https://github.com/teams-microsoft/tandem/issues/543"}
+{"flow":"W1","step":"attention","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"[].messageId","known":"https://github.com/teams-microsoft/tandem/issues/543"}
+{"flow":"W1","step":"attention","surface":"agent-cli","cell":null,"check":"fields","pass":false,"ms":3,"rubric":"predictable","selector":"[].link","threshold":{"re":"^https://teams\\.microsoft\\.com/"},"measured":"8 values","fix":"give each attention item its ref (<conversation>#<message>) and Teams link, as today's top items and look's messages have","known":"https://github.com/teams-microsoft/tandem/issues/543"}
+{"flow":"W1","step":"attention","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":3,"rubric":"fast","measured":3,"threshold":2500,"known":"https://github.com/teams-microsoft/tandem/issues/543"}
+{"flow":"W1","step":"attention","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":3,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/543"}
+{"flow":"W1","step":"attention","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":3,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/543"}
+{"flow":"W1","step":"conversations","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":4,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W1","step":"conversations","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":4,"rubric":"predictable","selector":"[].shortId"}
+{"flow":"W1","step":"conversations","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":4,"rubric":"predictable","selector":"[].title"}
+{"flow":"W1","step":"conversations","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":4,"rubric":"predictable","selector":"[].kind"}
+{"flow":"W1","step":"conversations","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":4,"rubric":"predictable","selector":"[].link"}
+{"flow":"W1","step":"conversations","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":4,"rubric":"fast","measured":4,"threshold":2500}
+{"flow":"W1","step":"conversations","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":4,"rubric":"beautiful"}
+{"flow":"W1","step":"conversations","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":4,"rubric":"beautiful"}
+{"flow":"W1","step":"open-first","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":5,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W1","step":"open-first","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":5,"rubric":"predictable","selector":"messages[0].ref"}
+{"flow":"W1","step":"open-first","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":5,"rubric":"predictable","selector":"messages[0].link"}
+{"flow":"W1","step":"open-first","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":5,"rubric":"predictable","selector":"messages[0].sender.displayName"}
+{"flow":"W1","step":"open-first","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":5,"rubric":"fast","measured":5,"threshold":2500}
+{"flow":"W1","step":"open-first","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":5,"rubric":"beautiful"}
+{"flow":"W1","step":"open-first","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":5,"rubric":"beautiful"}
+{"flow":"W1","step":"*","surface":"agent-cli","cell":null,"check":"reads-stay-reads","pass":true,"ms":0,"rubric":"honest","measured":0,"threshold":0}
+{"flow":"W8","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":false,"ms":4,"rubric":"discoverable","measured":["attention"],"evidence":"not in m365tandem --help: attention","fix":"list attention in the top-level help (src/cli/help.ts)","known":"https://github.com/teams-microsoft/tandem/issues/540"}
+{"flow":"W8","step":"today","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":11,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W8","step":"today","surface":"agent-cli","cell":null,"check":"stderr.empty","pass":true,"ms":11,"rubric":"beautiful"}
+{"flow":"W8","step":"today","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":11,"rubric":"fast","measured":11,"threshold":2500}
+{"flow":"W8","step":"today","surface":"agent-cli","cell":null,"check":"max-bytes","pass":true,"ms":11,"rubric":"fast","measured":1583,"threshold":3000}
+{"flow":"W8","step":"today","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":11,"rubric":"beautiful","selector":"^Needs you","evidence":"Today, Sat, Oct 31 9:59 PM. Counts and refs only; the commands at the end open the text. ⏎ Next meeting: [4f2nj3] Sam / Test 1:1, Sun, Nov 1 8:00 AM PST-8:30 AM PST (in 11 h 1 min): needs the person (1 new message, 1 needs you, 1 transcript turn for you) ⏎   chat [29rccb] 1 new message, 0 mentions, …"}
+{"flow":"W8","step":"today","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":11,"rubric":"beautiful","selector":"^Run next:","evidence":"Today, Sat, Oct 31 9:59 PM. Counts and refs only; the commands at the end open the text. ⏎ Next meeting: [4f2nj3] Sam / Test 1:1, Sun, Nov 1 8:00 AM PST-8:30 AM PST (in 11 h 1 min): needs the person (1 new message, 1 needs you, 1 transcript turn for you) ⏎   chat [29rccb] 1 new message, 0 mentions, …"}
+{"flow":"W8","step":"today","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":11,"rubric":"beautiful","selector":"\\[\\w{6}#\\d+\\]","evidence":"Today, Sat, Oct 31 9:59 PM. Counts and refs only; the commands at the end open the text. ⏎ Next meeting: [4f2nj3] Sam / Test 1:1, Sun, Nov 1 8:00 AM PST-8:30 AM PST (in 11 h 1 min): needs the person (1 new message, 1 needs you, 1 transcript turn for you) ⏎   chat [29rccb] 1 new message, 0 mentions, …"}
+{"flow":"W8","step":"today","surface":"agent-cli","cell":null,"check":"text.not","pass":true,"ms":11,"rubric":"beautiful","selector":"19:[0-9a-f]{8}"}
+{"flow":"W8","step":"today","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":11,"rubric":"beautiful"}
+{"flow":"W8","step":"today","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":11,"rubric":"beautiful"}
+{"flow":"W8","step":"attention","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":3,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W8","step":"attention","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":3,"rubric":"fast","measured":3,"threshold":2500}
+{"flow":"W8","step":"attention","surface":"agent-cli","cell":null,"check":"max-bytes","pass":true,"ms":3,"rubric":"fast","measured":958,"threshold":3000}
+{"flow":"W8","step":"attention","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":3,"rubric":"beautiful","selector":"^1\\. \\[\\w{6}\\]","evidence":"Needs you: 5 now · 2 later · 7 invites. ⏎ 1. [s72ch6] REPLY [1zijq8] Design reviews: Sam Example mentioned you (thread [1zijq8#1700003600000]) (50m ago, score 80) ⏎    Test User can you sign off on the mockups? ⏎ 2. [saambs] REPLY [ej90am] Sam Example: Sam Example asked you (2h ago, score 79)"}
+{"flow":"W8","step":"attention","surface":"agent-cli","cell":null,"check":"text.not","pass":true,"ms":3,"rubric":"beautiful","selector":"19:[0-9a-f]{8}"}
+{"flow":"W8","step":"attention","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"W8","step":"attention","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"W8","step":"open-ask","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":4,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W8","step":"open-ask","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":4,"rubric":"fast","measured":4,"threshold":2500}
+{"flow":"W8","step":"open-ask","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":4,"rubric":"beautiful","selector":"review doc","evidence":"# [ej90am] Sam Example (only you see this; looking does not mark it read) ⏎ [Sat, Oct 31 8:29 PM] (1700001800000) Sam Example: Quick question: can you look at the review doc before the Q&A? ⏎ Times are local (PDT, UTC-7)."}
+{"flow":"W8","step":"open-ask","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":4,"rubric":"beautiful"}
+{"flow":"W8","step":"open-ask","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":4,"rubric":"beautiful"}
+{"flow":"W8","step":"*","surface":"agent-cli","cell":null,"check":"reads-stay-reads","pass":true,"ms":0,"rubric":"honest","measured":0,"threshold":0}
+{"flow":"W2","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":true,"ms":4,"rubric":"discoverable"}
+{"flow":"W2","step":"week-flag","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":0,"rubric":"predictable","measured":2,"threshold":2,"known":"Ouro AX kit ax-command (ax-upstream U2): an unknown --<word> that is an argument's value"}
+{"flow":"W2","step":"week-flag","surface":"agent-cli","cell":null,"check":"stderr.oneLine","pass":true,"ms":0,"rubric":"forgiving","measured":1,"known":"Ouro AX kit ax-command (ax-upstream U2): an unknown --<word> that is an argument's value"}
+{"flow":"W2","step":"week-flag","surface":"agent-cli","cell":null,"check":"stderr.namesFix","pass":true,"ms":0,"rubric":"forgiving","known":"Ouro AX kit ax-command (ax-upstream U2): an unknown --<word> that is an argument's value"}
+{"flow":"W2","step":"week-flag","surface":"agent-cli","cell":null,"check":"stderr.noStack","pass":true,"ms":0,"rubric":"forgiving","known":"Ouro AX kit ax-command (ax-upstream U2): an unknown --<word> that is an argument's value"}
+{"flow":"W2","step":"week-flag","surface":"agent-cli","cell":null,"check":"text.has","pass":false,"ms":0,"rubric":"beautiful","selector":"calendar week","evidence":"m365tandem: calendar: there is no --week; its flags are --category, --matters. Fix: m365tandem calendar.","fix":"an unknown --<word> that is one of the command's words (calendar week) names that form in the Fix","known":"Ouro AX kit ax-command (ax-upstream U2): an unknown --<word> that is an argument's value"}
+{"flow":"W2","step":"week-flag","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":0,"rubric":"beautiful","known":"Ouro AX kit ax-command (ax-upstream U2): an unknown --<word> that is an argument's value"}
+{"flow":"W2","step":"week-flag","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":0,"rubric":"beautiful","known":"Ouro AX kit ax-command (ax-upstream U2): an unknown --<word> that is an argument's value"}
+{"flow":"W2","step":"week","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":1,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W2","step":"week","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":1,"rubric":"predictable","selector":"meetings[].id"}
+{"flow":"W2","step":"week","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":1,"rubric":"predictable","selector":"meetings[].subject"}
+{"flow":"W2","step":"week","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":1,"rubric":"predictable","selector":"meetings[].start"}
+{"flow":"W2","step":"week","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":1,"rubric":"fast","measured":1,"threshold":2500}
+{"flow":"W2","step":"week","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"W2","step":"week","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"W2","step":"matters","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":1,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W2","step":"matters","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":1,"rubric":"predictable","selector":"rule"}
+{"flow":"W2","step":"matters","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":1,"rubric":"fast","measured":1,"threshold":2500}
+{"flow":"W2","step":"matters","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"W2","step":"matters","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"W2","step":"agenda","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":7,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W2","step":"agenda","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":7,"rubric":"fast","measured":7,"threshold":2500}
+{"flow":"W2","step":"agenda","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":7,"rubric":"beautiful","selector":"Invites, not answered","evidence":"Today (2026-10-31) ⏎   [zpovph] all day      Team offsite week  (NOW) ⏎  Committed (2) ⏎   [fx0p80] 1:00 PM-1:30 PM  Weekly sync  (join link, chat [k8xi47], categories: Team (lightGreen))"}
+{"flow":"W2","step":"agenda","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":7,"rubric":"beautiful"}
+{"flow":"W2","step":"agenda","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":7,"rubric":"beautiful"}
+{"flow":"W2","step":"preview-decline","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":3,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W2","step":"preview-decline","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"ax"}
+{"flow":"W2","step":"preview-decline","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"action"}
+{"flow":"W2","step":"preview-decline","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"effect"}
+{"flow":"W2","step":"preview-decline","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"audience.who"}
+{"flow":"W2","step":"preview-decline","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"state"}
+{"flow":"W2","step":"preview-decline","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"summary"}
+{"flow":"W2","step":"preview-decline","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"postcondition"}
+{"flow":"W2","step":"preview-decline","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"next[].command"}
+{"flow":"W2","step":"preview-decline","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":3,"rubric":"predictable","selector":"state","threshold":"planned","measured":"planned"}
+{"flow":"W2","step":"preview-decline","surface":"agent-cli","cell":null,"check":"fields","pass":false,"ms":3,"rubric":"honest","selector":"audience.who","threshold":{"re":"organizer|Office hours host"},"measured":"other people","fix":"say who will get the answer in the outcome's audience.who and target (the organizer), as the text summary does"}
+{"flow":"W2","step":"preview-decline","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":3,"rubric":"fast","measured":3,"threshold":2500}
+{"flow":"W2","step":"preview-decline","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"W2","step":"preview-decline","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"W2","step":"decline","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":524,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W2","step":"decline","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":524,"rubric":"predictable","selector":"outcome.state"}
+{"flow":"W2","step":"decline","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":524,"rubric":"predictable","selector":"outcome.receipt.id"}
+{"flow":"W2","step":"decline","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":524,"rubric":"predictable","selector":"outcome.audience.who"}
+{"flow":"W2","step":"decline","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":524,"rubric":"predictable","selector":"outcome.state","threshold":"done","measured":"done"}
+{"flow":"W2","step":"decline","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":524,"rubric":"honest","selector":"why","threshold":{"re":"Ari asked"},"measured":"Ari asked: decline the big office hours"}
+{"flow":"W2","step":"decline","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":524,"rubric":"fast","measured":524,"threshold":5000}
+{"flow":"W2","step":"decline","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":524,"rubric":"beautiful"}
+{"flow":"W2","step":"decline","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":524,"rubric":"beautiful"}
+{"flow":"W2","step":"outcome","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":3,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W2","step":"outcome","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":3,"rubric":"predictable","selector":"state","threshold":"done","measured":"done"}
+{"flow":"W2","step":"outcome","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":3,"rubric":"predictable","selector":"action","threshold":"meeting.respond","measured":"meeting.respond"}
+{"flow":"W2","step":"outcome","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":3,"rubric":"fast","measured":3,"threshold":2500}
+{"flow":"W2","step":"outcome","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"W2","step":"outcome","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"W2","step":"log","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":1,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W2","step":"log","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":1,"rubric":"honest","selector":"[-1].by","threshold":"agent:flow-review","measured":"agent:flow-review"}
+{"flow":"W2","step":"log","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":1,"rubric":"predictable","selector":"[-1].verb","threshold":"meeting.respond","measured":"meeting.respond"}
+{"flow":"W2","step":"log","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":1,"rubric":"honest","selector":"[-1].data.why","threshold":{"re":"Ari asked"},"measured":"Ari asked: decline the big office hours"}
+{"flow":"W2","step":"log","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":1,"rubric":"fast","measured":1,"threshold":2500}
+{"flow":"W2","step":"log","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"W2","step":"log","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"W3","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":false,"ms":4,"rubric":"discoverable","measured":["prep"],"evidence":"not in m365tandem --help: prep","fix":"list prep in the top-level help (src/cli/help.ts)","known":"https://github.com/teams-microsoft/tandem/issues/540"}
+{"flow":"W3","step":"week","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":2,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W3","step":"week","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":2,"rubric":"fast","measured":2,"threshold":2500}
+{"flow":"W3","step":"week","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":2,"rubric":"beautiful"}
+{"flow":"W3","step":"week","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":2,"rubric":"beautiful"}
+{"flow":"W3","step":"week","surface":"agent-cli","cell":null,"check":"voice.json-only","pass":true,"ms":2,"rubric":"beautiful"}
+{"flow":"W3","step":"prep-list","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":7,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W3","step":"prep-list","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":7,"rubric":"predictable","selector":"meetings[]"}
+{"flow":"W3","step":"prep-list","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":7,"rubric":"fast","measured":7,"threshold":2500}
+{"flow":"W3","step":"prep-list","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":7,"rubric":"beautiful"}
+{"flow":"W3","step":"prep-list","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":7,"rubric":"beautiful"}
+{"flow":"W3","step":"prep-intro","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":4,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W3","step":"prep-intro","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":4,"rubric":"predictable","selector":"meeting.subject"}
+{"flow":"W3","step":"prep-intro","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":4,"rubric":"predictable","selector":"counts"}
+{"flow":"W3","step":"prep-intro","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":4,"rubric":"predictable","selector":"chat"}
+{"flow":"W3","step":"prep-intro","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":4,"rubric":"predictable","selector":"people[]"}
+{"flow":"W3","step":"prep-intro","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":4,"rubric":"predictable","selector":"meeting.subject","threshold":{"re":"Contoso"},"measured":"Contoso intro: pilot scope"}
+{"flow":"W3","step":"prep-intro","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":4,"rubric":"fast","measured":4,"threshold":2500}
+{"flow":"W3","step":"prep-intro","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":4,"rubric":"beautiful"}
+{"flow":"W3","step":"prep-intro","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":4,"rubric":"beautiful"}
+{"flow":"W3","step":"prior-call","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":11,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W3","step":"prior-call","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":11,"rubric":"predictable","selector":"results[]"}
+{"flow":"W3","step":"prior-call","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":11,"rubric":"fast","measured":11,"threshold":2500}
+{"flow":"W3","step":"prior-call","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":11,"rubric":"beautiful"}
+{"flow":"W3","step":"prior-call","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":11,"rubric":"beautiful"}
+{"flow":"W3","step":"note","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":10,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W3","step":"note","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":10,"rubric":"predictable","selector":"ok","threshold":true,"measured":true}
+{"flow":"W3","step":"note","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":10,"rubric":"honest","selector":"note.by","threshold":"agent","measured":"agent"}
+{"flow":"W3","step":"note","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":10,"rubric":"honest","selector":"note.agent","threshold":"flow-review","measured":"flow-review"}
+{"flow":"W3","step":"note","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":10,"rubric":"fast","measured":10,"threshold":5000}
+{"flow":"W3","step":"note","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":10,"rubric":"beautiful"}
+{"flow":"W3","step":"note","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":10,"rubric":"beautiful"}
+{"flow":"W4","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":true,"ms":4,"rubric":"discoverable"}
+{"flow":"W4","step":"week","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":2,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W4","step":"week","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":2,"rubric":"fast","measured":2,"threshold":2500}
+{"flow":"W4","step":"week","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":2,"rubric":"beautiful"}
+{"flow":"W4","step":"week","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":2,"rubric":"beautiful"}
+{"flow":"W4","step":"week","surface":"agent-cli","cell":null,"check":"voice.json-only","pass":true,"ms":2,"rubric":"beautiful"}
+{"flow":"W4","step":"meeting","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":4,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W4","step":"meeting","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":4,"rubric":"predictable","selector":"meeting.subject"}
+{"flow":"W4","step":"meeting","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":4,"rubric":"predictable","selector":"transcript"}
+{"flow":"W4","step":"meeting","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":4,"rubric":"predictable","selector":"meetingChat.ref"}
+{"flow":"W4","step":"meeting","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":4,"rubric":"predictable","selector":"followUps"}
+{"flow":"W4","step":"meeting","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":4,"rubric":"fast","measured":4,"threshold":2500}
+{"flow":"W4","step":"meeting","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":4,"rubric":"beautiful"}
+{"flow":"W4","step":"meeting","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":4,"rubric":"beautiful"}
+{"flow":"W4","step":"transcript","surface":"agent-cli","cell":null,"check":"exit","pass":false,"ms":5,"rubric":"predictable","measured":1,"threshold":[0,6],"evidence":"Transcript: none held for this meeting. ⏎ (That status covers no calls fetched for this meeting.)","fix":"a transcript read that finds none exits 0 and says so","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"W4","step":"transcript","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":5,"rubric":"fast","measured":5,"threshold":2500,"known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"W4","step":"transcript","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":5,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"W4","step":"transcript","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":5,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"W4","step":"draft-chat","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":11,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W4","step":"draft-chat","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":11,"rubric":"fast","measured":11,"threshold":5000}
+{"flow":"W4","step":"draft-chat","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":11,"rubric":"beautiful","selector":"nothing was sent","evidence":"Draft saved in \"Weekly sync\". Only you see it; nothing was sent. ⏎ Thanks all. I'll share the rollout numbers by Thursday."}
+{"flow":"W4","step":"draft-chat","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":11,"rubric":"beautiful"}
+{"flow":"W4","step":"draft-chat","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":11,"rubric":"beautiful"}
+{"flow":"W4","step":"draft-1on1","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":8,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W4","step":"draft-1on1","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":8,"rubric":"fast","measured":8,"threshold":5000}
+{"flow":"W4","step":"draft-1on1","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":8,"rubric":"beautiful"}
+{"flow":"W4","step":"draft-1on1","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":8,"rubric":"beautiful"}
+{"flow":"W4","step":"drafts","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":1,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W4","step":"drafts","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":1,"rubric":"predictable","selector":"[].conversationId"}
+{"flow":"W4","step":"drafts","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":1,"rubric":"predictable","selector":"[].draft.text"}
+{"flow":"W4","step":"drafts","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":1,"rubric":"fast","measured":1,"threshold":2500}
+{"flow":"W4","step":"drafts","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"W4","step":"drafts","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"W4","step":"watch-meeting","surface":"agent-cli","cell":null,"check":"exit","pass":false,"ms":3003,"rubric":"predictable","measured":5,"threshold":0,"evidence":"m365tandem: nothing happened in \"Weekly sync\" within 3s; m365tandem watch meeting:fx0p80 --after 0 waits again","fix":"produce follow-up-sent and follow-up-reply callbacks so watch meeting:<m> wakes","known":"https://github.com/teams-microsoft/tandem/pull/536"}
+{"flow":"W4","step":"watch-meeting","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":3003,"rubric":"fast","measured":3003,"threshold":4000,"known":"https://github.com/teams-microsoft/tandem/pull/536"}
+{"flow":"W4","step":"watch-meeting","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":3003,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/pull/536"}
+{"flow":"W4","step":"watch-meeting","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":3003,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/pull/536"}
+{"flow":"W4","step":"watch-meeting","surface":"agent-cli","cell":null,"check":"voice.json-only","pass":true,"ms":3003,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/pull/536"}
+{"flow":"W5","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":false,"ms":4,"rubric":"discoverable","measured":["attention"],"evidence":"not in m365tandem --help: attention","fix":"list attention in the top-level help (src/cli/help.ts)","known":"https://github.com/teams-microsoft/tandem/issues/540"}
+{"flow":"W5","step":"hold","surface":"agent-cli","cell":null,"check":"exit","pass":false,"ms":1,"rubric":"predictable","measured":2,"threshold":0,"evidence":"m365tandem: attention add: there is no --unless-reply-by; its flags are --about, --ask, --message, --why-file, --why. Fix: m365tandem attention add ej90am --why \"Ari asked: remind me if Sam doesn't reply about the review doc\".","fix":"attention add --unless-reply-by <time> (#536)","known":"https://github.com/teams-microsoft/tandem/pull/536"}
+{"flow":"W5","step":"hold","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":1,"rubric":"fast","measured":1,"threshold":5000,"known":"https://github.com/teams-microsoft/tandem/pull/536"}
+{"flow":"W5","step":"hold","surface":"agent-cli","cell":null,"check":"text.has","pass":false,"ms":1,"rubric":"beautiful","selector":"Tue","evidence":"m365tandem: attention add: there is no --unless-reply-by; its flags are --about, --ask, --message, --why-file, --why. Fix: m365tandem attention add ej90am --why \"Ari asked: remind me if Sam doesn't reply about the review doc\".","fix":"attention add --unless-reply-by <time> (#536)","known":"https://github.com/teams-microsoft/tandem/pull/536"}
+{"flow":"W5","step":"hold","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/pull/536"}
+{"flow":"W5","step":"hold","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/pull/536"}
+{"flow":"W5","step":"see-it","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":6,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W5","step":"see-it","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":6,"rubric":"fast","measured":6,"threshold":2500}
+{"flow":"W5","step":"see-it","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":6,"rubric":"beautiful"}
+{"flow":"W5","step":"see-it","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":6,"rubric":"beautiful"}
+{"flow":"W5","step":"see-it","surface":"agent-cli","cell":null,"check":"voice.json-only","pass":true,"ms":6,"rubric":"beautiful"}
+{"flow":"W9","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":true,"ms":4,"rubric":"discoverable"}
+{"flow":"W9","step":"search","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":11,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W9","step":"search","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":11,"rubric":"fast","measured":11,"threshold":2500}
+{"flow":"W9","step":"search","surface":"agent-cli","cell":null,"check":"text.has","pass":false,"ms":11,"rubric":"beautiful","selector":"\\[\\w{6}#\\d+\\]","evidence":"[Fri, Oct 30 11:20 AM] General | Sam Example: Legal approved the vendor contract. Nothing needed from anyone. ⏎ Times are local (PDT, UTC-7).","fix":"print each search hit's ref ([conversation#message]) so the next call can open, quote or link it"}
+{"flow":"W9","step":"search","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":11,"rubric":"beautiful"}
+{"flow":"W9","step":"search","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":11,"rubric":"beautiful"}
+{"flow":"W9","step":"older","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":1216,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W9","step":"older","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":1216,"rubric":"fast","measured":1216,"threshold":30000}
+{"flow":"W9","step":"older","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":1216,"rubric":"beautiful","selector":"^Older: m365tandem look nxrlt3 --before \\d+","evidence":"# [nxrlt3] Launch planning: before Mon, Oct 19 12:07 PM (only you see this; looking does not mark it read) ⏎ Loaded 84 older messages from Teams; that reaches the start of the conversation. ⏎ Showing the 5 messages before that, oldest first. ⏎ [Sat, Oct 17 8:07 PM] (1698790880000) Alex Example: I'll…"}
+{"flow":"W9","step":"older","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1216,"rubric":"beautiful"}
+{"flow":"W9","step":"older","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1216,"rubric":"beautiful"}
+{"flow":"W9","step":"before","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":308,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W9","step":"before","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":308,"rubric":"predictable","selector":"messages"}
+{"flow":"W9","step":"before","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":308,"rubric":"fast","measured":308,"threshold":30000}
+{"flow":"W9","step":"before","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":308,"rubric":"beautiful"}
+{"flow":"W9","step":"before","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":308,"rubric":"beautiful"}
+{"flow":"W9","step":"*","surface":"agent-cli","cell":null,"check":"reads-stay-reads","pass":true,"ms":0,"rubric":"honest","measured":0,"threshold":0}
+{"flow":"W10","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":true,"ms":4,"rubric":"discoverable"}
+{"flow":"W10","step":"who","surface":"agent-cli","cell":null,"check":"exit","pass":false,"ms":3,"rubric":"predictable","measured":1,"threshold":2,"evidence":"m365tandem: no conversation matches \"Morgan\". Try \"m365tandem conversations\".","fix":"people <name> that matches no conversation says names resolve in chat new <name> --dry-run, exit 2","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"W10","step":"who","surface":"agent-cli","cell":null,"check":"stderr.oneLine","pass":true,"ms":3,"rubric":"forgiving","measured":1,"known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"W10","step":"who","surface":"agent-cli","cell":null,"check":"stderr.namesFix","pass":true,"ms":3,"rubric":"forgiving","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"W10","step":"who","surface":"agent-cli","cell":null,"check":"stderr.noStack","pass":true,"ms":3,"rubric":"forgiving","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"W10","step":"who","surface":"agent-cli","cell":null,"check":"text.has","pass":false,"ms":3,"rubric":"beautiful","selector":"chat new","evidence":"m365tandem: no conversation matches \"Morgan\". Try \"m365tandem conversations\".","fix":"people <name> that matches no conversation says names resolve in chat new <name> --dry-run, exit 2","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"W10","step":"who","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":3,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"W10","step":"who","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":3,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"W10","step":"preview","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":812,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W10","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":812,"rubric":"predictable","selector":"ax"}
+{"flow":"W10","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":812,"rubric":"predictable","selector":"action"}
+{"flow":"W10","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":812,"rubric":"predictable","selector":"effect"}
+{"flow":"W10","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":812,"rubric":"predictable","selector":"audience.who"}
+{"flow":"W10","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":812,"rubric":"predictable","selector":"state"}
+{"flow":"W10","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":812,"rubric":"predictable","selector":"summary"}
+{"flow":"W10","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":812,"rubric":"predictable","selector":"postcondition"}
+{"flow":"W10","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":812,"rubric":"predictable","selector":"next[].command"}
+{"flow":"W10","step":"preview","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":812,"rubric":"predictable","selector":"state","threshold":"planned","measured":"planned"}
+{"flow":"W10","step":"preview","surface":"agent-cli","cell":null,"check":"fields","pass":false,"ms":812,"rubric":"honest","selector":"audience.who","threshold":{"re":"Morgan"},"measured":"other people"}
+{"flow":"W10","step":"preview","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":812,"rubric":"predictable","selector":"next[0].command","threshold":{"re":"^m365tandem chat new"},"measured":"m365tandem chat new Morgan --text \"Thanks for the intro; I'll send the SSO demo deck tomorrow.\" --why \"Ari asked: thank Morgan and promise the deck\" --json"}
+{"flow":"W10","step":"preview","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":812,"rubric":"fast","measured":812,"threshold":5000}
+{"flow":"W10","step":"preview","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":812,"rubric":"beautiful"}
+{"flow":"W10","step":"preview","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":812,"rubric":"beautiful"}
+{"flow":"W10","step":"start","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":1026,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W10","step":"start","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":1026,"rubric":"predictable","selector":"outcome.state","threshold":"done","measured":"done"}
+{"flow":"W10","step":"start","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":1026,"rubric":"fast","measured":1026,"threshold":5000}
+{"flow":"W10","step":"start","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1026,"rubric":"beautiful"}
+{"flow":"W10","step":"start","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1026,"rubric":"beautiful"}
+{"flow":"W11","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":true,"ms":4,"rubric":"discoverable"}
+{"flow":"W11","step":"no-why","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":0,"rubric":"predictable","measured":2,"threshold":2}
+{"flow":"W11","step":"no-why","surface":"agent-cli","cell":null,"check":"stderr.oneLine","pass":true,"ms":0,"rubric":"forgiving","measured":1}
+{"flow":"W11","step":"no-why","surface":"agent-cli","cell":null,"check":"stderr.namesFix","pass":true,"ms":0,"rubric":"forgiving"}
+{"flow":"W11","step":"no-why","surface":"agent-cli","cell":null,"check":"stderr.noStack","pass":true,"ms":0,"rubric":"forgiving"}
+{"flow":"W11","step":"no-why","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":0,"rubric":"beautiful","selector":"--why","evidence":"m365tandem: send: other people will see this as the person's, so it needs --why: who asked you, and what they said. Fix: m365tandem send nxrlt3 --attach /Users/microsoft/code/tandem-worktrees/ax-review-out/report-before/work/cli-home/banner.png --text \"Final banner\" --why \"<who asked you, and what t…"}
+{"flow":"W11","step":"no-why","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":0,"rubric":"beautiful"}
+{"flow":"W11","step":"no-why","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":0,"rubric":"beautiful"}
+{"flow":"W11","step":"preview","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":5,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W11","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":5,"rubric":"predictable","selector":"ax"}
+{"flow":"W11","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":5,"rubric":"predictable","selector":"action"}
+{"flow":"W11","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":5,"rubric":"predictable","selector":"effect"}
+{"flow":"W11","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":5,"rubric":"predictable","selector":"audience.who"}
+{"flow":"W11","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":5,"rubric":"predictable","selector":"state"}
+{"flow":"W11","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":5,"rubric":"predictable","selector":"summary"}
+{"flow":"W11","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":5,"rubric":"predictable","selector":"postcondition"}
+{"flow":"W11","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":5,"rubric":"predictable","selector":"next[].command"}
+{"flow":"W11","step":"preview","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":5,"rubric":"predictable","selector":"state","threshold":"planned","measured":"planned"}
+{"flow":"W11","step":"preview","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":5,"rubric":"honest","selector":"audience.who","threshold":{"re":"Launch planning"},"measured":"everyone in \"Launch planning\""}
+{"flow":"W11","step":"preview","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":5,"rubric":"fast","measured":5,"threshold":5000}
+{"flow":"W11","step":"preview","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":5,"rubric":"beautiful"}
+{"flow":"W11","step":"preview","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":5,"rubric":"beautiful"}
+{"flow":"W12","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":true,"ms":4,"rubric":"discoverable"}
+{"flow":"W12","step":"list","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":3,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W12","step":"list","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":3,"rubric":"fast","measured":3,"threshold":2500}
+{"flow":"W12","step":"list","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":3,"rubric":"beautiful","selector":"Approve \\[button\\]","evidence":"Build Helper's card in Build Helper (only you see this list): ⏎ Approval requested ⏎ **Ship launch-site 2.4** ⏎ Requested by: Sam Example"}
+{"flow":"W12","step":"list","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":3,"rubric":"beautiful","selector":"--action","evidence":"Build Helper's card in Build Helper (only you see this list): ⏎ Approval requested ⏎ **Ship launch-site 2.4** ⏎ Requested by: Sam Example"}
+{"flow":"W12","step":"list","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"W12","step":"list","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"W12","step":"wrong-message","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":0,"rubric":"predictable","measured":2,"threshold":2}
+{"flow":"W12","step":"wrong-message","surface":"agent-cli","cell":null,"check":"stderr.oneLine","pass":true,"ms":0,"rubric":"forgiving","measured":1}
+{"flow":"W12","step":"wrong-message","surface":"agent-cli","cell":null,"check":"stderr.namesFix","pass":true,"ms":0,"rubric":"forgiving"}
+{"flow":"W12","step":"wrong-message","surface":"agent-cli","cell":null,"check":"stderr.noStack","pass":true,"ms":0,"rubric":"forgiving"}
+{"flow":"W12","step":"wrong-message","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":0,"rubric":"beautiful"}
+{"flow":"W12","step":"wrong-message","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":0,"rubric":"beautiful"}
+{"flow":"W12","step":"preview","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":3,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W12","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"ax"}
+{"flow":"W12","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"action"}
+{"flow":"W12","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"effect"}
+{"flow":"W12","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"audience.who"}
+{"flow":"W12","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"state"}
+{"flow":"W12","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"summary"}
+{"flow":"W12","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"postcondition"}
+{"flow":"W12","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"next[].command"}
+{"flow":"W12","step":"preview","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":3,"rubric":"predictable","selector":"state","threshold":"planned","measured":"planned"}
+{"flow":"W12","step":"preview","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":3,"rubric":"fast","measured":3,"threshold":5000}
+{"flow":"W12","step":"preview","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"W12","step":"preview","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"W13","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":true,"ms":4,"rubric":"discoverable"}
+{"flow":"W13","step":"draft","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":6,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W13","step":"draft","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":6,"rubric":"fast","measured":6,"threshold":5000}
+{"flow":"W13","step":"draft","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":6,"rubric":"beautiful"}
+{"flow":"W13","step":"draft","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":6,"rubric":"beautiful"}
+{"flow":"W13","step":"log-json","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":1,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W13","step":"log-json","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":1,"rubric":"honest","selector":"[-1].by","threshold":"agent:week-host","measured":"agent:week-host"}
+{"flow":"W13","step":"log-json","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":1,"rubric":"predictable","selector":"[-1].verb","threshold":"draft.set","measured":"draft.set"}
+{"flow":"W13","step":"log-json","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":1,"rubric":"fast","measured":1,"threshold":2500}
+{"flow":"W13","step":"log-json","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"W13","step":"log-json","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"W13","step":"log-text","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":2,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"W13","step":"log-text","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":2,"rubric":"fast","measured":2,"threshold":2500}
+{"flow":"W13","step":"log-text","surface":"agent-cli","cell":null,"check":"text.has","pass":false,"ms":2,"rubric":"beautiful","selector":"Sam Example","evidence":"Sat, Oct 31 9:59:16 PM  agent  meeting.respond  mock-event-oh-fabric00000000000000000000|2026-11-01T16:00:00.000Z  [flow-review]  why: Ari asked: decline the big office hours ⏎ Sat, Oct 31 9:59:17 PM  agent  prep.note      mock-event-contosointro00000000000000000|2026-11-01T17:00:00.000Z  [flow-revi…","fix":"log's text names the conversation ([ref] title) instead of its raw Teams id"}
+{"flow":"W13","step":"log-text","surface":"agent-cli","cell":null,"check":"text.not","pass":false,"ms":2,"rubric":"beautiful","selector":"19:[0-9a-f]{8}","evidence":"Sat, Oct 31 9:59:17 PM  agent  draft.set      19:00000000-0000-4000-8000-000000000001_00000000-0000-4000-8000-000000000003@unq.gbl.spaces  [flow-review]","fix":"log's text names the conversation ([ref] title) instead of its raw Teams id"}
+{"flow":"W13","step":"log-text","surface":"agent-cli","cell":null,"check":"text.not","pass":false,"ms":2,"rubric":"beautiful","selector":"@unq\\.gbl\\.spaces","evidence":"Sat, Oct 31 9:59:17 PM  agent  draft.set      19:00000000-0000-4000-8000-000000000001_00000000-0000-4000-8000-000000000003@unq.gbl.spaces  [flow-review]","fix":"log's text names the conversation ([ref] title) instead of its raw Teams id"}
+{"flow":"W13","step":"log-text","surface":"agent-cli","cell":null,"check":"text.not","pass":false,"ms":2,"rubric":"beautiful","selector":"@thread\\.v2","evidence":"Sat, Oct 31 9:59:17 PM  agent  draft.set      19:meeting_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA@thread.v2  [flow-review]","fix":"log's text names the conversation ([ref] title) instead of its raw Teams id"}
+{"flow":"W13","step":"log-text","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":2,"rubric":"beautiful"}
+{"flow":"W13","step":"log-text","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":2,"rubric":"beautiful"}
+{"flow":"T2","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":true,"ms":4,"rubric":"discoverable"}
+{"flow":"T2","step":"set","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":7,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"T2","step":"set","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":7,"rubric":"fast","measured":7,"threshold":5000}
+{"flow":"T2","step":"set","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":7,"rubric":"beautiful","selector":"Only you see it; nothing was sent","evidence":"Draft saved in \"Sam Example\". Only you see it; nothing was sent. ⏎ I'll look at the review doc by end of day."}
+{"flow":"T2","step":"set","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":7,"rubric":"beautiful"}
+{"flow":"T2","step":"set","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":7,"rubric":"beautiful"}
+{"flow":"T2","step":"show","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":3,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"T2","step":"show","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"draft.text"}
+{"flow":"T2","step":"show","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":3,"rubric":"predictable","selector":"draft.text","threshold":{"re":"review doc"},"measured":"I'll look at the review doc by end of day."}
+{"flow":"T2","step":"show","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":3,"rubric":"fast","measured":3,"threshold":2500}
+{"flow":"T2","step":"show","surface":"agent-cli","cell":null,"check":"max-bytes","pass":true,"ms":3,"rubric":"fast","measured":2534,"threshold":4000}
+{"flow":"T2","step":"show","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"T2","step":"show","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"T3","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":true,"ms":4,"rubric":"discoverable"}
+{"flow":"T3","step":"preview","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":2,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"T3","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":2,"rubric":"predictable","selector":"ax"}
+{"flow":"T3","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":2,"rubric":"predictable","selector":"action"}
+{"flow":"T3","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":2,"rubric":"predictable","selector":"effect"}
+{"flow":"T3","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":2,"rubric":"predictable","selector":"audience.who"}
+{"flow":"T3","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":2,"rubric":"predictable","selector":"state"}
+{"flow":"T3","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":2,"rubric":"predictable","selector":"summary"}
+{"flow":"T3","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":2,"rubric":"predictable","selector":"postcondition"}
+{"flow":"T3","step":"preview","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":2,"rubric":"predictable","selector":"next[].command"}
+{"flow":"T3","step":"preview","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":2,"rubric":"predictable","selector":"state","threshold":"planned","measured":"planned"}
+{"flow":"T3","step":"preview","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":2,"rubric":"honest","selector":"audience.who","threshold":{"re":"Launch planning"},"measured":"everyone in \"Launch planning\""}
+{"flow":"T3","step":"preview","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":2,"rubric":"fast","measured":2,"threshold":2500}
+{"flow":"T3","step":"preview","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":2,"rubric":"beautiful"}
+{"flow":"T3","step":"preview","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":2,"rubric":"beautiful"}
+{"flow":"T3","step":"send","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":515,"rubric":"predictable","measured":0,"threshold":0,"known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"T3","step":"send","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":515,"rubric":"predictable","selector":"outcome.state","threshold":"done","measured":"done","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"T3","step":"send","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":515,"rubric":"honest","selector":"why","threshold":{"re":"Riley"},"measured":"Riley asked me to tell Launch planning the banner is final","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"T3","step":"send","surface":"agent-cli","cell":null,"check":"stderr.empty","pass":false,"ms":515,"rubric":"beautiful","evidence":"Intent t1-1793509163794-ABOdRLd7qLcB7cBGlXv6qQ. A compatible tandem daemon version is required for recovery. To recover this send, re-run the same command with --intent t1-1793509163794-ABOdRLd7qLcB7cBGlXv6qQ and the same --agent; a re-run without --intent is not a recovery and may be refused while …","fix":"with --json the intent key is in the JSON (intentKey); don't also print the recovery paragraph on stderr","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"T3","step":"send","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":515,"rubric":"fast","measured":515,"threshold":5000,"known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"T3","step":"send","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":515,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"T3","step":"send","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":515,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"T3","step":"send-text","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":517,"rubric":"predictable","measured":0,"threshold":0,"known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"T3","step":"send-text","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":517,"rubric":"fast","measured":517,"threshold":5000,"known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"T3","step":"send-text","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":517,"rubric":"beautiful","selector":"^Sent to","evidence":"Sending to \"Alex, Riley, and Sam\" as the person. Alex Example and 2 others will see it. ⏎ Sent to \"Alex, Riley, and Sam\" as the person. Alex Example and 2 others can see it. Logged as agent:flow-review with your why. ⏎ Checked: the message (client message id 1793509164422507) is in tandem's copy. ⏎ …","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"T3","step":"send-text","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":517,"rubric":"beautiful","selector":"Logged as agent:flow-review","evidence":"Sending to \"Alex, Riley, and Sam\" as the person. Alex Example and 2 others will see it. ⏎ Sent to \"Alex, Riley, and Sam\" as the person. Alex Example and 2 others can see it. Logged as agent:flow-review with your why. ⏎ Checked: the message (client message id 1793509164422507) is in tandem's copy. ⏎ …","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"T3","step":"send-text","surface":"agent-cli","cell":null,"check":"text.not","pass":false,"ms":517,"rubric":"beautiful","selector":"^Intent t1-","evidence":"Intent t1-1793509164311-HchwVJwOrMS5BsCAE6omVw. A compatible tandem daemon version is required for recovery. To recover this send, re-run the same command with --intent t1-1793509164311-HchwVJwOrMS5BsCAE6omVw and the same --agent; a re-run without --intent is not a recovery and may be refused while …","fix":"say the intent token in one short line after the result, not a paragraph before it","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"T3","step":"send-text","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":517,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"T3","step":"send-text","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":517,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/541"}
+{"flow":"T3","step":"log","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":1,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"T3","step":"log","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":1,"rubric":"honest","selector":"[-1].by","threshold":"agent:flow-review","measured":"agent:flow-review"}
+{"flow":"T3","step":"log","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":1,"rubric":"predictable","selector":"[-1].verb","threshold":"message.send","measured":"message.send"}
+{"flow":"T3","step":"log","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":1,"rubric":"honest","selector":"[-1].data.why","threshold":{"re":"Riley"},"measured":"Riley asked me to confirm the review"}
+{"flow":"T3","step":"log","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":1,"rubric":"fast","measured":1,"threshold":2500}
+{"flow":"T3","step":"log","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"T3","step":"log","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"T4","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":true,"ms":4,"rubric":"discoverable"}
+{"flow":"T4","step":"edit","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":0,"rubric":"predictable","measured":2,"threshold":2,"known":"Ouro AX kit ax-command (ax-upstream U1): an ambiguous word's Fix carries the words given"}
+{"flow":"T4","step":"edit","surface":"agent-cli","cell":null,"check":"stderr.oneLine","pass":true,"ms":0,"rubric":"forgiving","measured":1,"known":"Ouro AX kit ax-command (ax-upstream U1): an ambiguous word's Fix carries the words given"}
+{"flow":"T4","step":"edit","surface":"agent-cli","cell":null,"check":"stderr.namesFix","pass":true,"ms":0,"rubric":"forgiving","known":"Ouro AX kit ax-command (ax-upstream U1): an ambiguous word's Fix carries the words given"}
+{"flow":"T4","step":"edit","surface":"agent-cli","cell":null,"check":"stderr.noStack","pass":true,"ms":0,"rubric":"forgiving","known":"Ouro AX kit ax-command (ax-upstream U1): an ambiguous word's Fix carries the words given"}
+{"flow":"T4","step":"edit","surface":"agent-cli","cell":null,"check":"text.has","pass":false,"ms":0,"rubric":"beautiful","selector":"edit-sent nxrlt3#1700002700000","evidence":"m365tandem: edit: \"edit\" could mean 2 things, so it does nothing: change a draft only you see; or change a message already sent, which other people see. Fix: m365tandem draft set <conversation> --text \"...\" or m365tandem edit-sent <conversation>#<message id> --text \"...\" --agent <name> --why \"...\".","fix":"fill the ref and text the agent gave into edit's Fix, so the next call is a copy","known":"Ouro AX kit ax-command (ax-upstream U1): an ambiguous word's Fix carries the words given"}
+{"flow":"T4","step":"edit","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":0,"rubric":"beautiful","known":"Ouro AX kit ax-command (ax-upstream U1): an ambiguous word's Fix carries the words given"}
+{"flow":"T4","step":"edit","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":0,"rubric":"beautiful","known":"Ouro AX kit ax-command (ax-upstream U1): an ambiguous word's Fix carries the words given"}
+{"flow":"T4","step":"edit-sent","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":524,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"T4","step":"edit-sent","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":524,"rubric":"predictable","selector":"outcome.state","threshold":"done","measured":"done"}
+{"flow":"T4","step":"edit-sent","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":524,"rubric":"predictable","selector":"outcome.postcondition.holds","threshold":true,"measured":true}
+{"flow":"T4","step":"edit-sent","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":524,"rubric":"fast","measured":524,"threshold":5000}
+{"flow":"T4","step":"edit-sent","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":524,"rubric":"beautiful"}
+{"flow":"T4","step":"edit-sent","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":524,"rubric":"beautiful"}
+{"flow":"E2","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":true,"ms":4,"rubric":"discoverable"}
+{"flow":"E2","step":"read-um32zk","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":517,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-um32zk","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":517,"rubric":"beautiful"}
+{"flow":"E2","step":"read-um32zk","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":517,"rubric":"beautiful"}
+{"flow":"E2","step":"read-1zijq8","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":518,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-1zijq8","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":518,"rubric":"beautiful"}
+{"flow":"E2","step":"read-1zijq8","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":518,"rubric":"beautiful"}
+{"flow":"E2","step":"read-0tr0tn","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":518,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-0tr0tn","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":518,"rubric":"beautiful"}
+{"flow":"E2","step":"read-0tr0tn","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":518,"rubric":"beautiful"}
+{"flow":"E2","step":"read-s5eyv2","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":517,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-s5eyv2","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":517,"rubric":"beautiful"}
+{"flow":"E2","step":"read-s5eyv2","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":517,"rubric":"beautiful"}
+{"flow":"E2","step":"read-nxrlt3","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":518,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-nxrlt3","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":518,"rubric":"beautiful"}
+{"flow":"E2","step":"read-nxrlt3","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":518,"rubric":"beautiful"}
+{"flow":"E2","step":"read-fh6y0t","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":514,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-fh6y0t","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":514,"rubric":"beautiful"}
+{"flow":"E2","step":"read-fh6y0t","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":514,"rubric":"beautiful"}
+{"flow":"E2","step":"read-k8xi47","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":515,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-k8xi47","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":515,"rubric":"beautiful"}
+{"flow":"E2","step":"read-k8xi47","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":515,"rubric":"beautiful"}
+{"flow":"E2","step":"read-29rccb","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":516,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-29rccb","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":516,"rubric":"beautiful"}
+{"flow":"E2","step":"read-29rccb","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":516,"rubric":"beautiful"}
+{"flow":"E2","step":"read-r82dfi","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":515,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-r82dfi","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":515,"rubric":"beautiful"}
+{"flow":"E2","step":"read-r82dfi","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":515,"rubric":"beautiful"}
+{"flow":"E2","step":"read-ej90am","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":513,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-ej90am","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":513,"rubric":"beautiful"}
+{"flow":"E2","step":"read-ej90am","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":513,"rubric":"beautiful"}
+{"flow":"E2","step":"read-unz4hg","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":515,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-unz4hg","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":515,"rubric":"beautiful"}
+{"flow":"E2","step":"read-unz4hg","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":515,"rubric":"beautiful"}
+{"flow":"E2","step":"read-j4pzvx","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":514,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-j4pzvx","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":514,"rubric":"beautiful"}
+{"flow":"E2","step":"read-j4pzvx","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":514,"rubric":"beautiful"}
+{"flow":"E2","step":"read-ppmhey","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":514,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-ppmhey","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":514,"rubric":"beautiful"}
+{"flow":"E2","step":"read-ppmhey","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":514,"rubric":"beautiful"}
+{"flow":"E2","step":"read-qphuvv","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":513,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-qphuvv","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":513,"rubric":"beautiful"}
+{"flow":"E2","step":"read-qphuvv","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":513,"rubric":"beautiful"}
+{"flow":"E2","step":"read-81z8a7","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":525,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-81z8a7","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":525,"rubric":"beautiful"}
+{"flow":"E2","step":"read-81z8a7","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":525,"rubric":"beautiful"}
+{"flow":"E2","step":"read-mjqqyl","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":517,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-mjqqyl","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":517,"rubric":"beautiful"}
+{"flow":"E2","step":"read-mjqqyl","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":517,"rubric":"beautiful"}
+{"flow":"E2","step":"read-0w8iqh","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":519,"rubric":"predictable","measured":0,"threshold":[0,2]}
+{"flow":"E2","step":"read-0w8iqh","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":519,"rubric":"beautiful"}
+{"flow":"E2","step":"read-0w8iqh","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":519,"rubric":"beautiful"}
+{"flow":"E2","step":"read-58e81g","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":8,"rubric":"predictable","measured":2,"threshold":[0,2]}
+{"flow":"E2","step":"read-58e81g","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":8,"rubric":"beautiful"}
+{"flow":"E2","step":"read-58e81g","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":8,"rubric":"beautiful"}
+{"flow":"E2","step":"unread","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":3,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"E2","step":"unread","surface":"agent-cli","cell":null,"check":"stderr.empty","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"E2","step":"unread","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":3,"rubric":"fast","measured":3,"threshold":2500}
+{"flow":"E2","step":"unread","surface":"agent-cli","cell":null,"check":"text.has","pass":false,"ms":3,"rubric":"beautiful","selector":"^Nothing unread\\.","evidence":"No conversations synced yet. Is the tandem window open and signed in?","fix":"an empty filter says what is empty (nothing unread) and names the next useful command"}
+{"flow":"E2","step":"unread","surface":"agent-cli","cell":null,"check":"text.has","pass":false,"ms":3,"rubric":"beautiful","selector":"m365tandem today","evidence":"No conversations synced yet. Is the tandem window open and signed in?","fix":"an empty filter says what is empty (nothing unread) and names the next useful command"}
+{"flow":"E2","step":"unread","surface":"agent-cli","cell":null,"check":"text.not","pass":false,"ms":3,"rubric":"beautiful","selector":"synced yet","evidence":"No conversations synced yet. Is the tandem window open and signed in?","fix":"an empty filter says what is empty (nothing unread) and names the next useful command"}
+{"flow":"E2","step":"unread","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"E2","step":"unread","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"E2","step":"unread-json","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":1,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"E2","step":"unread-json","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":1,"rubric":"predictable","selector":"length","threshold":0,"measured":0}
+{"flow":"E2","step":"unread-json","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"E2","step":"unread-json","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"T5","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":true,"ms":4,"rubric":"discoverable"}
+{"flow":"T5","step":"week","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":1,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"T5","step":"week","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":1,"rubric":"fast","measured":1,"threshold":2500}
+{"flow":"T5","step":"week","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"T5","step":"week","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"T5","step":"week","surface":"agent-cli","cell":null,"check":"voice.json-only","pass":true,"ms":1,"rubric":"beautiful"}
+{"flow":"T5","step":"nothing","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":1003,"rubric":"predictable","measured":5,"threshold":5}
+{"flow":"T5","step":"nothing","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":1003,"rubric":"predictable","selector":"cursor"}
+{"flow":"T5","step":"nothing","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":1003,"rubric":"fast","measured":1003,"threshold":3000}
+{"flow":"T5","step":"nothing","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1003,"rubric":"beautiful"}
+{"flow":"T5","step":"nothing","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1003,"rubric":"beautiful"}
+{"flow":"T5","step":"reply","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":2005,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"T5","step":"reply","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":2005,"rubric":"fast","measured":2005,"threshold":15000}
+{"flow":"T5","step":"reply","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":2005,"rubric":"beautiful","selector":"Lakeside","evidence":"{ ⏎   \"ax\": \"wait/1\", ⏎   \"for\": \"a reply in \\\"Alex, Riley, and Sam\\\" from someone other than the person\", ⏎   \"target\": {"}
+{"flow":"T5","step":"reply","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":2005,"rubric":"beautiful"}
+{"flow":"T5","step":"reply","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":2005,"rubric":"beautiful"}
+{"flow":"T5","step":"reply","surface":"agent-cli","cell":null,"check":"voice.json-only","pass":true,"ms":2005,"rubric":"beautiful"}
+{"flow":"T5","step":"meeting-nothing","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":1004,"rubric":"predictable","measured":5,"threshold":5,"known":"https://github.com/teams-microsoft/tandem/issues/544"}
+{"flow":"T5","step":"meeting-nothing","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":1004,"rubric":"fast","measured":1004,"threshold":3000,"known":"https://github.com/teams-microsoft/tandem/issues/544"}
+{"flow":"T5","step":"meeting-nothing","surface":"agent-cli","cell":null,"check":"text.has","pass":false,"ms":1004,"rubric":"beautiful","selector":"^Resume: m365tandem watch meeting:","evidence":"Watching \"Weekly sync\" (Sat, Oct 31 1:00 PM) for meeting events. Only you see this. Times are local (PDT, UTC-7). ⏎ m365tandem: nothing happened in \"Weekly sync\" within 1s; m365tandem watch meeting:fx0p80 --after 0 waits again","fix":"say a meeting watch's timeout as a conversation watch does: a stdout 'Resume: <command>' line, not an error","known":"https://github.com/teams-microsoft/tandem/issues/544"}
+{"flow":"T5","step":"meeting-nothing","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1004,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/544"}
+{"flow":"T5","step":"meeting-nothing","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1004,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/544"}
+{"flow":"N5","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":true,"ms":4,"rubric":"discoverable"}
+{"flow":"N5","step":"find","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":7,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"N5","step":"find","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":7,"rubric":"predictable","selector":"results[].message.ref"}
+{"flow":"N5","step":"find","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":7,"rubric":"fast","measured":7,"threshold":2500}
+{"flow":"N5","step":"find","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":7,"rubric":"beautiful"}
+{"flow":"N5","step":"find","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":7,"rubric":"beautiful"}
+{"flow":"N5","step":"quote","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":6,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"N5","step":"quote","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":6,"rubric":"predictable","selector":"ax"}
+{"flow":"N5","step":"quote","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":6,"rubric":"predictable","selector":"action"}
+{"flow":"N5","step":"quote","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":6,"rubric":"predictable","selector":"effect"}
+{"flow":"N5","step":"quote","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":6,"rubric":"predictable","selector":"audience.who"}
+{"flow":"N5","step":"quote","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":6,"rubric":"predictable","selector":"state"}
+{"flow":"N5","step":"quote","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":6,"rubric":"predictable","selector":"summary"}
+{"flow":"N5","step":"quote","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":6,"rubric":"predictable","selector":"postcondition"}
+{"flow":"N5","step":"quote","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":6,"rubric":"predictable","selector":"next[].command"}
+{"flow":"N5","step":"quote","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":6,"rubric":"predictable","selector":"state","threshold":"planned","measured":"planned"}
+{"flow":"N5","step":"quote","surface":"agent-cli","cell":null,"check":"fields","pass":true,"ms":6,"rubric":"predictable","selector":"summary","threshold":{"re":"quoting"},"measured":"Dry run, nothing was done: Sending to Sam Example as the person, quoting Sam Example's message \"Quick question: can you look at the review doc before the Q&A?\". Sam Example will see it."}
+{"flow":"N5","step":"quote","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":6,"rubric":"fast","measured":6,"threshold":5000}
+{"flow":"N5","step":"quote","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":6,"rubric":"beautiful"}
+{"flow":"N5","step":"quote","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":6,"rubric":"beautiful"}
+{"flow":"N5","step":"react","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":3,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"N5","step":"react","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"ax"}
+{"flow":"N5","step":"react","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"action"}
+{"flow":"N5","step":"react","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"effect"}
+{"flow":"N5","step":"react","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"audience.who"}
+{"flow":"N5","step":"react","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"state"}
+{"flow":"N5","step":"react","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"summary"}
+{"flow":"N5","step":"react","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"postcondition"}
+{"flow":"N5","step":"react","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":3,"rubric":"predictable","selector":"next[].command"}
+{"flow":"N5","step":"react","surface":"agent-cli","cell":null,"check":"fields","pass":false,"ms":3,"rubric":"honest","selector":"audience.who","threshold":{"re":"Sam"},"measured":"other people"}
+{"flow":"N5","step":"react","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":3,"rubric":"fast","measured":3,"threshold":5000}
+{"flow":"N5","step":"react","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"N5","step":"react","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":3,"rubric":"beautiful"}
+{"flow":"E1","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":true,"ms":4,"rubric":"discoverable"}
+{"flow":"E1","step":"no-why","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":0,"rubric":"predictable","measured":2,"threshold":2}
+{"flow":"E1","step":"no-why","surface":"agent-cli","cell":null,"check":"stderr.oneLine","pass":true,"ms":0,"rubric":"forgiving","measured":1}
+{"flow":"E1","step":"no-why","surface":"agent-cli","cell":null,"check":"stderr.namesFix","pass":true,"ms":0,"rubric":"forgiving"}
+{"flow":"E1","step":"no-why","surface":"agent-cli","cell":null,"check":"stderr.noStack","pass":true,"ms":0,"rubric":"forgiving"}
+{"flow":"E1","step":"no-why","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":0,"rubric":"beautiful","selector":"--why","evidence":"m365tandem: send: other people will see this as the person's, so it needs --why: who asked you, and what they said. Fix: m365tandem send nxrlt3 --text x --why \"<who asked you, and what they said>\"."}
+{"flow":"E1","step":"no-why","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":0,"rubric":"beautiful"}
+{"flow":"E1","step":"no-why","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":0,"rubric":"beautiful"}
+{"flow":"E1","step":"typo-flag","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":0,"rubric":"predictable","measured":2,"threshold":2}
+{"flow":"E1","step":"typo-flag","surface":"agent-cli","cell":null,"check":"stderr.oneLine","pass":true,"ms":0,"rubric":"forgiving","measured":1}
+{"flow":"E1","step":"typo-flag","surface":"agent-cli","cell":null,"check":"stderr.namesFix","pass":true,"ms":0,"rubric":"forgiving"}
+{"flow":"E1","step":"typo-flag","surface":"agent-cli","cell":null,"check":"stderr.noStack","pass":true,"ms":0,"rubric":"forgiving"}
+{"flow":"E1","step":"typo-flag","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":0,"rubric":"beautiful","selector":"--text","evidence":"m365tandem: send: there is no --txt; its flags are --text, --file, --draft, --image, --mention, --quote, --attach, --markdown, --intent, --again, --why-file, --why, --why. Fix: m365tandem send nxrlt3 --text x --why y."}
+{"flow":"E1","step":"typo-flag","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":0,"rubric":"beautiful"}
+{"flow":"E1","step":"typo-flag","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":0,"rubric":"beautiful"}
+{"flow":"E1","step":"wrong-ref","surface":"agent-cli","cell":null,"check":"exit","pass":false,"ms":1,"rubric":"predictable","measured":1,"threshold":2,"evidence":"m365tandem: no conversation matches \"zzzzzz\". Try \"m365tandem conversations\".","fix":"a ref that matches nothing is a wrong argument: exit 2","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"E1","step":"wrong-ref","surface":"agent-cli","cell":null,"check":"stderr.oneLine","pass":true,"ms":1,"rubric":"forgiving","measured":1,"known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"E1","step":"wrong-ref","surface":"agent-cli","cell":null,"check":"stderr.namesFix","pass":true,"ms":1,"rubric":"forgiving","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"E1","step":"wrong-ref","surface":"agent-cli","cell":null,"check":"stderr.noStack","pass":true,"ms":1,"rubric":"forgiving","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"E1","step":"wrong-ref","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":1,"rubric":"beautiful","selector":"conversations","evidence":"m365tandem: no conversation matches \"zzzzzz\". Try \"m365tandem conversations\".","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"E1","step":"wrong-ref","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"E1","step":"wrong-ref","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"E1","step":"draft-show-nothing-open","surface":"agent-cli","cell":null,"check":"exit","pass":false,"ms":1,"rubric":"predictable","measured":1,"threshold":2,"evidence":"m365tandem: the person has no conversation open right now. Name one instead: its [id] from \"m365tandem conversations\".","fix":"exit 2 (usage) when no conversation is named and none is open","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"E1","step":"draft-show-nothing-open","surface":"agent-cli","cell":null,"check":"stderr.oneLine","pass":true,"ms":1,"rubric":"forgiving","measured":1,"known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"E1","step":"draft-show-nothing-open","surface":"agent-cli","cell":null,"check":"stderr.noStack","pass":true,"ms":1,"rubric":"forgiving","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"E1","step":"draft-show-nothing-open","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":1,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"E1","step":"draft-show-nothing-open","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":1,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"E1","step":"draft-show-nothing-open","surface":"agent-cli","cell":null,"check":"voice.json-only","pass":true,"ms":1,"rubric":"beautiful","known":"https://github.com/teams-microsoft/tandem/issues/542"}
+{"flow":"E1","step":"missing-arg","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":0,"rubric":"predictable","measured":2,"threshold":2}
+{"flow":"E1","step":"missing-arg","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":0,"rubric":"predictable","selector":"error.code"}
+{"flow":"E1","step":"missing-arg","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":0,"rubric":"predictable","selector":"error.fix"}
+{"flow":"E1","step":"missing-arg","surface":"agent-cli","cell":null,"check":"json-shape","pass":true,"ms":0,"rubric":"predictable","selector":"error.message"}
+{"flow":"E1","step":"missing-arg","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":0,"rubric":"beautiful"}
+{"flow":"E1","step":"missing-arg","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":0,"rubric":"beautiful"}
+{"flow":"E1","step":"*","surface":"agent-cli","cell":null,"check":"reads-stay-reads","pass":true,"ms":0,"rubric":"honest","measured":0,"threshold":0}
+{"flow":"S1","step":"--help","surface":"agent-cli","cell":null,"check":"discoverable.listed","pass":true,"ms":4,"rubric":"discoverable"}
+{"flow":"S1","step":"dry-run","surface":"agent-cli","cell":null,"check":"exit","pass":true,"ms":6,"rubric":"predictable","measured":0,"threshold":0}
+{"flow":"S1","step":"dry-run","surface":"agent-cli","cell":null,"check":"max-ms","pass":true,"ms":6,"rubric":"fast","measured":6,"threshold":2500}
+{"flow":"S1","step":"dry-run","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":6,"rubric":"beautiful","selector":"only you","evidence":"Tandem self-check: 11 writes to Teams. Its test messages go to your Notes to self, where only you see them. ⏎ Each goes the way your agent's do, logged as agent:flow-review with the reason \"self-check\". The test messages are deleted at the end. ⏎   will run Send a plain message (seen by only you) ⏎ …"}
+{"flow":"S1","step":"dry-run","surface":"agent-cli","cell":null,"check":"text.has","pass":true,"ms":6,"rubric":"beautiful","selector":"will run","evidence":"Tandem self-check: 11 writes to Teams. Its test messages go to your Notes to self, where only you see them. ⏎ Each goes the way your agent's do, logged as agent:flow-review with the reason \"self-check\". The test messages are deleted at the end. ⏎   will run Send a plain message (seen by only you) ⏎ …"}
+{"flow":"S1","step":"dry-run","surface":"agent-cli","cell":null,"check":"voice.no-brand-names","pass":true,"ms":6,"rubric":"beautiful"}
+{"flow":"S1","step":"dry-run","surface":"agent-cli","cell":null,"check":"voice.plain-stderr","pass":true,"ms":6,"rubric":"beautiful"}
+{"flow":"S1","step":"*","surface":"agent-cli","cell":null,"check":"reads-stay-reads","pass":true,"ms":0,"rubric":"honest","measured":0,"threshold":0}
+{"flow":"A1","step":"index","surface":"agent-http","cell":null,"check":"exit","pass":true,"ms":1,"rubric":"predictable","measured":200,"threshold":200}
+{"flow":"A1","step":"index","surface":"agent-http","cell":null,"check":"json-shape","pass":true,"ms":1,"rubric":"predictable","selector":"routes[]"}
+{"flow":"A1","step":"index","surface":"agent-http","cell":null,"check":"max-ms","pass":true,"ms":1,"rubric":"fast","measured":1,"threshold":2500}
+{"flow":"A1","step":"unknown","surface":"agent-http","cell":null,"check":"exit","pass":true,"ms":1,"rubric":"predictable","measured":404,"threshold":404}
+{"flow":"A1","step":"unknown","surface":"agent-http","cell":null,"check":"json-shape","pass":true,"ms":1,"rubric":"predictable","selector":"error"}
+{"flow":"A1","step":"no-why","surface":"agent-http","cell":null,"check":"exit","pass":true,"ms":1,"rubric":"predictable","measured":422,"threshold":[400,422]}
+{"flow":"A1","step":"no-why","surface":"agent-http","cell":null,"check":"json-shape","pass":true,"ms":1,"rubric":"predictable","selector":"error"}
+{"flow":"A1","step":"no-why","surface":"agent-http","cell":null,"check":"fields","pass":true,"ms":1,"rubric":"predictable","selector":"error","threshold":{"re":"why"},"measured":"say why, and who asked: --why <reason> (it goes in the action log)"}
