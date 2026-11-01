@@ -1,14 +1,13 @@
 {
+  "$comment": "The app's agent-port routes, from src/model/protocol.ts. state: what reads must not change. others: refused probes of what other people see (a made-up target; ax-xray sends each without, then with, its why).",
   "base": "/api",
   "routes": [
-    "GET /api",
     "GET /api/health",
     "GET /api/update",
     "POST /api/update/check",
     "POST /api/update/restart",
     "GET /api/state",
     "GET /api/freshness",
-    "GET /api/wait",
     "GET /api/conversations",
     "GET /api/conversations/{id}",
     "GET /api/conversations/{id}/messages",
@@ -21,7 +20,6 @@
     "GET /api/drafts/{id}",
     "POST /api/drafts/{id}",
     "GET /api/log",
-    "GET /api/events",
     "GET /api/callbacks",
     "GET /api/search",
     "GET /api/resolve",
@@ -45,8 +43,8 @@
     "GET /api/settings",
     "GET /api/actions",
     "POST /api/agent-actions",
-    "GET /api/agent-actions?intent=",
     "GET /api/agent-actions",
+    "GET /api/agent-actions?intent=",
     "GET /api/agent-actions/{id}",
     "POST /api/agent-actions/{id}/claim",
     "POST /api/agent-actions/{id}/done",
@@ -93,13 +91,10 @@
     "GET /api/people/presence",
     "POST /api/people/presence",
     "GET /api/people/avatars",
-    "GET /api/people/{mri}/avatar",
     "GET /api/folders",
-    "GET /api/teams",
+    "GET /api/groups",
     "GET /api/apps",
     "GET /api/untitled",
-    "GET /api/teams/{id}/picture",
-    "GET /api/apps/{id}/icon",
     "GET /api/emoji",
     "GET /api/emoji/status",
     "GET /api/emoji/catalog",
@@ -131,9 +126,8 @@
     "POST /api/sync/placed",
     "POST /api/sync/members",
     "POST /api/sync/emoji",
-    "GET /api/lifecycle?operation=",
     "GET /api/lifecycle",
-    "GET /api/lifecycle/stream",
+    "GET /api/lifecycle?operation=",
     "POST /api/lifecycle/clients",
     "POST /api/lifecycle/parts",
     "POST /api/lifecycle/ack",
@@ -141,86 +135,45 @@
     "POST /api/lifecycle/cancel",
     "POST /api/lifecycle/quiesce"
   ],
+  "skip": [],
   "state": [
-    "GET /api/log"
-  ],
-  "skip": [
-    "GET /api/events",
-    "GET /api/callbacks",
-    "GET /api/people/{mri}/avatar",
-    "GET /api/teams/{id}/picture",
-    "GET /api/apps/{id}/icon",
-    "GET /api/lifecycle/stream"
+    "GET /api/log",
+    "GET /api/drafts"
   ],
   "others": [
     {
       "route": "POST /api/agent-actions",
+      "why": "why",
       "body": {
         "action": "message.send",
         "conversationId": "{ref}",
-        "messageId": "1",
         "text": "ax-xray probe",
-        "key": "like",
         "agent": "ax-xray"
       }
     },
     {
       "route": "POST /api/agent-actions",
-      "body": {
-        "action": "message.reply",
-        "conversationId": "{ref}",
-        "messageId": "1",
-        "text": "ax-xray probe",
-        "key": "like",
-        "agent": "ax-xray"
-      }
-    },
-    {
-      "route": "POST /api/agent-actions",
+      "why": "why",
       "body": {
         "action": "reaction.add",
         "conversationId": "{ref}",
-        "messageId": "1",
-        "text": "ax-xray probe",
+        "messageId": "{ref}",
         "key": "like",
         "agent": "ax-xray"
       }
     },
     {
       "route": "POST /api/agent-actions",
+      "why": "why",
       "body": {
-        "action": "reaction.remove",
+        "action": "conversation.markRead",
         "conversationId": "{ref}",
-        "messageId": "1",
-        "text": "ax-xray probe",
-        "key": "like",
         "agent": "ax-xray"
       }
     },
     {
       "route": "POST /api/agent-actions",
-      "body": {
-        "action": "message.edit",
-        "conversationId": "{ref}",
-        "messageId": "1",
-        "text": "ax-xray probe",
-        "key": "like",
-        "agent": "ax-xray"
-      }
-    },
-    {
-      "route": "POST /api/agent-actions",
-      "body": {
-        "action": "message.delete",
-        "conversationId": "{ref}",
-        "messageId": "1",
-        "text": "ax-xray probe",
-        "key": "like",
-        "agent": "ax-xray"
-      }
-    },
-    {
-      "route": "POST /api/agent-actions",
+      "why": "why",
       "body": {
         "action": "meeting.respond",
         "meetingId": "{ref}",
@@ -229,20 +182,9 @@
       }
     },
     {
-      "route": "POST /api/agent-actions",
-      "body": {
-        "action": "conversation.markRead",
-        "conversationId": "{ref}",
-        "messageId": "1",
-        "text": "ax-xray probe",
-        "key": "like",
-        "agent": "ax-xray"
-      }
-    },
-    {
       "route": "POST /api/meetings/{id}/join",
+      "why": "why",
       "body": {
-        "what": "join",
         "agent": "ax-xray"
       }
     }

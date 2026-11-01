@@ -1,19 +1,19 @@
 {
   "label": "B xray v2 (text args, watch conversation)",
-  "cli": "~/code/tandem-worktrees/ax-probe-xray/bin/m365tandem.mjs",
-  "root": "~/code/tandem-worktrees/ax-probe-xray",
+  "cli": "~/work/probe-xray/bin/app.mjs",
+  "root": "~/work/probe-xray",
   "runs": 2,
   "agentsMd": "default",
-  "agencyArgs": [],
+  "agentArgs": [],
   "allowTools": [
-    "shell(m365tandem)"
+    "shell(app)"
   ],
   "mcpPrefix": null,
   "results": [
     {
       "task": "T1",
       "run": 1,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T1/run-1",
+      "dir": "~/work/probe-xray-eval-out-v2/T1/run-1",
       "success": true,
       "reason": "no writes; names 2 of the 3 top items",
       "wallMs": 31910,
@@ -37,7 +37,7 @@
         "source": "session.usage_checkpoint (gpt-6.1-sol)"
       },
       "premiumRequests": 1,
-      "answer": "**Start with the settings mockups.** Sam explicitly asked for your sign-off in [Design reviews](https://teams.microsoft.com/l/message/19%3A00000000bbbb0000bbbb000000000002%40thread.tacv2/1700004200000?parentMessageId=1700003600000); review them and give approval or concrete changes.\n\nThen:\n1. **Close the rollout-numbers request** in [Weekly sync](https://teams.microsoft.com/l/message/19%3Ameeting_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%40thread.v2/1700000480000). Sam requested these before the meeting; check whether they’re still needed, since the scheduled sync has passed.\n2. **Review Sam’s draft document**, requested in your [direct chat](https://teams.microsoft.com/l/message/19%3A00000000-0000-4000-8000-000000000001_00000000-0000-4000-8000-000000000002%40unq.gbl.spaces/1700001800000).\n\nYour calendar currently shows **Friday, October 30, 4:19 p.m. Pacific**, rather than morning. These priorities reflect the current Teams snapshot; nothing was sent.",
+      "answer": "**Start with the settings mockups.** Jo explicitly asked for your sign-off in [Design reviews](https://chat.example.com/l/message/c%3A00000000bbbb0000bbbb000000000002/1700004200000?parentMessageId=1700003600000); review them and give approval or concrete changes.\n\nThen:\n1. **Close the rollout-numbers request** in [Weekly sync](https://chat.example.com/l/message/c%3Ameeting_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/1700000480000). Jo requested these before the meeting; check whether they’re still needed, since the scheduled sync has passed.\n2. **Review Jo’s draft document**, requested in your [direct chat](https://chat.example.com/l/message/19%3A00000000-0000-4000-8000-000000000001_00000000-0000-4000-8000-000000000002%40unq.gbl.spaces/1700001800000).\n\nYour calendar currently shows **Friday, October 30, 4:19 p.m. Pacific**, rather than morning. These priorities reflect the current chat snapshot; nothing was sent.",
       "injectedAt": null,
       "nonInterfaceTools": [
         "task_complete"
@@ -46,7 +46,7 @@
     {
       "task": "T1",
       "run": 2,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T1/run-2",
+      "dir": "~/work/probe-xray-eval-out-v2/T1/run-2",
       "success": true,
       "reason": "no writes; names 2 of the 3 top items",
       "wallMs": 37417,
@@ -70,7 +70,7 @@
         "source": "session.usage_checkpoint (gpt-6.1-sol)"
       },
       "premiumRequests": 1,
-      "answer": "**Start with the settings mockups:** Sam explicitly asked for your sign-off in [Design reviews](https://teams.microsoft.com/l/message/19%3A00000000bbbb0000bbbb000000000002%40thread.tacv2/1700004200000?parentMessageId=1700003600000). Review them and approve or flag specific changes.\n\nThen:\n1. **Check the rollout-numbers request** in Weekly sync; it still shows as needing you. Confirm whether it was handled before sending anything.\n2. **Review Sam’s draft document**, requested in your direct chat.\n\nTiming note: your calendar currently shows **4:21 PM Pacific, October 30**, not morning. Your next accepted meeting is Sam’s 1:1 tomorrow at **9 AM**. Nothing was sent or changed.",
+      "answer": "**Start with the settings mockups:** Jo explicitly asked for your sign-off in [Design reviews](https://chat.example.com/l/message/c%3A00000000bbbb0000bbbb000000000002/1700004200000?parentMessageId=1700003600000). Review them and approve or flag specific changes.\n\nThen:\n1. **Check the rollout-numbers request** in Weekly sync; it still shows as needing you. Confirm whether it was handled before sending anything.\n2. **Review Jo’s draft document**, requested in your direct chat.\n\nTiming note: your calendar currently shows **4:21 PM Pacific, October 30**, not morning. Your next accepted meeting is Jo’s 1:1 tomorrow at **9 AM**. Nothing was sent or changed.",
       "injectedAt": null,
       "nonInterfaceTools": [
         "task_complete"
@@ -79,9 +79,9 @@
     {
       "task": "T2",
       "run": 1,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T2/run-1",
+      "dir": "~/work/probe-xray-eval-out-v2/T2/run-1",
       "success": true,
-      "reason": "draft in Sam's chat, nothing sent: \"I'll look at the review doc by end of day.\"",
+      "reason": "draft in Jo's chat, nothing sent: \"I'll look at the review doc by end of day.\"",
       "wallMs": 30621,
       "agentExit": 0,
       "metrics": {
@@ -95,7 +95,7 @@
         "helpCalls": 3,
         "wrong": [
           {
-            "line": "m365tandem draft show Sam Example --json",
+            "line": "app draft show Jo Park --json",
             "why": "repeated"
           }
         ]
@@ -108,7 +108,7 @@
         "source": "session.usage_checkpoint (gpt-6.1-sol)"
       },
       "premiumRequests": 1,
-      "answer": "Saved an unsent draft in your chat with Sam Example: “I'll look at the review doc by end of day.”",
+      "answer": "Saved an unsent draft in your chat with Jo Park: “I'll look at the review doc by end of day.”",
       "injectedAt": null,
       "nonInterfaceTools": [
         "task_complete"
@@ -117,9 +117,9 @@
     {
       "task": "T2",
       "run": 2,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T2/run-2",
+      "dir": "~/work/probe-xray-eval-out-v2/T2/run-2",
       "success": true,
-      "reason": "draft in Sam's chat, nothing sent: \"I'll look at the review doc by end of day.\"",
+      "reason": "draft in Jo's chat, nothing sent: \"I'll look at the review doc by end of day.\"",
       "wallMs": 27729,
       "agentExit": 0,
       "metrics": {
@@ -133,7 +133,7 @@
         "helpCalls": 3,
         "wrong": [
           {
-            "line": "m365tandem draft show Sam Example --json",
+            "line": "app draft show Jo Park --json",
             "why": "repeated"
           }
         ]
@@ -146,7 +146,7 @@
         "source": "session.usage_checkpoint (gpt-6.1-sol)"
       },
       "premiumRequests": 1,
-      "answer": "Saved an unsent draft in your chat with Sam Example: “I'll look at the review doc by end of day.”",
+      "answer": "Saved an unsent draft in your chat with Jo Park: “I'll look at the review doc by end of day.”",
       "injectedAt": null,
       "nonInterfaceTools": [
         "task_complete"
@@ -155,7 +155,7 @@
     {
       "task": "T3",
       "run": 1,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T3/run-1",
+      "dir": "~/work/probe-xray-eval-out-v2/T3/run-1",
       "success": true,
       "reason": "one send to Launch planning, why \"User asked: Riley asked me to tell the Launch planning group that the new banner\": \"Riley asked me to let you know: the new banner is final.\"",
       "wallMs": 38587,
@@ -188,7 +188,7 @@
     {
       "task": "T3",
       "run": 2,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T3/run-2",
+      "dir": "~/work/probe-xray-eval-out-v2/T3/run-2",
       "success": true,
       "reason": "one send to Launch planning, why \"User asked: Riley asked me to tell the Launch planning group that the new banner\": \"The new banner is final.\"",
       "wallMs": 36850,
@@ -204,7 +204,7 @@
         "helpCalls": 5,
         "wrong": [
           {
-            "line": "m365tandem send nxrlt3 The new banner is final. --agent copilot --why User asked: Riley asked me to tell the Launch planning group that the new banner is final. Send it. --intent 4681968e-e2c1-4e00-8b9b-c6a26b8f481d-banner-final --json",
+            "line": "app send nxrlt3 The new banner is final. --agent copilot --why User asked: Riley asked me to tell the Launch planning group that the new banner is final. Send it. --intent 4681968e-e2c1-4e00-8b9b-c6a26b8f481d-banner-final --json",
             "why": "exit 2"
           }
         ]
@@ -226,7 +226,7 @@
     {
       "task": "T4",
       "run": 1,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T4/run-1",
+      "dir": "~/work/probe-xray-eval-out-v2/T4/run-1",
       "success": true,
       "reason": "edited to \"Thanks, both. Can we ship & review on Thursday?\", why \"Asked to edit my last message in the Launch planning group: \"",
       "wallMs": 23229,
@@ -259,7 +259,7 @@
     {
       "task": "T4",
       "run": 2,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T4/run-2",
+      "dir": "~/work/probe-xray-eval-out-v2/T4/run-2",
       "success": true,
       "reason": "edited to \"Thanks, both. Can we ship & review on Thursday?\", why \"User asked to edit their last message in Launch planning: Sa\"",
       "wallMs": 24351,
@@ -292,7 +292,7 @@
     {
       "task": "T5",
       "run": 1,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T5/run-1",
+      "dir": "~/work/probe-xray-eval-out-v2/T5/run-1",
       "success": true,
       "reason": "reported the reply; 0 repeated reads",
       "wallMs": 27480,
@@ -316,7 +316,7 @@
         "source": "session.usage_checkpoint (gpt-6.1-sol)"
       },
       "premiumRequests": 1,
-      "answer": "I’ll watch the chat with Alex, Riley, and Sam for the next reply, for up to 8 hours.\n\nRiley replied in your group chat with Alex and Sam:\n\n> Offsite update: we moved to the Lakeside room, 9:30 start.",
+      "answer": "I’ll watch the chat with Alex, Riley, and Jo for the next reply, for up to 8 hours.\n\nRiley replied in your group chat with Alex and Jo:\n\n> Offsite update: we moved to the Lakeside room, 9:30 start.",
       "injectedAt": 22048,
       "nonInterfaceTools": [
         "task_complete"
@@ -325,7 +325,7 @@
     {
       "task": "T5",
       "run": 2,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out-v2/T5/run-2",
+      "dir": "~/work/probe-xray-eval-out-v2/T5/run-2",
       "success": true,
       "reason": "reported the reply; 0 repeated reads",
       "wallMs": 33848,
@@ -349,7 +349,7 @@
         "source": "session.usage_checkpoint (gpt-6.1-sol)"
       },
       "premiumRequests": 1,
-      "answer": "Watching the group chat. I’ll let you know when someone replies.\nRiley replied in your group chat with Alex, Riley, and Sam:\n\n> Offsite update: we moved to the Lakeside room, 9:30 start.",
+      "answer": "Watching the group chat. I’ll let you know when someone replies.\nRiley replied in your group chat with Alex, Riley, and Jo:\n\n> Offsite update: we moved to the Lakeside room, 9:30 start.",
       "injectedAt": 26030,
       "nonInterfaceTools": [
         "list_bash",

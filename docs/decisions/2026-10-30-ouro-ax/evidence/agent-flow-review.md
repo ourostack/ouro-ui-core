@@ -1,6 +1,6 @@
-# Tandem's agent flows: what the X-ray did not see
+# The first adopter's agent flows: what the X-ray did not see
 
-A review of Tandem's agent flows for one person's working week, 2026-10-31, on Tandem's main branch at `4d3c5662` (which already used Ouro AX). Each flow is the `m365tandem` calls a good agent makes for one task, scripted with no model and run against a mock with made-up fixtures (Tandem's `probe/agent-flows`, 21 flows, 593 checks, about 15 seconds). Every check is one line of [`agent-flows-tandem-main.jsonl`](agent-flows-tandem-main.jsonl), in the flow-review/0 findings format. The same commit's X-ray called the CLI conformant.
+A review of the first adopter's agent flows for one person's working week, 2026-10-31, on its main branch at `4d3c5662` (which already used Ouro AX). Each flow is the `app` calls a good agent makes for one task, scripted with no model and run against a mock with made-up fixtures (its `probe/agent-flows`, 21 flows, 593 checks, about 15 seconds). Every check is one line of [`agent-flows-adopter-main.jsonl`](agent-flows-adopter-main.jsonl), in the flow-review/0 findings format. The same commit's X-ray called the CLI conformant.
 
 ## Results
 
@@ -10,7 +10,7 @@ The failures the X-ray could not see, and what Ouro AX takes from each:
 
 | Flow and step | What the flow found | In Ouro AX |
 |---|---|---|
-| W2 `week-flag` | `calendar --week` answered `Fix: m365tandem calendar.`, which drops the week. | `ArgSpec.values`: the fix gives the word without dashes. |
+| W2 `week-flag` | `calendar --week` answered `Fix: app calendar.`, which drops the week. | `ArgSpec.values`: the fix gives the word without dashes. |
 | T4 `edit` | The ambiguous `edit` answered with templates (`edit-sent <conversation>#<message id>`), not the reference the agent gave. | `{args}` and `{flags}` in an ambiguous word's meanings. |
 | W2 `preview-decline`, W10 `preview`, N5 `react` | The dry run's `--json` said `audience.who: "other people"` while its text named the organizer, a contact and a sender. | `cli.audience-named`; `validateOutcome` warns. |
 | W9 `search` | Search results in text carried no message refs, so an agent had to read again to act. | `cli.text-refs`. |
@@ -18,7 +18,7 @@ The failures the X-ray could not see, and what Ouro AX takes from each:
 | H1 `send-help` | `send --help` was 11,080 bytes, over a 6,000-byte budget. | `cli.help-size`. |
 | E2 `unread` | An empty `--unread` list said nothing had synced, which sent the agent to check a healthy window. | `emptyText` and the voice's `empty` slot, after the fact. |
 
-Found by hand on the same commit: `m365tandem help all | head -1` exited 1 with a Node `Error: write EPIPE` stack trace on stderr. Ouro AX adds `quietPipes`, and `cli.no-stack-trace` now also runs the overview into a closed pipe.
+Found by hand on the same commit: `app help all | head -1` exited 1 with a Node `Error: write EPIPE` stack trace on stderr. Ouro AX adds `quietPipes`, and `cli.no-stack-trace` now also runs the overview into a closed pipe.
 
 ## What it shows
 

@@ -1,6 +1,6 @@
-# AX X-ray: m365tandem
+# AX X-ray: app
 
-Ouro AX claim set 1.0.0 (sha256 70e37a5e78c80a6b8244257c8db19fc8fa8f65061098df82e24bbb92a3e7c11f), checked by ax-xray 1.0.0 at 2026-10-31T02:37:13.600Z. Target: at 1c72b11d4b3c08d709b0f2b2a7707ecd13e8c560; CLI `m365tandem` (39 commands, 137 calls); HTTP http://127.0.0.1:62523 (132 routes in the manifest, 100 requests).
+Ouro AX claim set 1.0.0 (sha256 70e37a5e78c80a6b8244257c8db19fc8fa8f65061098df82e24bbb92a3e7c11f), checked by ax-xray 1.0.0 at 2026-10-31T02:37:13.600Z. Target: at 1c72b11d4b3c08d709b0f2b2a7707ecd13e8c560; CLI `app` (39 commands, 137 calls); HTTP http://127.0.0.1:62523 (132 routes in the manifest, 100 requests).
 
 **Does not conform yet: 4 must claims not holding; no inventory given; 2 must claims skipped.** Claims holding: 21 of 36 (must: 12 of 18). Checks: 363 pass, 117 fail, 11 skipped.
 
@@ -55,47 +55,47 @@ Why: A silently ignored flag gives an agent a wrong answer that looks right: `--
 
 Fix: Check every flag against the command's declared flags before acting; refuse an unknown one with the usage exit code.
 
-- **today**: `m365tandem today --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **activity**: `m365tandem activity --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **activity --allx**: `m365tandem activity --allx --json` → exit 0; stdout: {: --allx was ignored, so the answer is not what was asked
-- **status**: `m365tandem status --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **update**: `m365tandem update --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **conversations**: `m365tandem conversations --ax-xray-no-such-flag --json` → exit 0; stdout: [: the flag was ignored
-- **conversations --limt**: `m365tandem conversations --limt 2 --json` → exit 0; stdout: [: --limt was ignored, so the answer is not what was asked
-- **emoji**: `m365tandem emoji --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **emoji --limt**: `m365tandem emoji --limt 2 --json` → exit 0; stdout: {: --limt was ignored, so the answer is not what was asked
-- **folders**: `m365tandem folders --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **folders --allx**: `m365tandem folders --allx --json` → exit 0; stdout: {: --allx was ignored, so the answer is not what was asked
-- **teams**: `m365tandem teams --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **teams --hiddn**: `m365tandem teams --hiddn --json` → exit 0; stdout: {: --hiddn was ignored, so the answer is not what was asked
-- **apps**: `m365tandem apps --ax-xray-no-such-flag --json` → exit 0; stdout: [: the flag was ignored
-- **apps --lookp**: `m365tandem apps --lookp --json` → exit 0; stdout: [: --lookp was ignored, so the answer is not what was asked
-- **focus**: `m365tandem focus --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **attention**: `m365tandem attention --ax-xray-no-such-flag --json` → exit 0; stdout: [: the flag was ignored
-- **attention --allx**: `m365tandem attention --allx --json` → exit 0; stdout: [: --allx was ignored, so the answer is not what was asked
-- **agenda**: `m365tandem agenda --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **matters**: `m365tandem matters --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **matters --seris**: `m365tandem matters --seris --json` → exit 0; stdout: {: --seris was ignored, so the answer is not what was asked
-- **categories**: `m365tandem categories --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **recordings**: `m365tandem recordings --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **recordings --sine**: `m365tandem recordings --sine --json` → exit 0; stdout: {: --sine was ignored, so the answer is not what was asked
-- **prep**: `m365tandem prep --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **prep --tex**: `m365tandem prep --tex 2 --json` → exit 1; stderr: m365tandem: no meeting matches "2". Try "m365tandem agenda".
-- **draft**: `m365tandem draft show --ax-xray-no-such-flag --json` → exit 1; stderr: m365tandem: the person has no conversation open right now. Name one instead: its [id] from "m365tandem conversations".
-- **draft --tex**: `m365tandem draft show --tex 2 --json` → exit 2; stderr: m365tandem: numbers refer to the last list printed; run "m365tandem conversations" first, or use the short id in [brackets].
-- **layout**: `m365tandem layout catalog --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **layout --brif**: `m365tandem layout catalog --brif --json` → exit 0; stdout: {: --brif was ignored, so the answer is not what was asked
-- **log**: `m365tandem log --ax-xray-no-such-flag --json` → exit 0; stdout: []: the flag was ignored
-- **log --limt**: `m365tandem log --limt 2 --json` → exit 0; stdout: []: --limt was ignored, so the answer is not what was asked
-- **help**: `m365tandem help --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **look**: `m365tandem look 19:00000000bbbb0000bbbb000000000002@thread.tacv2 --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **look --limt**: `m365tandem look 19:00000000bbbb0000bbbb000000000002@thread.tacv2 --limt 2 --json` → exit 0; stdout: {: --limt was ignored, so the answer is not what was asked
-- **people**: `m365tandem people 19:00000000bbbb0000bbbb000000000002@thread.tacv2 --ax-xray-no-such-flag --json` → exit 1; stderr: m365tandem: tandem knows nobody in "19:00000000bbbb0000bbbb000000000002@thread.tacv2" yet: Teams lists no members for it and no one has written there.
-- **search**: `m365tandem search the --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **search --limt**: `m365tandem search the --limt 2 --json` → exit 0; stdout: {: --limt was ignored, so the answer is not what was asked
-- **meeting**: `m365tandem meeting "mock-event-allday\|2026-10-30T07:00:00.000Z" --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
-- **meeting --freh**: `m365tandem meeting "mock-event-allday\|2026-10-30T07:00:00.000Z" --freh --json` → exit 0; stdout: {: --freh was ignored, so the answer is not what was asked
-- **notes**: `m365tandem notes "mock-event-allday\|2026-10-30T07:00:00.000Z" --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **today**: `app today --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **activity**: `app activity --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **activity --allx**: `app activity --allx --json` → exit 0; stdout: {: --allx was ignored, so the answer is not what was asked
+- **status**: `app status --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **update**: `app update --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **conversations**: `app conversations --ax-xray-no-such-flag --json` → exit 0; stdout: [: the flag was ignored
+- **conversations --limt**: `app conversations --limt 2 --json` → exit 0; stdout: [: --limt was ignored, so the answer is not what was asked
+- **emoji**: `app emoji --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **emoji --limt**: `app emoji --limt 2 --json` → exit 0; stdout: {: --limt was ignored, so the answer is not what was asked
+- **folders**: `app folders --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **folders --allx**: `app folders --allx --json` → exit 0; stdout: {: --allx was ignored, so the answer is not what was asked
+- **groups**: `app groups --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **groups --hiddn**: `app groups --hiddn --json` → exit 0; stdout: {: --hiddn was ignored, so the answer is not what was asked
+- **apps**: `app apps --ax-xray-no-such-flag --json` → exit 0; stdout: [: the flag was ignored
+- **apps --lookp**: `app apps --lookp --json` → exit 0; stdout: [: --lookp was ignored, so the answer is not what was asked
+- **focus**: `app focus --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **attention**: `app attention --ax-xray-no-such-flag --json` → exit 0; stdout: [: the flag was ignored
+- **attention --allx**: `app attention --allx --json` → exit 0; stdout: [: --allx was ignored, so the answer is not what was asked
+- **agenda**: `app agenda --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **matters**: `app matters --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **matters --seris**: `app matters --seris --json` → exit 0; stdout: {: --seris was ignored, so the answer is not what was asked
+- **categories**: `app categories --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **recordings**: `app recordings --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **recordings --sine**: `app recordings --sine --json` → exit 0; stdout: {: --sine was ignored, so the answer is not what was asked
+- **prep**: `app prep --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **prep --tex**: `app prep --tex 2 --json` → exit 1; stderr: app: no meeting matches "2". Try "app agenda".
+- **draft**: `app draft show --ax-xray-no-such-flag --json` → exit 1; stderr: app: the person has no conversation open right now. Name one instead: its [id] from "app conversations".
+- **draft --tex**: `app draft show --tex 2 --json` → exit 2; stderr: app: numbers refer to the last list printed; run "app conversations" first, or use the short id in [brackets].
+- **layout**: `app layout catalog --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **layout --brif**: `app layout catalog --brif --json` → exit 0; stdout: {: --brif was ignored, so the answer is not what was asked
+- **log**: `app log --ax-xray-no-such-flag --json` → exit 0; stdout: []: the flag was ignored
+- **log --limt**: `app log --limt 2 --json` → exit 0; stdout: []: --limt was ignored, so the answer is not what was asked
+- **help**: `app help --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **look**: `app look c:00000000bbbb0000bbbb000000000002 --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **look --limt**: `app look c:00000000bbbb0000bbbb000000000002 --limt 2 --json` → exit 0; stdout: {: --limt was ignored, so the answer is not what was asked
+- **people**: `app people c:00000000bbbb0000bbbb000000000002 --ax-xray-no-such-flag --json` → exit 1; stderr: app: the app knows nobody in "c:00000000bbbb0000bbbb000000000002" yet: the chat service lists no members for it and no one has written there.
+- **search**: `app search the --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **search --limt**: `app search the --limt 2 --json` → exit 0; stdout: {: --limt was ignored, so the answer is not what was asked
+- **meeting**: `app meeting "mock-event-allday\|2026-10-30T07:00:00.000Z" --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
+- **meeting --freh**: `app meeting "mock-event-allday\|2026-10-30T07:00:00.000Z" --freh --json` → exit 0; stdout: {: --freh was ignored, so the answer is not what was asked
+- **notes**: `app notes "mock-event-allday\|2026-10-30T07:00:00.000Z" --ax-xray-no-such-flag --json` → exit 0; stdout: {: the flag was ignored
 
 ### `http.wrong-ref-first`: A route given an id that does not exist fails and says where to get a right one.
 
@@ -116,9 +116,9 @@ Fix: On a miss, name the route that lists valid ids.
 - **GET /api/meetings/{id}/transcript**: `GET /api/meetings/axxraynoref/transcript` → 404 {"error":"no such meeting"}
 - **GET /api/meetings/{id}/notes**: `GET /api/meetings/axxraynoref/notes` → 404 {"error":"no such meeting"}
 - **GET /api/calendar/categorize/{id}**: `GET /api/calendar/categorize/axxraynoref` → 404 {"error":"no such request"}
-- **POST /api/agent-actions (message.send)**: `POST /api/agent-actions` → 422 {"error":"not a conversation tandem can act in","code":"target"}
-- **POST /api/agent-actions (reaction.add)**: `POST /api/agent-actions` → 422 {"error":"not a conversation tandem can act in","code":"target"}
-- **POST /api/agent-actions (conversation.markRead)**: `POST /api/agent-actions` → 422 {"error":"not a conversation tandem can act in","code":"target"}
+- **POST /api/agent-actions (message.send)**: `POST /api/agent-actions` → 422 {"error":"not a conversation the app can act in","code":"target"}
+- **POST /api/agent-actions (reaction.add)**: `POST /api/agent-actions` → 422 {"error":"not a conversation the app can act in","code":"target"}
+- **POST /api/agent-actions (conversation.markRead)**: `POST /api/agent-actions` → 422 {"error":"not a conversation the app can act in","code":"target"}
 - **POST /api/meetings/{id}/join**: `POST /api/meetings/axxraynoref/join` → 404 {"error":"no such meeting"}
 
 ### `cli.others-preview`: Every command other people see has a preview that acts on nothing (`--dry-run`) and names who will see it.
@@ -127,14 +127,14 @@ Why: An agent, or a checker, can confirm the audience without acting; a wall it 
 
 Fix: Add `--dry-run`: resolve the target, print the preview line ("Would send to X as the person. Everyone in X will see it."), exit 0, and send nothing.
 
-- **send**: `m365tandem send --help` offers no --dry-run, so who will see it can only be learnt by doing it
-- **reply**: `m365tandem reply --help` offers no --dry-run, so who will see it can only be learnt by doing it
-- **react**: `m365tandem react --help` offers no --dry-run, so who will see it can only be learnt by doing it
-- **edit-sent**: `m365tandem edit-sent --help` offers no --dry-run, so who will see it can only be learnt by doing it
-- **delete-sent**: `m365tandem delete-sent --help` offers no --dry-run, so who will see it can only be learnt by doing it
-- **answer-invite**: `m365tandem answer-invite --help` offers no --dry-run, so who will see it can only be learnt by doing it
-- **join**: `m365tandem join --help` offers no --dry-run, so who will see it can only be learnt by doing it
-- **mark-read**: `m365tandem mark-read --help` offers no --dry-run, so who will see it can only be learnt by doing it
+- **send**: `app send --help` offers no --dry-run, so who will see it can only be learnt by doing it
+- **reply**: `app reply --help` offers no --dry-run, so who will see it can only be learnt by doing it
+- **react**: `app react --help` offers no --dry-run, so who will see it can only be learnt by doing it
+- **edit-sent**: `app edit-sent --help` offers no --dry-run, so who will see it can only be learnt by doing it
+- **delete-sent**: `app delete-sent --help` offers no --dry-run, so who will see it can only be learnt by doing it
+- **answer-invite**: `app answer-invite --help` offers no --dry-run, so who will see it can only be learnt by doing it
+- **join**: `app join --help` offers no --dry-run, so who will see it can only be learnt by doing it
+- **mark-read**: `app mark-read --help` offers no --dry-run, so who will see it can only be learnt by doing it
 
 ### `cli.wait-on-refs`: A wait command accepts the refs the reads list: `watch <ref>` waits on the conversation a list gave.
 
@@ -142,7 +142,7 @@ Why: Waiting through the interface beats polling; when the wait refuses the ref 
 
 Fix: Let the wait take every ref a read prints, and exit with a documented code when nothing happens in time.
 
-- **watch <conversation>**: `m365tandem watch 19:00000000bbbb0000bbbb000000000002@thread.tacv2 --timeout 1s` → exit 2; stderr: m365tandem: watch takes an object ref such as meeting:<ref>; bare "watch" streams every event
+- **watch <conversation>**: `app watch c:00000000bbbb0000bbbb000000000002 --timeout 1s` → exit 2; stderr: app: watch takes an object ref such as meeting:<ref>; bare "watch" streams every event
 
 ### `http.error-teaches`: Every error names a next action: a route, a field, or a command.
 
@@ -157,25 +157,25 @@ Fix: Say where to go: `no such conversation; GET /api/conversations lists them`.
 - **GET /api/conversations/{id}/transcript**: "no such conversation" names no route, flag or command
 - **GET /api/callbacks**: "object is required: refs look like meeting:<6 characters>" names no route, flag or command
 - **GET /api/resolve**: "link-form" names no route, flag or command
-- **GET /api/agent-actions**: "only tandem's own page may do this" names no route, flag or command
+- **GET /api/agent-actions**: "only the app's own page may do this" names no route, flag or command
 - **GET /api/agent-actions/{id}**: "no such action" names no route, flag or command
 - **GET /api/activity/seen/{id}**: "no such request" names no route, flag or command
-- **GET /api/activity/seen-work**: "only tandem's own page may do this" names no route, flag or command
+- **GET /api/activity/seen-work**: "only the app's own page may do this" names no route, flag or command
 - **GET /api/prep/{id}**: "no such meeting" names no route, flag or command
 - **GET /api/meetings/{id}**: "no such meeting" names no route, flag or command
 - **GET /api/meetings/{id}/recap**: "no such meeting" names no route, flag or command
 - **GET /api/meetings/{id}/transcript**: "no such meeting" names no route, flag or command
 - **GET /api/meetings/{id}/notes**: "no such meeting" names no route, flag or command
-- **GET /api/calendar/categorize**: "only tandem's own page may do this" names no route, flag or command
+- **GET /api/calendar/categorize**: "only the app's own page may do this" names no route, flag or command
 - **GET /api/calendar/categorize/{id}**: "no such request" names no route, flag or command
-- **GET /api/sync/fresh-work**: "only tandem's own page may do this" names no route, flag or command
-- **GET /api/sync/recap-work**: "only tandem's own page may do this" names no route, flag or command
-- **GET /api/sync/chat-work**: "only tandem's own page may do this" names no route, flag or command
-- **GET /api/sync/profile-work**: "only tandem's own page may do this" names no route, flag or command
-- **GET /api/sync/org-work**: "only tandem's own page may do this" names no route, flag or command
-- **POST /api/agent-actions (message.send) (wrong ref)**: "not a conversation tandem can act in" names no route, flag or command
-- **POST /api/agent-actions (reaction.add) (wrong ref)**: "not a conversation tandem can act in" names no route, flag or command
-- **POST /api/agent-actions (conversation.markRead) (wrong ref)**: "not a conversation tandem can act in" names no route, flag or command
+- **GET /api/sync/fresh-work**: "only the app's own page may do this" names no route, flag or command
+- **GET /api/sync/recap-work**: "only the app's own page may do this" names no route, flag or command
+- **GET /api/sync/chat-work**: "only the app's own page may do this" names no route, flag or command
+- **GET /api/sync/profile-work**: "only the app's own page may do this" names no route, flag or command
+- **GET /api/sync/org-work**: "only the app's own page may do this" names no route, flag or command
+- **POST /api/agent-actions (message.send) (wrong ref)**: "not a conversation the app can act in" names no route, flag or command
+- **POST /api/agent-actions (reaction.add) (wrong ref)**: "not a conversation the app can act in" names no route, flag or command
+- **POST /api/agent-actions (conversation.markRead) (wrong ref)**: "not a conversation the app can act in" names no route, flag or command
 - **POST /api/meetings/{id}/join (wrong ref)**: "no such meeting" names no route, flag or command
 
 ### `cli.flag-suggest`: A misspelt flag's error names the closest real flag.
@@ -184,23 +184,23 @@ Why: The error should carry the fix, so the next call is right.
 
 Fix: Suggest the declared flag nearest by edit distance: `unknown flag --limt; did you mean --limit?`.
 
-- **activity --allx**: `m365tandem activity --allx --json` → exit 0; stdout: {; does not name --all
-- **conversations --limt**: `m365tandem conversations --limt 2 --json` → exit 0; stdout: [; does not name --limit
-- **emoji --limt**: `m365tandem emoji --limt 2 --json` → exit 0; stdout: {; does not name --limit
-- **folders --allx**: `m365tandem folders --allx --json` → exit 0; stdout: {; does not name --all
-- **teams --hiddn**: `m365tandem teams --hiddn --json` → exit 0; stdout: {; does not name --hidden
-- **apps --lookp**: `m365tandem apps --lookp --json` → exit 0; stdout: [; does not name --lookup
-- **attention --allx**: `m365tandem attention --allx --json` → exit 0; stdout: [; does not name --all
-- **calendar --categry**: `m365tandem calendar --categry 2 --json` → exit 2; stderr: m365tandem: unsupported calendar option "--categry". Use a positional range, for example: m365tandem calendar week.; does not name --category
-- **matters --seris**: `m365tandem matters --seris --json` → exit 0; stdout: {; does not name --series
-- **recordings --sine**: `m365tandem recordings --sine --json` → exit 0; stdout: {; does not name --since
-- **prep --tex**: `m365tandem prep --tex 2 --json` → exit 1; stderr: m365tandem: no meeting matches "2". Try "m365tandem agenda".; does not name --text
-- **draft --tex**: `m365tandem draft show --tex 2 --json` → exit 2; stderr: m365tandem: numbers refer to the last list printed; run "m365tandem conversations" first, or use the short id in [brackets].; does not name --text
-- **layout --brif**: `m365tandem layout catalog --brif --json` → exit 0; stdout: {; does not name --brief
-- **log --limt**: `m365tandem log --limt 2 --json` → exit 0; stdout: []; does not name --limit
-- **look --limt**: `m365tandem look 19:00000000bbbb0000bbbb000000000002@thread.tacv2 --limt 2 --json` → exit 0; stdout: {; does not name --limit
-- **search --limt**: `m365tandem search the --limt 2 --json` → exit 0; stdout: {; does not name --limit
-- **meeting --freh**: `m365tandem meeting "mock-event-allday\|2026-10-30T07:00:00.000Z" --freh --json` → exit 0; stdout: {; does not name --fresh
+- **activity --allx**: `app activity --allx --json` → exit 0; stdout: {; does not name --all
+- **conversations --limt**: `app conversations --limt 2 --json` → exit 0; stdout: [; does not name --limit
+- **emoji --limt**: `app emoji --limt 2 --json` → exit 0; stdout: {; does not name --limit
+- **folders --allx**: `app folders --allx --json` → exit 0; stdout: {; does not name --all
+- **groups --hiddn**: `app groups --hiddn --json` → exit 0; stdout: {; does not name --hidden
+- **apps --lookp**: `app apps --lookp --json` → exit 0; stdout: [; does not name --lookup
+- **attention --allx**: `app attention --allx --json` → exit 0; stdout: [; does not name --all
+- **calendar --categry**: `app calendar --categry 2 --json` → exit 2; stderr: app: unsupported calendar option "--categry". Use a positional range, for example: app calendar week.; does not name --category
+- **matters --seris**: `app matters --seris --json` → exit 0; stdout: {; does not name --series
+- **recordings --sine**: `app recordings --sine --json` → exit 0; stdout: {; does not name --since
+- **prep --tex**: `app prep --tex 2 --json` → exit 1; stderr: app: no meeting matches "2". Try "app agenda".; does not name --text
+- **draft --tex**: `app draft show --tex 2 --json` → exit 2; stderr: app: numbers refer to the last list printed; run "app conversations" first, or use the short id in [brackets].; does not name --text
+- **layout --brif**: `app layout catalog --brif --json` → exit 0; stdout: {; does not name --brief
+- **log --limt**: `app log --limt 2 --json` → exit 0; stdout: []; does not name --limit
+- **look --limt**: `app look c:00000000bbbb0000bbbb000000000002 --limt 2 --json` → exit 0; stdout: {; does not name --limit
+- **search --limt**: `app search the --limt 2 --json` → exit 0; stdout: {; does not name --limit
+- **meeting --freh**: `app meeting "mock-event-allday\|2026-10-30T07:00:00.000Z" --freh --json` → exit 0; stdout: {; does not name --fresh
 
 ### `cli.read-json`: Every read takes `--json` and prints exactly one JSON document (a stream prints JSON lines), exits 0 and writes nothing to stderr.
 
@@ -208,8 +208,8 @@ Why: One parseable answer per call is the cheapest thing for an agent to consume
 
 Fix: Give the read a `--json` that prints the same data the text shows, as one document.
 
-- **draft**: `m365tandem draft show --json` → exit 1; stderr: m365tandem: the person has no conversation open right now. Name one instead: its [id] from "m365tandem conversations".
-- **people**: `m365tandem people 19:00000000bbbb0000bbbb000000000002@thread.tacv2 --json` → exit 1; stderr: m365tandem: tandem knows nobody in "19:00000000bbbb0000bbbb000000000002@thread.tacv2" yet: Teams lists no members for it and no one has written there.
+- **draft**: `app draft show --json` → exit 1; stderr: app: the person has no conversation open right now. Name one instead: its [id] from "app conversations".
+- **people**: `app people c:00000000bbbb0000bbbb000000000002 --json` → exit 1; stderr: app: the app knows nobody in "c:00000000bbbb0000bbbb000000000002" yet: the chat service lists no members for it and no one has written there.
 
 ### `cli.error-teaches`: Every error names a next action: a command to run or a flag to add.
 
@@ -217,7 +217,7 @@ Why: An agent recovers from the error alone when the error says what to do inste
 
 Fix: End each error with what to do: `Try "<cli> conversations"`.
 
-- **people --ax-xray-no-such-flag**: `m365tandem people 19:00000000bbbb0000bbbb000000000002@thread.tacv2 --ax-xray-no-such-flag --json` → exit 1; stderr: m365tandem: tandem knows nobody in "19:00000000bbbb0000bbbb000000000002@thread.tacv2" yet: Teams lists no members for it and no one has written there.: names no command or flag to try
+- **people --ax-xray-no-such-flag**: `app people c:00000000bbbb0000bbbb000000000002 --ax-xray-no-such-flag --json` → exit 1; stderr: app: the app knows nobody in "c:00000000bbbb0000bbbb000000000002" yet: the chat service lists no members for it and no one has written there.: names no command or flag to try
 
 ### `cli.wait-typed`: A wait's `--json` answer is a wait (`wait/1`): what happened, or, when nothing did in time, the cursor and the exact command that resumes.
 
@@ -225,7 +225,7 @@ Why: A typed wait tells an agent what happened, or exactly how to keep waiting, 
 
 Fix: Answer waits with `ax-wait` (`waitFor({ ... })`), which gives the cursor and the resume command.
 
-- **watch <conversation> --json**: `m365tandem watch 19:00000000bbbb0000bbbb000000000002@thread.tacv2 --timeout 1s --json` → exit 2; stderr: m365tandem: watch takes an object ref such as meeting:<ref>; bare "watch" streams every event; not a wait/1
+- **watch <conversation> --json**: `app watch c:00000000bbbb0000bbbb000000000002 --timeout 1s --json` → exit 2; stderr: app: watch takes an object ref such as meeting:<ref>; bare "watch" streams every event; not a wait/1
 
 ### `http.index`: The API's base path answers an index of its routes.
 
@@ -258,7 +258,7 @@ Fix: Answer 404 with `no route GET /api/x; GET /api lists the routes`.
 | cli · emoji | `cli.help-effects` `cli.command-help` `cli.read-json` | `cli.unknown-flag` |  |
 | cli · people | `cli.help-effects` `cli.command-help` | `cli.read-json` `cli.unknown-flag` |  |
 | cli · folders | `cli.help-effects` `cli.command-help` `cli.read-json` | `cli.unknown-flag` |  |
-| cli · teams | `cli.help-effects` `cli.command-help` `cli.read-json` | `cli.unknown-flag` |  |
+| cli · groups | `cli.help-effects` `cli.command-help` `cli.read-json` | `cli.unknown-flag` |  |
 | cli · apps | `cli.help-effects` `cli.command-help` `cli.read-json` | `cli.unknown-flag` |  |
 | cli · focus | `cli.help-effects` `cli.command-help` `cli.read-json` | `cli.unknown-flag` |  |
 | cli · show | `cli.help-effects` `cli.command-help` `cli.missing-arg` |  |  |
@@ -297,7 +297,7 @@ Fix: Answer 404 with `no route GET /api/x; GET /api lists the routes`.
 | cli · emoji --help | `cli.help-width` |  |  |
 | cli · people --help | `cli.help-width` |  |  |
 | cli · folders --help | `cli.help-width` |  |  |
-| cli · teams --help | `cli.help-width` |  |  |
+| cli · groups --help | `cli.help-width` |  |  |
 | cli · apps --help | `cli.help-width` |  |  |
 | cli · focus --help | `cli.help-width` |  |  |
 | cli · show --help | `cli.help-width` |  |  |
@@ -339,7 +339,7 @@ Fix: Answer 404 with `no route GET /api/x; GET /api lists the routes`.
 | cli · conversations --limt |  | `cli.unknown-flag` `cli.flag-suggest` |  |
 | cli · emoji --limt |  | `cli.unknown-flag` `cli.flag-suggest` |  |
 | cli · folders --allx |  | `cli.unknown-flag` `cli.flag-suggest` |  |
-| cli · teams --hiddn |  | `cli.unknown-flag` `cli.flag-suggest` |  |
+| cli · groups --hiddn |  | `cli.unknown-flag` `cli.flag-suggest` |  |
 | cli · apps --lookp |  | `cli.unknown-flag` `cli.flag-suggest` |  |
 | cli · attention --allx |  | `cli.unknown-flag` `cli.flag-suggest` |  |
 | cli · calendar --ax-xray-no-such-flag | `cli.one-line-error` `cli.error-teaches` |  |  |
@@ -430,7 +430,7 @@ Fix: Answer 404 with `no route GET /api/x; GET /api lists the routes`.
 | http · GET /api/people/presence | `http.json` |  |  |
 | http · GET /api/people/avatars | `http.json` |  |  |
 | http · GET /api/folders | `http.json` |  |  |
-| http · GET /api/teams | `http.json` |  |  |
+| http · GET /api/groups | `http.json` |  |  |
 | http · GET /api/apps | `http.json` |  |  |
 | http · GET /api/untitled | `http.json` |  |  |
 | http · GET /api/emoji | `http.json` |  |  |

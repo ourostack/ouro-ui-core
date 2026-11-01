@@ -1,99 +1,6 @@
 {
-  "cli": [
-    "today",
-    "status",
-    "update",
-    "conversations",
-    "look",
-    "emoji",
-    "people",
-    "folders",
-    "teams",
-    "apps",
-    "focus",
-    "search",
-    "agenda",
-    "calendar",
-    "categories",
-    "meeting",
-    "transcript",
-    "recordings",
-    "activity",
-    "activity seen",
-    "log",
-    "draft show",
-    "draft status",
-    "draft set",
-    "draft append",
-    "draft ready",
-    "draft needs-collab",
-    "draft discard",
-    "draft send",
-    "draft post",
-    "draft submit",
-    "draft approve",
-    "draft accept",
-    "draft reject",
-    "draft review",
-    "show",
-    "open",
-    "attention",
-    "attention add",
-    "attention done",
-    "attention dismiss",
-    "attention snooze",
-    "attention reopen",
-    "attention pin",
-    "attention unpin",
-    "prep",
-    "prep note",
-    "prep pin",
-    "prep unpin",
-    "prep edit",
-    "prep dismiss",
-    "prep approve",
-    "note",
-    "notes",
-    "layout",
-    "layout catalog",
-    "layout set",
-    "layout apply",
-    "layout accept",
-    "layout approve",
-    "layout save",
-    "layout forget",
-    "layout dismiss",
-    "layout profile",
-    "layout list",
-    "layout check",
-    "layout propose",
-    "layout derive",
-    "layout explain",
-    "layout diff",
-    "layout use",
-    "layout undo",
-    "matters",
-    "matters explain",
-    "matters propose",
-    "matters set",
-    "matters clear",
-    "categorize",
-    "watch",
-    "outcome",
-    "send",
-    "reply",
-    "react",
-    "unreact",
-    "edit-sent",
-    "delete-sent",
-    "mark-read",
-    "answer-invite",
-    "accept",
-    "tentative",
-    "decline",
-    "join"
-  ],
-  "http": [
+  "base": "/api",
+  "routes": [
     "GET /api",
     "GET /api/health",
     "GET /api/update",
@@ -188,10 +95,10 @@
     "GET /api/people/avatars",
     "GET /api/people/{mri}/avatar",
     "GET /api/folders",
-    "GET /api/teams",
+    "GET /api/groups",
     "GET /api/apps",
     "GET /api/untitled",
-    "GET /api/teams/{id}/picture",
+    "GET /api/groups/{id}/picture",
     "GET /api/apps/{id}/icon",
     "GET /api/emoji",
     "GET /api/emoji/status",
@@ -233,5 +140,111 @@
     "POST /api/lifecycle/prepare",
     "POST /api/lifecycle/cancel",
     "POST /api/lifecycle/quiesce"
+  ],
+  "state": [
+    "GET /api/log"
+  ],
+  "skip": [
+    "GET /api/events",
+    "GET /api/callbacks",
+    "GET /api/people/{mri}/avatar",
+    "GET /api/groups/{id}/picture",
+    "GET /api/apps/{id}/icon",
+    "GET /api/lifecycle/stream"
+  ],
+  "others": [
+    {
+      "route": "POST /api/agent-actions",
+      "body": {
+        "action": "message.send",
+        "conversationId": "{ref}",
+        "messageId": "1",
+        "text": "ax-xray probe",
+        "key": "like",
+        "agent": "ax-xray"
+      }
+    },
+    {
+      "route": "POST /api/agent-actions",
+      "body": {
+        "action": "message.reply",
+        "conversationId": "{ref}",
+        "messageId": "1",
+        "text": "ax-xray probe",
+        "key": "like",
+        "agent": "ax-xray"
+      }
+    },
+    {
+      "route": "POST /api/agent-actions",
+      "body": {
+        "action": "reaction.add",
+        "conversationId": "{ref}",
+        "messageId": "1",
+        "text": "ax-xray probe",
+        "key": "like",
+        "agent": "ax-xray"
+      }
+    },
+    {
+      "route": "POST /api/agent-actions",
+      "body": {
+        "action": "reaction.remove",
+        "conversationId": "{ref}",
+        "messageId": "1",
+        "text": "ax-xray probe",
+        "key": "like",
+        "agent": "ax-xray"
+      }
+    },
+    {
+      "route": "POST /api/agent-actions",
+      "body": {
+        "action": "message.edit",
+        "conversationId": "{ref}",
+        "messageId": "1",
+        "text": "ax-xray probe",
+        "key": "like",
+        "agent": "ax-xray"
+      }
+    },
+    {
+      "route": "POST /api/agent-actions",
+      "body": {
+        "action": "message.delete",
+        "conversationId": "{ref}",
+        "messageId": "1",
+        "text": "ax-xray probe",
+        "key": "like",
+        "agent": "ax-xray"
+      }
+    },
+    {
+      "route": "POST /api/agent-actions",
+      "body": {
+        "action": "meeting.respond",
+        "meetingId": "{ref}",
+        "response": "accepted",
+        "agent": "ax-xray"
+      }
+    },
+    {
+      "route": "POST /api/agent-actions",
+      "body": {
+        "action": "conversation.markRead",
+        "conversationId": "{ref}",
+        "messageId": "1",
+        "text": "ax-xray probe",
+        "key": "like",
+        "agent": "ax-xray"
+      }
+    },
+    {
+      "route": "POST /api/meetings/{id}/join",
+      "body": {
+        "what": "join",
+        "agent": "ax-xray"
+      }
+    }
   ]
 }

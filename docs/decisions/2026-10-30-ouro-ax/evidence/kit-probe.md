@@ -2,7 +2,7 @@
 
 Thesis: Ouro AX is a copy-in kit like HX. One TypeScript command definition gives parser, help and `help --json`, `--json` output, exit codes, effect class with `--why`, and the same command as an MCP tool; every refusal is one line ending `Fix: <exact command>`.
 
-Built: ouro-ui branch ax-probe/kit, `registry/ouro/ax/` items ax-errors, ax-exit-codes, ax-effects, ax-command, ax-help, ax-output, ax-cli, ax-mcp, ax-lint, umbrella ouro-ax, plus test items and example; zero deps, 36 tests; scripts/registry.mts generates them. Tandem draft PR #431: ouro-add.ts copies kit into src/cli/ax/; 18 of 54 commands declared (others pass through, counted by ax-lint); help overview generated and byte-identical; help --json gains input schemas; `m365tandem mcp`; test/ax-kit.test.ts; `look --since-id` now refused with a fix. CI green.
+Built: ouro-ui branch probe/kit, `registry/ouro/ax/` items ax-errors, ax-exit-codes, ax-effects, ax-command, ax-help, ax-output, ax-cli, ax-mcp, ax-lint, umbrella ouro-ax, plus test items and example; zero deps, 36 tests; scripts/registry.mts generates them. The app's draft PR #431: ouro-add.ts copies kit into src/cli/ax/; 18 of 54 commands declared (others pass through, counted by ax-lint); help overview generated and byte-identical; help --json gains input schemas; `app mcp`; test/ax-kit.test.ts; `look --since-id` now refused with a fix. CI green.
 
 Measurement (success · calls · wrong turns · tokens), main is pre-#440:
 
@@ -20,4 +20,4 @@ Strength: CLI and MCP can't drift; adoptable one command at a time with ax-lint 
 
 Work measurement: fits bottom-up (stable command name, effect, --why, named exit code let the factory label wrong turns by error code); joining to plan needs a work-event shape (Lane D).
 
-Left: two worktrees; `.ax-tsc` (33 MB) in tandem worktree, `.ax-deps` (24 MB) in ouro-ui worktree; ax-probe-kit-eval/mcp.json. Eval run folders deleted.
+Left: two worktrees; `.ax-tsc` (33 MB) in the app's worktree, `.ax-deps` (24 MB) in ouro-ui worktree; probe-kit-eval/mcp.json. Eval run folders deleted.

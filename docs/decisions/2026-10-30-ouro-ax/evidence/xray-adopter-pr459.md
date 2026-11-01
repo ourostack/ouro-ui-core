@@ -1,6 +1,6 @@
-# AX X-ray: m365tandem
+# AX X-ray: app
 
-Ouro AX claim set 1.0.0 (sha256 70e37a5e78c80a6b8244257c8db19fc8fa8f65061098df82e24bbb92a3e7c11f), checked by ax-xray 1.0.0 at 2026-10-31T04:39:53.555Z. Target: at 2356170dfe3ef544d14025a1c1ac31b70d5547f2; CLI `m365tandem` (92 commands, 226 calls); HTTP http://127.0.0.1:35397 (139 routes in the manifest, 104 requests).
+Ouro AX claim set 1.0.0 (sha256 70e37a5e78c80a6b8244257c8db19fc8fa8f65061098df82e24bbb92a3e7c11f), checked by ax-xray 1.0.0 at 2026-10-31T04:39:53.555Z. Target: at 2356170dfe3ef544d14025a1c1ac31b70d5547f2; CLI `app` (92 commands, 226 calls); HTTP http://127.0.0.1:35397 (139 routes in the manifest, 104 requests).
 
 **Conforms: every applicable must claim holds, and the inventory covers every surface checked.** Claims holding: 33 of 36 (must: 18 of 18). Checks: 768 pass, 3 fail, 3 skipped.
 
@@ -55,8 +55,8 @@ Why: One parseable answer per call is the cheapest thing for an agent to consume
 
 Fix: Give the read a `--json` that prints the same data the text shows, as one document.
 
-- **draft show**: `m365tandem draft show --json` → exit 1; stderr: m365tandem: the person has no conversation open right now. Name one instead: its [id] from "m365tandem conversations".
-- **people**: `m365tandem people 19:00000000bbbb0000bbbb000000000002@thread.tacv2 --json` → exit 1; stderr: m365tandem: tandem knows nobody in "19:00000000bbbb0000bbbb000000000002@thread.tacv2" yet: Teams lists no members for it and no one has written there.
+- **draft show**: `app draft show --json` → exit 1; stderr: app: the person has no conversation open right now. Name one instead: its [id] from "app conversations".
+- **people**: `app people c:00000000bbbb0000bbbb000000000002 --json` → exit 1; stderr: app: the app knows nobody in "c:00000000bbbb0000bbbb000000000002" yet: the chat service lists no members for it and no one has written there.
 
 ### `http.error-teaches`: Every error names a next action: a route, a field, or a command.
 
@@ -80,7 +80,7 @@ Fix: Say where to go: `no such conversation; GET /api/conversations lists them`.
 | cli · emoji | `cli.help-effects` `cli.command-help` `cli.read-json` `cli.unknown-flag` |  |  |
 | cli · people | `cli.help-effects` `cli.command-help` `cli.unknown-flag` | `cli.read-json` |  |
 | cli · folders | `cli.help-effects` `cli.command-help` `cli.read-json` `cli.unknown-flag` |  |  |
-| cli · teams | `cli.help-effects` `cli.command-help` `cli.read-json` `cli.unknown-flag` |  |  |
+| cli · groups | `cli.help-effects` `cli.command-help` `cli.read-json` `cli.unknown-flag` |  |  |
 | cli · apps | `cli.help-effects` `cli.command-help` `cli.read-json` `cli.unknown-flag` |  |  |
 | cli · focus | `cli.help-effects` `cli.command-help` `cli.read-json` `cli.unknown-flag` |  |  |
 | cli · search | `cli.help-effects` `cli.command-help` `cli.read-json` `cli.unknown-flag` |  |  |
@@ -173,7 +173,7 @@ Fix: Say where to go: `no such conversation; GET /api/conversations lists them`.
 | cli · emoji --help | `cli.help-width` |  |  |
 | cli · people --help | `cli.help-width` |  |  |
 | cli · folders --help | `cli.help-width` |  |  |
-| cli · teams --help | `cli.help-width` |  |  |
+| cli · groups --help | `cli.help-width` |  |  |
 | cli · apps --help | `cli.help-width` |  |  |
 | cli · focus --help | `cli.help-width` |  |  |
 | cli · search --help | `cli.help-width` |  |  |
@@ -272,8 +272,8 @@ Fix: Say where to go: `no such conversation; GET /api/conversations lists them`.
 | cli · emoji --limt | `cli.unknown-flag` `cli.flag-suggest` |  |  |
 | cli · folders --ax-xray-no-such-flag | `cli.one-line-error` `cli.error-teaches` |  |  |
 | cli · folders --allx | `cli.unknown-flag` `cli.flag-suggest` |  |  |
-| cli · teams --ax-xray-no-such-flag | `cli.one-line-error` `cli.error-teaches` |  |  |
-| cli · teams --hiddn | `cli.unknown-flag` `cli.flag-suggest` |  |  |
+| cli · groups --ax-xray-no-such-flag | `cli.one-line-error` `cli.error-teaches` |  |  |
+| cli · groups --hiddn | `cli.unknown-flag` `cli.flag-suggest` |  |  |
 | cli · apps --ax-xray-no-such-flag | `cli.one-line-error` `cli.error-teaches` |  |  |
 | cli · apps --lookp | `cli.unknown-flag` `cli.flag-suggest` |  |  |
 | cli · focus --ax-xray-no-such-flag | `cli.one-line-error` `cli.error-teaches` |  |  |
@@ -390,7 +390,7 @@ Fix: Say where to go: `no such conversation; GET /api/conversations lists them`.
 | http · GET /api/people/presence | `http.json` |  |  |
 | http · GET /api/people/avatars | `http.json` |  |  |
 | http · GET /api/folders | `http.json` |  |  |
-| http · GET /api/teams | `http.json` |  |  |
+| http · GET /api/groups | `http.json` |  |  |
 | http · GET /api/apps | `http.json` |  |  |
 | http · GET /api/untitled | `http.json` |  |  |
 | http · GET /api/emoji | `http.json` |  |  |

@@ -1,21 +1,21 @@
 {
   "label": "#440 cli/text-without-pipe 6297c319",
-  "cli": "~/code/tandem-worktrees/ax-eval-440/bin/m365tandem.mjs",
-  "root": "~/code/tandem-worktrees/ax-eval-440",
+  "cli": "~/work/ax-eval-440/bin/app.mjs",
+  "root": "~/work/ax-eval-440",
   "runs": 2,
-  "agentsMd": "~/code/tandem-worktrees/ax-eval-out/agents-440.md",
-  "agencyArgs": [],
+  "agentsMd": "~/work/ax-eval-out/agents-440.md",
+  "agentArgs": [],
   "allowTools": [
-    "shell(m365tandem)"
+    "shell(app)"
   ],
   "mcpPrefix": null,
   "results": [
     {
       "task": "T2",
       "run": 1,
-      "dir": "~/code/tandem-worktrees/ax-eval-out/after-440/T2/run-1",
+      "dir": "~/work/ax-eval-out/after-440/T2/run-1",
       "success": true,
-      "reason": "draft in Sam's chat, nothing sent: \"I'll look at the review doc by end of day.\"",
+      "reason": "draft in Jo's chat, nothing sent: \"I'll look at the review doc by end of day.\"",
       "wallMs": 19971,
       "agentExit": 0,
       "metrics": {
@@ -29,7 +29,7 @@
         "helpCalls": 3,
         "wrong": [
           {
-            "line": "m365tandem draft show Sam Example --json",
+            "line": "app draft show Jo Park --json",
             "why": "repeated"
           }
         ]
@@ -42,7 +42,7 @@
         "source": "session.usage_checkpoint (gpt-6.1-sol)"
       },
       "premiumRequests": 1,
-      "answer": "Saved an unsent draft in your chat with Sam Example: “I'll look at the review doc by end of day.”",
+      "answer": "Saved an unsent draft in your chat with Jo Park: “I'll look at the review doc by end of day.”",
       "injectedAt": null,
       "nonInterfaceTools": [
         "task_complete"
@@ -51,9 +51,9 @@
     {
       "task": "T2",
       "run": 2,
-      "dir": "~/code/tandem-worktrees/ax-eval-out/after-440/T2/run-2",
+      "dir": "~/work/ax-eval-out/after-440/T2/run-2",
       "success": true,
-      "reason": "draft in Sam's chat, nothing sent: \"I'll take a look at the review doc by end of day.\"",
+      "reason": "draft in Jo's chat, nothing sent: \"I'll take a look at the review doc by end of day.\"",
       "wallMs": 20884,
       "agentExit": 0,
       "metrics": {
@@ -67,7 +67,7 @@
         "helpCalls": 3,
         "wrong": [
           {
-            "line": "m365tandem draft show Sam Example --json",
+            "line": "app draft show Jo Park --json",
             "why": "repeated"
           }
         ]
@@ -80,7 +80,7 @@
         "source": "session.usage_checkpoint (gpt-6.1-sol)"
       },
       "premiumRequests": 1,
-      "answer": "Saved an unsent draft in your chat with Sam Example: “I'll take a look at the review doc by end of day.”",
+      "answer": "Saved an unsent draft in your chat with Jo Park: “I'll take a look at the review doc by end of day.”",
       "injectedAt": null,
       "nonInterfaceTools": [
         "task_complete"
@@ -89,7 +89,7 @@
     {
       "task": "T3",
       "run": 1,
-      "dir": "~/code/tandem-worktrees/ax-eval-out/after-440/T3/run-1",
+      "dir": "~/work/ax-eval-out/after-440/T3/run-1",
       "success": true,
       "reason": "one send to Launch planning, why \"User asked: Riley asked me to tell the Launch planning group that the new banner\": \"Riley asked me to let everyone know that the new banner is final.\"",
       "wallMs": 21192,
@@ -122,7 +122,7 @@
     {
       "task": "T3",
       "run": 2,
-      "dir": "~/code/tandem-worktrees/ax-eval-out/after-440/T3/run-2",
+      "dir": "~/work/ax-eval-out/after-440/T3/run-2",
       "success": true,
       "reason": "one send to Launch planning, why \"User asked: Riley asked me to tell the Launch planning group that the new banner\": \"Riley asked me to let you know that the new banner is final.\"",
       "wallMs": 31854,
@@ -155,7 +155,7 @@
     {
       "task": "T4",
       "run": 1,
-      "dir": "~/code/tandem-worktrees/ax-eval-out/after-440/T4/run-1",
+      "dir": "~/work/ax-eval-out/after-440/T4/run-1",
       "success": true,
       "reason": "edited to \"Thanks, both. Can we ship & review on Thursday?\", why \"Asked to edit my last message in the Launch planning group: \"",
       "wallMs": 24574,
@@ -188,7 +188,7 @@
     {
       "task": "T4",
       "run": 2,
-      "dir": "~/code/tandem-worktrees/ax-eval-out/after-440/T4/run-2",
+      "dir": "~/work/ax-eval-out/after-440/T4/run-2",
       "success": true,
       "reason": "edited to \"Thanks, both. Can we ship & review on Thursday?\", why \"User asked to edit their last message in Launch planning to \"",
       "wallMs": 38003,
@@ -204,15 +204,15 @@
         "helpCalls": 5,
         "wrong": [
           {
-            "line": "m365tandem edit-sent --help",
+            "line": "app edit-sent --help",
             "why": "repeated"
           },
           {
-            "line": "m365tandem look --help",
+            "line": "app look --help",
             "why": "repeated"
           },
           {
-            "line": "m365tandem conversations --json | jq '.[] | select(.title | test(\"Launch planning\"; \"i\"))' && m365tandem edit-sent --help && m365tandem look --help",
+            "line": "app conversations --json | jq '.[] | select(.title | test(\"Launch planning\"; \"i\"))' && app edit-sent --help && app look --help",
             "why": "denied by tool permissions"
           }
         ]

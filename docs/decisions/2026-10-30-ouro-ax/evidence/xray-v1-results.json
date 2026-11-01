@@ -1,19 +1,19 @@
 {
   "label": "B xray fixes",
-  "cli": "~/code/tandem-worktrees/ax-probe-xray/bin/m365tandem.mjs",
-  "root": "~/code/tandem-worktrees/ax-probe-xray",
+  "cli": "~/work/probe-xray/bin/app.mjs",
+  "root": "~/work/probe-xray",
   "runs": 2,
   "agentsMd": "default",
-  "agencyArgs": [],
+  "agentArgs": [],
   "allowTools": [
-    "shell(m365tandem)"
+    "shell(app)"
   ],
   "mcpPrefix": null,
   "results": [
     {
       "task": "T1",
       "run": 1,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out/T1/run-1",
+      "dir": "~/work/probe-xray-eval-out/T1/run-1",
       "success": true,
       "reason": "no writes; names 2 of the 3 top items",
       "wallMs": 26508,
@@ -36,7 +36,7 @@
         "source": "session.usage_checkpoint (gpt-6.1-sol)"
       },
       "premiumRequests": 1,
-      "answer": "**Handle the design review first.** Your calendar shows it starting at **3:30 PM today—about now**, rather than this morning; you’re the organizer.\n\n1. **Review the settings mockups and decide on sign-off.** [Sam explicitly asked for your approval](https://teams.microsoft.com/l/message/19%3A00000000bbbb0000bbbb000000000002%40thread.tacv2/1700004200000?parentMessageId=1700003600000)—bring your decision or concerns to the review.\n2. **Follow up on the rollout numbers.** [Sam requested them before the weekly sync](https://teams.microsoft.com/l/message/19%3Ameeting_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%40thread.v2/1700000480000); there’s no response visible afterward.\n3. **Review Sam’s draft document.** [His direct request](https://teams.microsoft.com/l/message/19%3A00000000-0000-4000-8000-000000000001_00000000-0000-4000-8000-000000000002%40unq.gbl.spaces/1700001800000) has no stated deadline, so put it after the meeting-related asks.",
+      "answer": "**Handle the design review first.** Your calendar shows it starting at **3:30 PM today—about now**, rather than this morning; you’re the organizer.\n\n1. **Review the settings mockups and decide on sign-off.** [Jo explicitly asked for your approval](https://chat.example.com/l/message/c%3A00000000bbbb0000bbbb000000000002/1700004200000?parentMessageId=1700003600000)—bring your decision or concerns to the review.\n2. **Follow up on the rollout numbers.** [Jo requested them before the weekly sync](https://chat.example.com/l/message/c%3Ameeting_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/1700000480000); there’s no response visible afterward.\n3. **Review Jo’s draft document.** [His direct request](https://chat.example.com/l/message/19%3A00000000-0000-4000-8000-000000000001_00000000-0000-4000-8000-000000000002%40unq.gbl.spaces/1700001800000) has no stated deadline, so put it after the meeting-related asks.",
       "injectedAt": null,
       "nonInterfaceTools": [
         "task_complete"
@@ -45,7 +45,7 @@
     {
       "task": "T1",
       "run": 2,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out/T1/run-2",
+      "dir": "~/work/probe-xray-eval-out/T1/run-2",
       "success": true,
       "reason": "no writes; names 3 of the 3 top items",
       "wallMs": 21864,
@@ -68,7 +68,7 @@
         "source": "session.usage_checkpoint (gpt-6.1-sol)"
       },
       "premiumRequests": 1,
-      "answer": "**Handle the design review first.** Your calendar shows it starting now at **3:30 PM Pacific**—rather than morning—and you’re the organizer. Sam is waiting for your [sign-off on the settings mockups](https://teams.microsoft.com/l/message/19%3A00000000bbbb0000bbbb000000000002%40thread.tacv2/1700004200000?parentMessageId=1700003600000); review them and bring your decision or blockers.\n\nThen prioritize:\n1. **Rollout numbers:** Sam asked for them before the weekly sync. Check whether that request still needs closing out.\n2. **Review-doc draft:** Sam also directly asked you to look it over; no deadline was stated.\n\nThe brown-bag invite and Riley’s “see you at the review” reply can wait.",
+      "answer": "**Handle the design review first.** Your calendar shows it starting now at **3:30 PM Pacific**—rather than morning—and you’re the organizer. Jo is waiting for your [sign-off on the settings mockups](https://chat.example.com/l/message/c%3A00000000bbbb0000bbbb000000000002/1700004200000?parentMessageId=1700003600000); review them and bring your decision or blockers.\n\nThen prioritize:\n1. **Rollout numbers:** Jo asked for them before the weekly sync. Check whether that request still needs closing out.\n2. **Review-doc draft:** Jo also directly asked you to look it over; no deadline was stated.\n\nThe brown-bag invite and Riley’s “see you at the review” reply can wait.",
       "injectedAt": null,
       "nonInterfaceTools": [
         "task_complete"
@@ -77,9 +77,9 @@
     {
       "task": "T2",
       "run": 1,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out/T2/run-1",
+      "dir": "~/work/probe-xray-eval-out/T2/run-1",
       "success": true,
-      "reason": "draft in Sam's chat, nothing sent: \"I'll look at the review doc by end of day.\"",
+      "reason": "draft in Jo's chat, nothing sent: \"I'll look at the review doc by end of day.\"",
       "wallMs": 23834,
       "agentExit": 0,
       "metrics": {
@@ -100,7 +100,7 @@
         "source": "session.usage_checkpoint (gpt-6.1-sol)"
       },
       "premiumRequests": 1,
-      "answer": "Saved a draft in your chat with Sam Example: “I'll look at the review doc by end of day.” Left unsent for you.",
+      "answer": "Saved a draft in your chat with Jo Park: “I'll look at the review doc by end of day.” Left unsent for you.",
       "injectedAt": null,
       "nonInterfaceTools": [
         "task_complete"
@@ -109,9 +109,9 @@
     {
       "task": "T2",
       "run": 2,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out/T2/run-2",
+      "dir": "~/work/probe-xray-eval-out/T2/run-2",
       "success": true,
-      "reason": "draft in Sam's chat, nothing sent: \"I'll look at the review doc by end of day.\"",
+      "reason": "draft in Jo's chat, nothing sent: \"I'll look at the review doc by end of day.\"",
       "wallMs": 27044,
       "agentExit": 0,
       "metrics": {
@@ -124,7 +124,7 @@
         "helpCalls": 3,
         "wrong": [
           {
-            "line": "m365tandem draft show Sam Example --json",
+            "line": "app draft show Jo Park --json",
             "why": "repeated"
           }
         ]
@@ -137,7 +137,7 @@
         "source": "session.usage_checkpoint (gpt-6.1-sol)"
       },
       "premiumRequests": 1,
-      "answer": "Saved an unsent draft in your chat with Sam Example: “I'll look at the review doc by end of day.”",
+      "answer": "Saved an unsent draft in your chat with Jo Park: “I'll look at the review doc by end of day.”",
       "injectedAt": null,
       "nonInterfaceTools": [
         "task_complete"
@@ -146,7 +146,7 @@
     {
       "task": "T3",
       "run": 1,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out/T3/run-1",
+      "dir": "~/work/probe-xray-eval-out/T3/run-1",
       "success": false,
       "reason": "0 completed sends to Launch planning (want 1); log: none",
       "wallMs": 22867,
@@ -178,7 +178,7 @@
     {
       "task": "T3",
       "run": 2,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out/T3/run-2",
+      "dir": "~/work/probe-xray-eval-out/T3/run-2",
       "success": false,
       "reason": "0 completed sends to Launch planning (want 1); log: none",
       "wallMs": 25129,
@@ -210,7 +210,7 @@
     {
       "task": "T4",
       "run": 1,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out/T4/run-1",
+      "dir": "~/work/probe-xray-eval-out/T4/run-1",
       "success": false,
       "reason": "the message was not edited",
       "wallMs": 23703,
@@ -242,7 +242,7 @@
     {
       "task": "T4",
       "run": 2,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out/T4/run-2",
+      "dir": "~/work/probe-xray-eval-out/T4/run-2",
       "success": false,
       "reason": "the message was not edited",
       "wallMs": 38441,
@@ -257,7 +257,7 @@
         "helpCalls": 4,
         "wrong": [
           {
-            "line": "m365tandem edit-sent --help",
+            "line": "app edit-sent --help",
             "why": "repeated"
           }
         ]
@@ -280,7 +280,7 @@
     {
       "task": "T5",
       "run": 1,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out/T5/run-1",
+      "dir": "~/work/probe-xray-eval-out/T5/run-1",
       "success": false,
       "reason": "the answer does not report the reply",
       "wallMs": 84263,
@@ -295,15 +295,15 @@
         "helpCalls": 2,
         "wrong": [
           {
-            "line": "m365tandem watch r82dfi --timeout 8h --json",
+            "line": "app watch r82dfi --timeout 8h --json",
             "why": "exit 2"
           },
           {
-            "line": "m365tandem watch chat:r82dfi --timeout 8h --json",
+            "line": "app watch chat:r82dfi --timeout 8h --json",
             "why": "exit 2"
           },
           {
-            "line": "m365tandem watch",
+            "line": "app watch",
             "why": "exit 130"
           }
         ]
@@ -316,7 +316,7 @@
         "source": "session.usage_checkpoint (gpt-6.1-sol)"
       },
       "premiumRequests": 1,
-      "answer": "I found the group chat with Alex, Riley, and Sam. I’m watching for the next reply.\n\nI found your group chat with Alex, Riley, and Sam, but continuous reply monitoring requires approval unavailable in this session. No reply alert has been set up.",
+      "answer": "I found the group chat with Alex, Riley, and Jo. I’m watching for the next reply.\n\nI found your group chat with Alex, Riley, and Jo, but continuous reply monitoring requires approval unavailable in this session. No reply alert has been set up.",
       "injectedAt": 31054,
       "nonInterfaceTools": [
         "task_complete"
@@ -325,7 +325,7 @@
     {
       "task": "T5",
       "run": 2,
-      "dir": "~/code/tandem-worktrees/ax-probe-xray-eval-out/T5/run-2",
+      "dir": "~/work/probe-xray-eval-out/T5/run-2",
       "success": true,
       "reason": "reported the reply; 0 repeated reads",
       "wallMs": 65933,
@@ -340,11 +340,11 @@
         "helpCalls": 2,
         "wrong": [
           {
-            "line": "m365tandem watch chat:r82dfi --timeout 8h --json",
+            "line": "app watch chat:r82dfi --timeout 8h --json",
             "why": "exit 2"
           },
           {
-            "line": "m365tandem watch",
+            "line": "app watch",
             "why": "exit 130"
           }
         ]
@@ -357,7 +357,7 @@
         "source": "session.usage_checkpoint (gpt-6.1-sol)"
       },
       "premiumRequests": 1,
-      "answer": "Riley just replied in your group chat with Alex, Riley, and Sam:\n\n> Offsite update: we moved to the Lakeside room, 9:30 start.",
+      "answer": "Riley just replied in your group chat with Alex, Riley, and Jo:\n\n> Offsite update: we moved to the Lakeside room, 9:30 start.",
       "injectedAt": 25043,
       "nonInterfaceTools": [
         "task_complete"

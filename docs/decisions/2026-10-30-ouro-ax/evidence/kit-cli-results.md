@@ -1,6 +1,6 @@
 # ax-eval: kit CLI v3
 
-CLI: `~/code/tandem-worktrees/ax-probe-kit/bin/m365tandem.mjs` · runs per task: 2 · 2026-10-31T00:07:54.858Z · AGENTS.md: docs/agent-guide.md paragraph
+CLI: `~/work/probe-kit/bin/app.mjs` · runs per task: 2 · 2026-10-31T00:07:54.858Z · AGENTS.md: docs/agent-guide.md paragraph
 
 ## Per task (mean over runs)
 
@@ -23,10 +23,10 @@ CLI: `~/code/tandem-worktrees/ax-probe-kit/bin/m365tandem.mjs` · runs per task:
 ### T3 run 1
 
 ```
-  [0] m365tandem --help
-  [0] m365tandem search Launch planning --json
-  [0] m365tandem send --help
-  [0] m365tandem send 19:00000000aaaa0000aaaa000000000001@thread.v2 The new banner is final. --agent copilot --why The user asked: Riley asked me to tell the Launch planning group that the new banner is fin
+  [0] app --help
+  [0] app search Launch planning --json
+  [0] app send --help
+  [0] app send c:00000000aaaa0000aaaa000000000001 The new banner is final. --agent copilot --why The user asked: Riley asked me to tell the Launch planning group that the new banner is fin
 ```
 
 Answer: Sent to **Launch planning**: “The new banner is final.”
@@ -34,10 +34,10 @@ Answer: Sent to **Launch planning**: “The new banner is final.”
 ### T3 run 2
 
 ```
-  [0] m365tandem --help
-  [0] m365tandem search Launch planning --json
-  [0] m365tandem send --help
-  [0] m365tandem send 19:00000000aaaa0000aaaa000000000001@thread.v2 Riley asked me to let everyone know: the new banner is final. --agent copilot --why The user asked me to tell the Launch planning group th
+  [0] app --help
+  [0] app search Launch planning --json
+  [0] app send --help
+  [0] app send c:00000000aaaa0000aaaa000000000001 Riley asked me to let everyone know: the new banner is final. --agent copilot --why The user asked me to tell the Launch planning group th
 ```
 
 Answer: Sent to **Launch planning**: “Riley asked me to let everyone know: the new banner is final.”
@@ -45,13 +45,13 @@ Answer: Sent to **Launch planning**: “Riley asked me to let everyone know: the
 ### T4 run 1
 
 ```
-  [0] m365tandem --help
-  [0] m365tandem conversations --help
-  [0] m365tandem edit-sent --help
-  [0] m365tandem look --help
-  [0] m365tandem look Launch planning --limit 30 --json
-  [0] m365tandem edit-sent nxrlt3#1700002700000 Thanks, both. Can we ship & review on Thursday? --agent copilot --why User asked to edit their last message in Launch planning: Sam says it should say Thursda
-  [0] m365tandem look nxrlt3#1700002700000 --json
+  [0] app --help
+  [0] app conversations --help
+  [0] app edit-sent --help
+  [0] app look --help
+  [0] app look Launch planning --limit 30 --json
+  [0] app edit-sent nxrlt3#1700002700000 Thanks, both. Can we ship & review on Thursday? --agent copilot --why User asked to edit their last message in Launch planning: Jo says it should say Thursda
+  [0] app look nxrlt3#1700002700000 --json
 ```
 
 Answer: Edited your last message in Launch planning to: “Thanks, both. Can we ship & review on Thursday?”
@@ -59,11 +59,11 @@ Answer: Edited your last message in Launch planning to: “Thanks, both. Can we 
 ### T4 run 2
 
 ```
-  [0] m365tandem --help
-  [0] m365tandem conversations --help
-  [0] m365tandem edit-sent --help
-  [0] m365tandem look Launch planning --json
-  [0] m365tandem edit-sent nxrlt3#1700002700000 Thanks, both. Can we ship & review on Thursday? --agent copilot --why Asked to edit my last message in the Launch planning group: Sam says it should say Thurs
+  [0] app --help
+  [0] app conversations --help
+  [0] app edit-sent --help
+  [0] app look Launch planning --json
+  [0] app edit-sent nxrlt3#1700002700000 Thanks, both. Can we ship & review on Thursday? --agent copilot --why Asked to edit my last message in the Launch planning group: Jo says it should say Thurs
 ```
 
 Answer: Edited your last message in Launch planning: “Thanks, both. Can we ship & review on Thursday?”

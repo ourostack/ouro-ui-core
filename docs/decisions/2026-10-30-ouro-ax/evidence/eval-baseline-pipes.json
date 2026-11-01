@@ -1,12 +1,12 @@
 {
   "label": "main ffdecc01, printf/echo allowed (supplement)",
-  "cli": "~/code/tandem-worktrees/ax-eval/bin/m365tandem.mjs",
-  "root": "~/code/tandem-worktrees/ax-eval",
+  "cli": "~/work/ax-eval/bin/app.mjs",
+  "root": "~/work/ax-eval",
   "runs": 2,
   "agentsMd": "default",
-  "agencyArgs": [],
+  "agentArgs": [],
   "allowTools": [
-    "shell(m365tandem)",
+    "shell(app)",
     "shell(printf)",
     "shell(echo)"
   ],
@@ -15,7 +15,7 @@
     {
       "task": "T3",
       "run": 1,
-      "dir": "~/code/tandem-worktrees/ax-eval-out/baseline-pipes/T3/run-1",
+      "dir": "~/work/ax-eval-out/baseline-pipes/T3/run-1",
       "success": true,
       "reason": "one send to Launch planning, why \"User asked: Riley asked me to tell the Launch planning group that the new banner\": \"The new banner is final.\"",
       "wallMs": 29338,
@@ -31,7 +31,7 @@
         "helpCalls": 3,
         "wrong": [
           {
-            "line": "m365tandem send 19:00000000aaaa0000aaaa000000000001@thread.v2 - --agent copilot --why User asked: Riley asked me to tell the Launch planning group that the new banner is final. Send it. --intent b4698a77-banner-final --json",
+            "line": "app send c:00000000aaaa0000aaaa000000000001 - --agent copilot --why User asked: Riley asked me to tell the Launch planning group that the new banner is final. Send it. --intent b4698a77-banner-final --json",
             "why": "exit 2"
           }
         ]
@@ -53,7 +53,7 @@
     {
       "task": "T3",
       "run": 2,
-      "dir": "~/code/tandem-worktrees/ax-eval-out/baseline-pipes/T3/run-2",
+      "dir": "~/work/ax-eval-out/baseline-pipes/T3/run-2",
       "success": false,
       "reason": "--why does not say Riley asked: \"User asked me to tell the Launch planning group that the new banner is final and send it.\"",
       "wallMs": 34245,
@@ -69,7 +69,7 @@
         "helpCalls": 4,
         "wrong": [
           {
-            "line": "m365tandem send nxrlt3 - --agent copilot --why User asked me to tell the Launch planning group that the new banner is final and send it. --intent 6f8bd2f2-launch-banner-final --json",
+            "line": "app send nxrlt3 - --agent copilot --why User asked me to tell the Launch planning group that the new banner is final and send it. --intent 6f8bd2f2-launch-banner-final --json",
             "why": "exit 2"
           }
         ]
@@ -91,7 +91,7 @@
     {
       "task": "T4",
       "run": 1,
-      "dir": "~/code/tandem-worktrees/ax-eval-out/baseline-pipes/T4/run-1",
+      "dir": "~/work/ax-eval-out/baseline-pipes/T4/run-1",
       "success": true,
       "reason": "edited to \"Thanks, both. Can we ship & review on Thursday?\", why \"Asked to edit my last message in the Launch planning group: \"",
       "wallMs": 78325,
@@ -107,15 +107,15 @@
         "helpCalls": 5,
         "wrong": [
           {
-            "line": "m365tandem edit-sent --help",
+            "line": "app edit-sent --help",
             "why": "repeated"
           },
           {
-            "line": "m365tandem look --help",
+            "line": "app look --help",
             "why": "repeated"
           },
           {
-            "line": "m365tandem conversations --json | jq '.[] | select(.title | test(\"Launch planning\"; \"i\"))' && m365tandem edit-sent --help && m365tandem look --help",
+            "line": "app conversations --json | jq '.[] | select(.title | test(\"Launch planning\"; \"i\"))' && app edit-sent --help && app look --help",
             "why": "denied by tool permissions"
           }
         ]
@@ -138,7 +138,7 @@
     {
       "task": "T4",
       "run": 2,
-      "dir": "~/code/tandem-worktrees/ax-eval-out/baseline-pipes/T4/run-2",
+      "dir": "~/work/ax-eval-out/baseline-pipes/T4/run-2",
       "success": true,
       "reason": "edited to \"Thanks, both. Can we ship & review on Thursday?\", why \"User asked to edit their last message in Launch planning to \"",
       "wallMs": 97491,
@@ -154,11 +154,11 @@
         "helpCalls": 4,
         "wrong": [
           {
-            "line": "m365tandem edit-sent --help",
+            "line": "app edit-sent --help",
             "why": "repeated"
           },
           {
-            "line": "m365tandem conversations --json | jq '.[] | select(.title | test(\"Launch planning\"; \"i\"))' && m365tandem edit-sent --help && m365tandem look --help",
+            "line": "app conversations --json | jq '.[] | select(.title | test(\"Launch planning\"; \"i\"))' && app edit-sent --help && app look --help",
             "why": "denied by tool permissions"
           }
         ]

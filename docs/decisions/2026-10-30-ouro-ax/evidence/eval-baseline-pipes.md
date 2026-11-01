@@ -1,6 +1,6 @@
 # ax-eval: main ffdecc01, printf/echo allowed (supplement)
 
-CLI: `~/code/tandem-worktrees/ax-eval/bin/m365tandem.mjs` · runs per task: 2 · 2026-10-30T23:04:29.586Z · AGENTS.md: docs/agent-guide.md paragraph
+CLI: `~/work/ax-eval/bin/app.mjs` · runs per task: 2 · 2026-10-30T23:04:29.586Z · AGENTS.md: docs/agent-guide.md paragraph
 
 ## Per task (mean over runs)
 
@@ -23,14 +23,14 @@ CLI: `~/code/tandem-worktrees/ax-eval/bin/m365tandem.mjs` · runs per task: 2 ·
 ### T3 run 1
 
 ```
-  [0] m365tandem --help
-  [0] m365tandem search --help
-  [0] m365tandem send --help
-  [0] m365tandem search Launch planning --json
-! [2] m365tandem send 19:00000000aaaa0000aaaa000000000001@thread.v2 - --agent copilot --why User asked: Riley asked me to tell the Launch planning group that the new banner is final. Send it. --intent b4698
-  [0] m365tandem send 19:00000000aaaa0000aaaa000000000001@thread.v2 - --agent copilot --why User asked: Riley asked me to tell the Launch planning group that the new banner is final. Send it. --intent t1-17
+  [0] app --help
+  [0] app search --help
+  [0] app send --help
+  [0] app search Launch planning --json
+! [2] app send c:00000000aaaa0000aaaa000000000001 - --agent copilot --why User asked: Riley asked me to tell the Launch planning group that the new banner is final. Send it. --intent b4698
+  [0] app send c:00000000aaaa0000aaaa000000000001 - --agent copilot --why User asked: Riley asked me to tell the Launch planning group that the new banner is final. Send it. --intent t1-17
 wrong turns:
-  exit 2: m365tandem send 19:00000000aaaa0000aaaa000000000001@thread.v2 - --agent copilot --why User asked: Riley asked me to tell the Launch planning group that the new 
+  exit 2: app send c:00000000aaaa0000aaaa000000000001 - --agent copilot --why User asked: Riley asked me to tell the Launch planning group that the new 
 ```
 
 Answer: Sent to **Launch planning**: “The new banner is final.”
@@ -38,16 +38,16 @@ Answer: Sent to **Launch planning**: “The new banner is final.”
 ### T3 run 2
 
 ```
-  [0] m365tandem --help
-  [0] m365tandem conversations --help
-  [0] m365tandem send --help
-  [0] m365tandem conversations --json
-  [0] m365tandem look --help
-  [0] m365tandem look nxrlt3 --limit 10 --json
-! [2] m365tandem send nxrlt3 - --agent copilot --why User asked me to tell the Launch planning group that the new banner is final and send it. --intent 6f8bd2f2-launch-banner-final --json
-  [0] m365tandem send nxrlt3 - --agent copilot --why User asked me to tell the Launch planning group that the new banner is final and send it. --json
+  [0] app --help
+  [0] app conversations --help
+  [0] app send --help
+  [0] app conversations --json
+  [0] app look --help
+  [0] app look nxrlt3 --limit 10 --json
+! [2] app send nxrlt3 - --agent copilot --why User asked me to tell the Launch planning group that the new banner is final and send it. --intent 6f8bd2f2-launch-banner-final --json
+  [0] app send nxrlt3 - --agent copilot --why User asked me to tell the Launch planning group that the new banner is final and send it. --json
 wrong turns:
-  exit 2: m365tandem send nxrlt3 - --agent copilot --why User asked me to tell the Launch planning group that the new banner is final and send it. --intent 6f8bd2f2-launc
+  exit 2: app send nxrlt3 - --agent copilot --why User asked me to tell the Launch planning group that the new banner is final and send it. --intent 6f8bd2f2-launc
 ```
 
 Answer: Sent to **Launch planning**: “Riley asked me to let everyone know that the new banner is final.”
@@ -55,20 +55,20 @@ Answer: Sent to **Launch planning**: “Riley asked me to let everyone know that
 ### T4 run 1
 
 ```
-  [0] m365tandem --help
-  [0] m365tandem conversations --json
-  [0] m365tandem edit-sent --help
-  [0] m365tandem look --help
-  [0] m365tandem edit-sent --help
-  [0] m365tandem look --help
-  [0] m365tandem look nxrlt3 --json
-  [0] m365tandem look nxrlt3 --limit 6
-  [0] m365tandem edit-sent nxrlt3#1700002700000 - --agent copilot --why Asked to edit my last message in the Launch planning group: Sam says it should say Thursday, not Friday. --json
-  [0] m365tandem look nxrlt3#1700002700000 --json
+  [0] app --help
+  [0] app conversations --json
+  [0] app edit-sent --help
+  [0] app look --help
+  [0] app edit-sent --help
+  [0] app look --help
+  [0] app look nxrlt3 --json
+  [0] app look nxrlt3 --limit 6
+  [0] app edit-sent nxrlt3#1700002700000 - --agent copilot --why Asked to edit my last message in the Launch planning group: Jo says it should say Thursday, not Friday. --json
+  [0] app look nxrlt3#1700002700000 --json
 wrong turns:
-  repeated: m365tandem edit-sent --help
-  repeated: m365tandem look --help
-  denied by tool permissions: m365tandem conversations --json | jq '.[] | select(.title | test("Launch planning"; "i"))' && m365tandem edit-sent --help && m365tandem look --help
+  repeated: app edit-sent --help
+  repeated: app look --help
+  denied by tool permissions: app conversations --json | jq '.[] | select(.title | test("Launch planning"; "i"))' && app edit-sent --help && app look --help
 ```
 
 Answer: Edited your last message in Launch planning to: “Thanks, both. Can we ship & review on Thursday?”
@@ -76,17 +76,17 @@ Answer: Edited your last message in Launch planning to: “Thanks, both. Can we 
 ### T4 run 2
 
 ```
-  [0] m365tandem --help
-  [0] m365tandem conversations --json
-  [0] m365tandem edit-sent --help
-  [0] m365tandem look --help
-  [0] m365tandem look nxrlt3 --json
-  [0] m365tandem edit-sent --help
-  [0] m365tandem edit-sent nxrlt3#1700002700000 - --agent copilot --why User asked to edit their last message in Launch planning to say Thursday, not Friday, per Sam. --json
-  [0] m365tandem look nxrlt3#1700002700000 --json
+  [0] app --help
+  [0] app conversations --json
+  [0] app edit-sent --help
+  [0] app look --help
+  [0] app look nxrlt3 --json
+  [0] app edit-sent --help
+  [0] app edit-sent nxrlt3#1700002700000 - --agent copilot --why User asked to edit their last message in Launch planning to say Thursday, not Friday, per Jo. --json
+  [0] app look nxrlt3#1700002700000 --json
 wrong turns:
-  repeated: m365tandem edit-sent --help
-  denied by tool permissions: m365tandem conversations --json | jq '.[] | select(.title | test("Launch planning"; "i"))' && m365tandem edit-sent --help && m365tandem look --help
+  repeated: app edit-sent --help
+  denied by tool permissions: app conversations --json | jq '.[] | select(.title | test("Launch planning"; "i"))' && app edit-sent --help && app look --help
 ```
 
 Answer: Edited your last message in Launch planning to: “Thanks, both. Can we ship & review on Thursday?”
