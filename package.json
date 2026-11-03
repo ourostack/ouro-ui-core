@@ -1,0 +1,25 @@
+{
+  "name": "@ouro.bot/ui-core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The platform-neutral core of Ouro UI: one token source that every platform builds from.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.2.0",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "tokens": "node scripts/build.mts",
+    "tokens:parity": "node scripts/parity.mts",
+    "tokens:import": "node scripts/import-from-web.mts",
+    "apple:check": "sh scripts/apple-check.sh",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test 'test/**/*.test.mts'"
+  },
+  "devDependencies": {
+    "@terrazzo/parser": "2.10.0",
+    "@types/node": "24.19.2",
+    "typescript": "5.9.3"
+  }
+}

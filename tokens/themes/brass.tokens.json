@@ -1,0 +1,561 @@
+{
+  "$description": "The Brass theme: the tokens it sets over tokens/ouro.tokens.json. DTCG 2025.10. Derived from ourostack/ouro-ui@v1.3.3.",
+  "font-sans": {
+    "$type": "fontFamily",
+    "$value": ["Geist", "ui-sans-serif", "system-ui", "sans-serif"]
+  },
+  "font-mono": {
+    "$type": "fontFamily",
+    "$value": ["Geist Mono", "ui-monospace", "SF Mono", "Menlo", "Consolas", "monospace"],
+    "$extensions": {
+      "bot.ouro": {
+        "css": "\"Geist Mono\", ui-monospace, \"SF Mono\", Menlo, Consolas, monospace"
+      }
+    }
+  },
+  "radius": {
+    "$type": "dimension",
+    "$value": {
+      "value": 0.25,
+      "unit": "rem"
+    }
+  },
+  "background": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.972, 0.014, 85]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.2, 0.022, 50]
+        }
+      }
+    }
+  },
+  "foreground": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.25, 0.035, 50]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.93, 0.03, 85]
+        }
+      }
+    }
+  },
+  "card": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.99, 0.01, 85]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.24, 0.026, 50]
+        }
+      }
+    }
+  },
+  "card-foreground": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.25, 0.035, 50]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.93, 0.03, 85]
+        }
+      }
+    }
+  },
+  "popover": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.99, 0.01, 85]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.24, 0.026, 50]
+        }
+      }
+    }
+  },
+  "popover-foreground": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.25, 0.035, 50]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.93, 0.03, 85]
+        }
+      }
+    }
+  },
+  "primary": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.4, 0.07, 45]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.79, 0.12, 80]
+        }
+      }
+    }
+  },
+  "primary-foreground": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.975, 0.016, 85]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.2, 0.03, 50]
+        }
+      }
+    }
+  },
+  "secondary": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.935, 0.022, 80]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.28, 0.03, 52]
+        }
+      }
+    }
+  },
+  "secondary-foreground": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.27, 0.04, 50]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.93, 0.03, 85]
+        }
+      }
+    }
+  },
+  "muted": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.94, 0.02, 80]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.27, 0.028, 52]
+        }
+      }
+    }
+  },
+  "muted-foreground": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.42, 0.04, 55]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.82, 0.035, 80]
+        }
+      }
+    }
+  },
+  "accent": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.91, 0.05, 85]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.32, 0.05, 70]
+        }
+      }
+    }
+  },
+  "accent-foreground": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.28, 0.045, 50]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.93, 0.03, 85]
+        }
+      }
+    }
+  },
+  "destructive": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.5, 0.17, 28]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.7, 0.15, 30]
+        }
+      }
+    }
+  },
+  "border": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.86, 0.03, 75]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.34, 0.035, 55]
+        }
+      }
+    }
+  },
+  "input": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.82, 0.035, 75]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.38, 0.04, 58]
+        }
+      }
+    }
+  },
+  "ring": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.6, 0.12, 75]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.79, 0.12, 80]
+        }
+      }
+    }
+  },
+  "chart-1": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.45, 0.07, 45]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.79, 0.12, 80]
+        }
+      }
+    }
+  },
+  "chart-2": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.55, 0.08, 145]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.72, 0.09, 145]
+        }
+      }
+    }
+  },
+  "chart-3": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.72, 0.13, 80]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.82, 0.13, 82]
+        }
+      }
+    }
+  },
+  "chart-4": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.55, 0.14, 30]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.7, 0.14, 35]
+        }
+      }
+    }
+  },
+  "chart-5": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.38, 0.04, 50]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.6, 0.04, 60]
+        }
+      }
+    }
+  },
+  "sidebar": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.955, 0.018, 82]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.22, 0.024, 50]
+        }
+      }
+    }
+  },
+  "sidebar-foreground": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.25, 0.035, 50]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.93, 0.03, 85]
+        }
+      }
+    }
+  },
+  "sidebar-primary": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.4, 0.07, 45]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.79, 0.12, 80]
+        }
+      }
+    }
+  },
+  "sidebar-primary-foreground": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.975, 0.016, 85]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.2, 0.03, 50]
+        }
+      }
+    }
+  },
+  "sidebar-accent": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.91, 0.05, 85]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.32, 0.05, 70]
+        }
+      }
+    }
+  },
+  "sidebar-accent-foreground": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.28, 0.045, 50]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.93, 0.03, 85]
+        }
+      }
+    }
+  },
+  "sidebar-border": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.86, 0.03, 75]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.34, 0.035, 55]
+        }
+      }
+    }
+  },
+  "sidebar-ring": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.6, 0.12, 75]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "oklch",
+          "components": [0.79, 0.12, 80]
+        }
+      }
+    }
+  },
+  "font-heading": {
+    "$type": "fontFamily",
+    "$value": ["Cormorant Garamond", "Georgia", "Times New Roman", "serif"],
+    "$extensions": {
+      "bot.ouro": {
+        "css": "\"Cormorant Garamond\", Georgia, \"Times New Roman\", serif"
+      }
+    }
+  },
+  "shadow-xs": {
+    "$type": "string",
+    "$value": "0 1px 1px oklch(0.25 0.035 50 / 0.08)",
+    "$extensions": {
+      "mode": {
+        "dark": "0 1px 1px oklch(0 0 0 / 0.3)"
+      }
+    }
+  },
+  "shadow-sm": {
+    "$type": "string",
+    "$value": "0 1px 0 oklch(0.25 0.035 50 / 0.06), 0 1px 3px oklch(0.25 0.035 50 / 0.1)",
+    "$extensions": {
+      "mode": {
+        "dark": "0 1px 0 oklch(0.79 0.12 80 / 0.06), 0 1px 3px oklch(0 0 0 / 0.35)"
+      }
+    }
+  },
+  "shadow-md": {
+    "$type": "string",
+    "$value": "0 2px 0 oklch(0.25 0.035 50 / 0.05), 0 6px 14px -4px oklch(0.25 0.035 50 / 0.16)",
+    "$extensions": {
+      "mode": {
+        "dark": "0 1px 0 oklch(0.79 0.12 80 / 0.08), 0 6px 14px -4px oklch(0 0 0 / 0.45)"
+      }
+    }
+  },
+  "shadow-lg": {
+    "$type": "string",
+    "$value": "0 2px 0 oklch(0.25 0.035 50 / 0.05), 0 16px 34px -10px oklch(0.25 0.035 50 / 0.26)",
+    "$extensions": {
+      "mode": {
+        "dark": "0 1px 0 oklch(0.79 0.12 80 / 0.1), 0 16px 34px -10px oklch(0 0 0 / 0.55)"
+      }
+    }
+  },
+  "shadow-xl": {
+    "$type": "string",
+    "$value": "0 3px 0 oklch(0.25 0.035 50 / 0.06), 0 28px 60px -16px oklch(0.25 0.035 50 / 0.36)",
+    "$extensions": {
+      "mode": {
+        "dark": "0 1px 0 oklch(0.79 0.12 80 / 0.12), 0 28px 60px -16px oklch(0 0 0 / 0.65)"
+      }
+    }
+  },
+  "ouro": {
+    "backdrop": {
+      "color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.2, 0.03, 50]
+        },
+        "$extensions": {
+          "mode": {
+            "dark": {
+              "colorSpace": "oklch",
+              "components": [0.1, 0.02, 50]
+            }
+          }
+        }
+      }
+    }
+  }
+}
