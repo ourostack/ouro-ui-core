@@ -1,0 +1,125 @@
+# stdout, exit 3 (colour forced with CLICOLOR_FORCE=1, escape codes removed here)
+
+<a five-line block-letter wordmark of the tool name, drawn in a gradient on a colour terminal>
+local-first work suite mirror for SQLite  |  doctor
+
+DOCTOR
+======
+
+Ready checks
+------------
+  ● chat_installed           chat app data found at <scratch>/chat-root
+  ● full_disk_access          the chat app container is readable
+  ✖ chat_origin              no chat app IndexedDB origin found under <scratch>/chat-root
+                              fix: Open chat app and sign in so it creates its cache, then run again.
+  ● database_writable         <scratch>/db/archive.db does not exist yet; <scratch> is writable
+  ● schema_version            no archive yet; the first sync creates it
+  ● fts                       no archive yet; the first sync creates it
+  ▲ last_sync_age             never synced
+                              fix: Run `archiver sync`.
+  ● calendar_cache            no archive yet; the first sync creates it
+  ● mail_store             the mail app source is off (--mail-root none, or --chat-root without --mail-root); name --mail-root DIR to turn it on
+  ● mail_readable             mail is not read: the mail app source is off (--mail-root none, or --chat-root without --mail-root)
+  ● mail_archive_mode         no archive yet; the first sync creates it with mode 0600
+  ● transcripts_browser       browser at <browser path> (transcripts fetch runs it headless; doctor does not start it)
+  ● transcripts_profile_mode  no browser profile yet; transcripts fetch creates <scratch>/db/browser, readable by its owner only
+
+# stderr
+
+error: failing checks: chat_origin
+fix: Resolve the failing checks listed by `archiver doctor`, then run again.
+
+# --json stdout (one document, exit 3)
+
+{
+  "ok": false,
+  "checks": [
+    {
+      "name": "chat_installed",
+      "ok": true,
+      "detail": "chat app data found at <scratch>/chat-root",
+      "fix": ""
+    },
+    {
+      "name": "full_disk_access",
+      "ok": true,
+      "detail": "the chat app container is readable",
+      "fix": ""
+    },
+    {
+      "name": "chat_origin",
+      "ok": false,
+      "detail": "no chat app IndexedDB origin found under <scratch>/chat-root",
+      "fix": "Open chat app and sign in so it creates its cache, then run again."
+    },
+    {
+      "name": "database_writable",
+      "ok": true,
+      "detail": "<scratch>/db/archive.db does not exist yet; <scratch> is writable",
+      "fix": ""
+    },
+    {
+      "name": "schema_version",
+      "ok": true,
+      "detail": "no archive yet; the first sync creates it",
+      "fix": ""
+    },
+    {
+      "name": "fts",
+      "ok": true,
+      "detail": "no archive yet; the first sync creates it",
+      "fix": ""
+    },
+    {
+      "name": "last_sync_age",
+      "ok": true,
+      "warn": true,
+      "detail": "never synced",
+      "fix": "Run `archiver sync`."
+    },
+    {
+      "name": "calendar_cache",
+      "ok": true,
+      "detail": "no archive yet; the first sync creates it",
+      "fix": ""
+    },
+    {
+      "name": "mail_store",
+      "ok": true,
+      "detail": "the mail app source is off (--mail-root none, or --chat-root without --mail-root); name --mail-root DIR to turn it on",
+      "fix": ""
+    },
+    {
+      "name": "mail_readable",
+      "ok": true,
+      "detail": "mail is not read: the mail app source is off (--mail-root none, or --chat-root without --mail-root)",
+      "fix": ""
+    },
+    {
+      "name": "mail_archive_mode",
+      "ok": true,
+      "detail": "no archive yet; the first sync creates it with mode 0600",
+      "fix": ""
+    },
+    {
+      "name": "transcripts_browser",
+      "ok": true,
+      "detail": "browser at <browser path> (transcripts fetch runs it headless; doctor does not start it)",
+      "fix": ""
+    },
+    {
+      "name": "transcripts_profile_mode",
+      "ok": true,
+      "detail": "no browser profile yet; transcripts fetch creates <scratch>/db/browser, readable by its owner only",
+      "fix": ""
+    }
+  ]
+}
+
+# --json stderr
+
+{"error":{"code":"doctor_failed","message":"failing checks: chat_origin","fix":"Resolve the failing checks listed by `archiver doctor`, then run again."}}
+
+# escape codes in the colour capture
+
+ESC[0m ESC[1m ESC[2m ESC[31m ESC[32m ESC[33m ESC[36m ESC[38;5;133m ESC[38;5;134m ESC[38;5;167m ESC[38;5;168m ESC[38;5;169m ESC[38;5;203m ESC[38;5;209m ESC[38;5;38m ESC[38;5;63m ESC[38;5;68m ESC[38;5;69m ESC[38;5;74m ESC[38;5;98m ESC[38;5;99m
