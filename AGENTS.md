@@ -9,6 +9,12 @@ Core is the platform-neutral part of Ouro UI: what is true on every platform, fo
 - `pnpm tokens:parity` must pass: `dist/web/` equals web's files at `parity.json`'s `webTag`, byte for byte. A token change lands in web first, then here with a `webTag` bump, until web builds from core.
 - Before you push, run `pnpm typecheck`, `pnpm tokens`, `pnpm tokens:parity`, `pnpm test`, and on a Mac, `pnpm apple:check`.
 
+## Ouro AX for Apple
+
+- `standard/ax/surfaces/apple.claims.json` is the claim set; `apple.md` beside it is its page, and a test fails when their claim lists differ. Change both in one PR and bump the set's `version`.
+- A claim starts as `should`. It becomes `must` only with a SiriEvaluations run that shows the failure, or a stated hazard with a check (web's admission rule). `checkClaimSet` in `src/ax-claims.mts` enforces the shape.
+- Platforms vendor `dist/ax/apple.claims.json` from a release, by hash; never edit their copies.
+
 ## Claims
 
 A factual sentence is a claim on every surface: Markdown, code comments, a pull request's title and body. Give each claim its primary source (a file, a test, a command's output or a link) and, where one exists, the check that proves it, so the next agent can trust it without rebuilding the proof. Don't reword a claim to get past review: source it, correct it, or remove it. This is web's Claims rule; its `pnpm claims:lint` tooling moves here with the standard.

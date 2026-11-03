@@ -2,9 +2,11 @@
 //   dist/web/**.css               Ouro HX for web (byte-identical to web's files; see tokens:parity)
 //   dist/apple/OuroTokens.swift   Ouro HX for Apple
 //   dist/swatches.html            every theme's resolved colours, to look at
+//   dist/ax/apple.claims.json     Ouro AX for Apple's claim set, byte for byte from standard/ax/surfaces/
 //   dist/dist-manifest.json       { coreTag, files: { "dist/<path>": sha256 } }, for core-provenance.json
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { loadAppleClaimSet } from "../src/ax-claims.mts";
 import { renderApple } from "../src/apple.mts";
 import { renderSwatches } from "../src/swatches.mts";
 import { renderWeb } from "../src/web.mts";
@@ -16,6 +18,11 @@ const tag = `v${version}`;
 const files = new Map<string, string>(await renderWeb());
 files.set("apple/OuroTokens.swift", await renderApple(tag));
 files.set("swatches.html", await renderSwatches(tag));
+
+// The claim set is published as written, after checking it, so a platform pins the bytes it was reviewed as.
+const appleClaims = await readFile(new URL("standard/ax/surfaces/apple.claims.json", root), "utf8");
+loadAppleClaimSet(JSON.parse(appleClaims));
+files.set("ax/apple.claims.json", appleClaims);
 
 const manifest = {
   coreTag: tag,
