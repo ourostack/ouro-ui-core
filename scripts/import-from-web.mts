@@ -13,7 +13,7 @@ import { parseArgs } from "node:util";
 import { readDeclarations } from "../src/css-reader.mts";
 import { isAlias, aliasPath, parseValue } from "../src/css-value.mts";
 import { cssNameToPath } from "../src/names.mts";
-import { nest, THEMES, type RawToken, type ThemeName, type TokenMap } from "../src/tokens.mts";
+import { nest, pinDarkAliases, THEMES, type RawToken, type ThemeName, type TokenMap } from "../src/tokens.mts";
 import { render } from "../src/web.mts";
 
 const { values: args } = parseArgs({ options: { from: { type: "string" } } });
@@ -152,29 +152,8 @@ function typeAliases(map: TokenMap, fallback: TokenMap = new Map()) {
     }
   }
 }
-/**
- * An alias whose chain changes in dark mode states its dark alias outright. Terrazzo 2.10 resolves
- * an alias's inherited dark mode through the next token's default value, not that token's dark
- * alias: --background: var(--sj-paper) would resolve dark to --sj-bone instead of --sj-charcoal.
- */
-function pinDarkAliases(map: TokenMap, fallback: TokenMap = new Map()) {
-  const find = (id: string) => map.get(id) ?? fallback.get(id);
-  const hasDark = (id: string, seen = new Set<string>()): boolean => {
-    const t = find(id);
-    if (!t || seen.has(id)) return false;
-    seen.add(id);
-    if (t.$extensions?.mode?.dark !== undefined) return true;
-    return isAlias(t.$value) && hasDark(aliasPath(t.$value).join("."), seen);
-  };
-  for (const token of map.values()) {
-    if (!isAlias(token.$value) || token.$extensions?.mode?.dark !== undefined) continue;
-    if (!hasDark(aliasPath(token.$value).join("."))) continue;
-    token.$extensions = { ...token.$extensions, mode: { dark: token.$value } };
-  }
-}
-
 typeAliases(baseTokens);
-pinDarkAliases(baseTokens);
+for (const [id, token] of pinDarkAliases(baseTokens)) baseTokens.set(id, token);
 
 const themeTokens = new Map<ThemeName, TokenMap>();
 for (const theme of THEMES) {
@@ -187,7 +166,7 @@ for (const theme of THEMES) {
     if (!inherited || strip(inherited) !== strip(token)) set.set(id, token);
   }
   typeAliases(set, baseTokens);
-  pinDarkAliases(set, baseTokens);
+  for (const [id, token] of pinDarkAliases(set, baseTokens)) set.set(id, token);
   themeTokens.set(theme, set);
 }
 

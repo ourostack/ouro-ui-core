@@ -2,7 +2,7 @@
 // validate the result and resolve aliases and modes.
 import { readFile } from "node:fs/promises";
 import { defineConfig, parse } from "@terrazzo/parser";
-import { formatValue, type DtcgType } from "./css-value.mts";
+import { aliasPath, formatValue, isAlias, type DtcgType } from "./css-value.mts";
 
 export const THEMES = ["pearl", "abyss", "brass", "chart", "cookbook", "coral"] as const;
 export type ThemeName = (typeof THEMES)[number];
@@ -81,10 +81,34 @@ export interface Resolved {
   type: string;
 }
 
+/**
+ * An alias whose chain changes in dark mode must state its dark alias outright. Terrazzo 2.10
+ * resolves an alias's inherited dark mode through the next token's default value, not that
+ * token's dark alias: --background: var(--sj-paper) would resolve dark to --sj-bone instead of
+ * --sj-charcoal. Returns a copy; the importer writes the pins into the JSON, and resolve() applies
+ * them again so a hand-edited alias can't lose its dark value.
+ */
+export function pinDarkAliases(map: TokenMap, fallback: TokenMap = new Map()): TokenMap {
+  const out: TokenMap = new Map();
+  const find = (id: string) => map.get(id) ?? fallback.get(id);
+  const hasDark = (id: string, seen = new Set<string>()): boolean => {
+    const t = find(id);
+    if (!t || seen.has(id)) return false;
+    seen.add(id);
+    if (t.$extensions?.mode?.dark !== undefined) return true;
+    return isAlias(t.$value) && hasDark(aliasPath(t.$value).join("."), seen);
+  };
+  for (const [id, token] of map) {
+    const pin = isAlias(token.$value) && token.$extensions?.mode?.dark === undefined && hasDark(aliasPath(token.$value).join("."));
+    out.set(id, pin ? { ...token, $extensions: { ...token.$extensions, mode: { dark: token.$value } } } : token);
+  }
+  return out;
+}
+
 /** Validates a layered set with Terrazzo and returns each token's resolved light and dark values. */
 export async function resolve(tokens: TokenMap): Promise<Map<string, Resolved>> {
   const config = defineConfig({}, { cwd: root });
-  const src = JSON.stringify(nest(tokens));
+  const src = JSON.stringify(nest(pinDarkAliases(tokens)));
   const { tokens: parsed } = await parse([{ filename: new URL("file:///ouro.tokens.json"), src }], { config });
   const out = new Map<string, Resolved>();
   for (const [id, t] of Object.entries(parsed)) {

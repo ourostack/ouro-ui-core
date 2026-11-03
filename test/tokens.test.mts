@@ -80,3 +80,17 @@ test("every web token appears in a template, and every placeholder names a token
     }
   }
 });
+
+test("parity.json compares every web template, and only those", async () => {
+  const parity = JSON.parse(await readFile(new URL("../parity.json", import.meta.url), "utf8")) as { files: Record<string, string> };
+  const templates = (await webTemplates()).map(({ path }) => `dist/web/${path}`).sort();
+  assert.deepEqual(Object.keys(parity.files).sort(), templates);
+});
+
+test("resolve() keeps a dark alias chain even when the JSON doesn't pin it", async () => {
+  const tokens = await layered("cookbook");
+  const background = tokens.get("background")!;
+  tokens.set("background", { $type: background.$type, $value: background.$value });
+  const resolved = await resolve(tokens);
+  assert.equal(hexOf(resolved.get("background")!.dark), "#1f1d1a");
+});

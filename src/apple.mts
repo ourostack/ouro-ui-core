@@ -1,7 +1,8 @@
 // Ouro HX for Apple: renders dist/apple/OuroTokens.swift, a SwiftUI file with no dependencies.
 // Colours are resolved here (aliases, modes and color-mix() included), because SwiftUI has no
 // var(). The CSS has light and dark values and no high-contrast ones, so neither does this file.
-import { dtcgToRgba, rgbaToHex } from "./color.mts";
+// An oklch() colour outside sRGB is written in Display P3, as browsers draw it on wide-gamut screens.
+import { dtcgToRgba, oklchToDisplayP3, rgbaToHex } from "./color.mts";
 import type { DtcgColor } from "./css-value.mts";
 import { layered, resolve, THEMES, type Resolved } from "./tokens.mts";
 
@@ -31,6 +32,11 @@ function swiftColor(value: unknown, where: string): string {
   const c = value as DtcgColor;
   if (!c || typeof c !== "object" || !("colorSpace" in c)) throw new Error(`${where} is not a colour`);
   const { r, g, b, a } = dtcgToRgba(c);
+  const p3 = c.colorSpace === "oklch" ? oklchToDisplayP3(...(c.components.map((x) => (x === "none" ? 0 : x)) as [number, number, number])) : null;
+  if (p3) {
+    // Outside sRGB: browsers draw it in Display P3 on wide-gamut screens, so SwiftUI does too.
+    return `Color(.displayP3, red: ${fixed(p3[0])}, green: ${fixed(p3[1])}, blue: ${fixed(p3[2])}, opacity: ${fixed(a)}) /* oklch(${c.components.join(" ")}), outside sRGB; ${rgbaToHex({ r, g, b, a })} clipped */`;
+  }
   return `Color(.sRGB, red: ${fixed(r)}, green: ${fixed(g)}, blue: ${fixed(b)}, opacity: ${fixed(a)}) /* ${rgbaToHex({ r, g, b, a })}${a < 1 ? ` at ${Math.round(a * 100)}%` : ""} */`;
 }
 
@@ -78,6 +84,12 @@ ${THEMES.map((t) => `    case ${t}`).join("\n")}
 /// One colour mode's colours. The names are Ouro HX's CSS variables in camel case: \`--primary-foreground\` is \`primaryForeground\`.
 public struct OuroColors: Sendable {
 ${APPLE_COLORS.map((c) => `    public let ${swiftName(c)}: Color`).join("\n")}
+
+    public init(
+${APPLE_COLORS.map((c) => `        ${swiftName(c)}: Color`).join(",\n")}
+    ) {
+${APPLE_COLORS.map((c) => `        self.${swiftName(c)} = ${swiftName(c)}`).join("\n")}
+    }
 }
 
 /// A theme: its colours in light and dark mode, and its corner radius.
@@ -87,6 +99,13 @@ public struct OuroTheme: Sendable {
     public let dark: OuroColors
     /// The base corner radius in points (CSS \`--radius\` at ${POINTS_PER_REM} points per rem).
     public let radius: Double
+
+    public init(name: OuroThemeName, light: OuroColors, dark: OuroColors, radius: Double) {
+        self.name = name
+        self.light = light
+        self.dark = dark
+        self.radius = radius
+    }
 
     /// The colours for a colour scheme, such as \`@Environment(\\.colorScheme)\`.
     public func colors(_ scheme: ColorScheme) -> OuroColors {
@@ -100,6 +119,13 @@ public struct OuroCubicBezier: Sendable, Equatable {
     public let y1: Double
     public let x2: Double
     public let y2: Double
+
+    public init(x1: Double, y1: Double, x2: Double, y2: Double) {
+        self.x1 = x1
+        self.y1 = y1
+        self.x2 = x2
+        self.y2 = y2
+    }
 
     public func animation(duration: Double) -> Animation {
         .timingCurve(x1, y1, x2, y2, duration: duration)

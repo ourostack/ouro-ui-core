@@ -6,8 +6,9 @@ import SwiftUI
 var failures = 0
 
 func hex(_ color: Color) -> String {
-    let c = NSColor(color).usingColorSpace(.sRGB)!
-    return String(format: "#%02x%02x%02x", Int((c.redComponent * 255).rounded()), Int((c.greenComponent * 255).rounded()), Int((c.blueComponent * 255).rounded()))
+    let c = NSColor(color).usingColorSpace(.extendedSRGB)!
+    let byte = { (x: CGFloat) in Int((min(1, max(0, x)) * 255).rounded()) }
+    return String(format: "#%02x%02x%02x", byte(c.redComponent), byte(c.greenComponent), byte(c.blueComponent))
 }
 
 @MainActor func expect(_ actual: String, _ expected: String, _ what: String) {
@@ -20,6 +21,7 @@ expect(hex(pearl.dark.primary), "#2997ff", "pearl dark primary")
 expect(hex(pearl.colors(.dark).background), "#000000", "pearl dark background")
 expect(hex(OuroTokens.theme(.cookbook).light.background), "#fbfaf4", "cookbook light background (var(--sj-paper), then var(--sj-bone))")
 expect(hex(OuroTokens.theme(.cookbook).dark.background), "#1f1d1a", "cookbook dark background (var(--sj-paper), then var(--sj-charcoal))")
+expect(hex(OuroTokens.theme(.abyss).light.primary), "#007283", "abyss light primary, oklch(0.5 0.1 210) in Display P3, clipped to sRGB")
 expect(String(OuroTokens.theme(.pearl).radius), "12.0", "pearl radius in points (0.75rem)")
 expect(String(OuroTokens.Duration.fast), "0.15", "duration fast in seconds")
 expect(String(OuroTokens.Press.scale), "0.97", "press scale")

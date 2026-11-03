@@ -1,6 +1,6 @@
 # Ouro UI core
 
-**One set of tokens, every platform: the shared heart of Ouro HX (for people) and Ouro AX (for agents).**
+**One set of tokens, every platform: the shared heart of Ouro HX (for people) and Ouro AX (for agents).** Change a colour once and watch it turn up everywhere, down to the last byte.
 
 Core holds what is true on every platform. Today that is the tokens: Ouro HX's colours, radii and motion, written once as [DTCG 2025.10](https://www.designtokens.org/tr/2025.10/format/) JSON and generated into each platform's own language. Each platform repository pins a core release by tag and builds from it. The HX design language, AX's claims standard and the [ui.ouro.bot](https://ui.ouro.bot/) site move here in later steps.
 

@@ -44,15 +44,39 @@ function hexToRgba(hex: string): Rgba {
 const toLinear = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
 const fromLinear = (c: number) => (c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055);
 
-export function oklabToSrgb(L: number, a: number, b: number): [number, number, number] {
+/** OKLab to linear sRGB, unclamped: a component outside 0–1 means the colour is outside sRGB. */
+export function oklabToLinearSrgb(L: number, a: number, b: number): [number, number, number] {
   const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3;
   const m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3;
   const s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
   return [
-    clamp01(fromLinear(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s)),
-    clamp01(fromLinear(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s)),
-    clamp01(fromLinear(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s)),
+    4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+    -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+    -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s,
   ];
+}
+
+export function oklabToSrgb(L: number, a: number, b: number): [number, number, number] {
+  return oklabToLinearSrgb(L, a, b).map((c) => clamp01(fromLinear(c))) as [number, number, number];
+}
+
+const signedFromLinear = (c: number) => Math.sign(c) * fromLinear(Math.abs(c));
+
+/**
+ * A colour in Display P3 (gamma-encoded), for colours outside sRGB that browsers draw in P3 on
+ * wide-gamut screens. Returns null when the colour fits in sRGB.
+ */
+export function oklchToDisplayP3(L: number, C: number, H: number): [number, number, number] | null {
+  const h = (H * Math.PI) / 180;
+  const [r, g, b] = oklabToLinearSrgb(L, C * Math.cos(h), C * Math.sin(h));
+  const EPS = 0.0005;
+  if ([r, g, b].every((c) => c >= -EPS && c <= 1 + EPS)) return null;
+  const p3 = [
+    0.8224621209 * r + 0.1775378791 * g,
+    0.0331941989 * r + 0.9668058011 * g,
+    0.0170826307 * r + 0.0723974407 * g + 0.9105199286 * b,
+  ];
+  return p3.map((c) => clamp01(signedFromLinear(c))) as [number, number, number];
 }
 
 function srgbToOklab(r: number, g: number, b: number): [number, number, number] {

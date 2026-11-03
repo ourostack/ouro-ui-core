@@ -14,7 +14,7 @@ import { cssText, layered, THEMES, type ThemeName, type TokenMap } from "./token
 export const PLACEHOLDER = /\{\{([\w.-]+)(@dark|\|description)?\}\}/g;
 
 export function render(template: string, tokens: TokenMap, file = "template"): string {
-  return template.replace(PLACEHOLDER, (_, id: string, suffix: string | undefined) => {
+  const out = template.replace(PLACEHOLDER, (_, id: string, suffix: string | undefined) => {
     if (suffix === "|description") {
       const description = tokens.get(id)?.$description;
       if (!description) throw new Error(`${file}: ${id} has no $description`);
@@ -23,6 +23,9 @@ export function render(template: string, tokens: TokenMap, file = "template"): s
     if (suffix === "@dark") return cssText(tokens, id, "dark");
     return cssText(tokens, id, "light");
   });
+  const leftover = /\{\{[^}]*\}\}/.exec(out);
+  if (leftover) throw new Error(`${file}: malformed placeholder ${leftover[0]}`);
+  return out;
 }
 
 const templatesRoot = new URL("../templates/web/", import.meta.url);
