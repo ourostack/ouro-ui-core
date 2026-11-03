@@ -19,6 +19,7 @@ scripts/build.mts                 pnpm tokens: writes dist/
 scripts/parity.mts                pnpm tokens:parity: dist/web/ against web's files, byte for byte
 standard/ax/surfaces/apple.md     Ouro AX for Apple: the App Intents surfaces and their claims
 standard/ax/surfaces/apple.claims.json  the same claims as data, published as dist/ax/apple.claims.json
+docs/ci-resources.md              the free CI and build resources Ouro can use, and how to switch each on
 docs/decisions/                   decision records, with their history from ouro-ui; new ones go here, each with a "Prior art" section
 ```
 
