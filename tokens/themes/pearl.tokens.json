@@ -1,0 +1,91 @@
+{
+  "$description": "The Pearl theme: the tokens it sets over tokens/ouro.tokens.json. DTCG 2025.10. Derived from ourostack/ouro-ui@v1.3.3.",
+  "font-sans": {
+    "$type": "fontFamily",
+    "$value": ["Geist", "ui-sans-serif", "system-ui", "sans-serif"]
+  },
+  "font-mono": {
+    "$type": "fontFamily",
+    "$value": ["Geist Mono", "ui-monospace", "SF Mono", "Menlo", "Consolas", "monospace"],
+    "$extensions": {
+      "bot.ouro": {
+        "css": "\"Geist Mono\", ui-monospace, \"SF Mono\", Menlo, Consolas, monospace"
+      }
+    }
+  },
+  "font-heading": {
+    "$type": "fontFamily",
+    "$value": ["-apple-system", "BlinkMacSystemFont", "SF Pro Display", "Geist", "ui-sans-serif", "system-ui", "sans-serif"],
+    "$extensions": {
+      "bot.ouro": {
+        "css": "-apple-system, BlinkMacSystemFont, \"SF Pro Display\", \"Geist\", ui-sans-serif, system-ui, sans-serif"
+      }
+    }
+  },
+  "shadow-xs": {
+    "$type": "string",
+    "$value": "0 1px 1px rgb(0 0 0 / 0.04)",
+    "$extensions": {
+      "mode": {
+        "dark": "0 1px 1px rgb(0 0 0 / 0.4)"
+      }
+    }
+  },
+  "shadow-sm": {
+    "$type": "string",
+    "$value": "0 1px 2px rgb(0 0 0 / 0.05), 0 2px 6px rgb(0 0 0 / 0.04)",
+    "$extensions": {
+      "mode": {
+        "dark": "0 1px 2px rgb(0 0 0 / 0.4), 0 2px 6px rgb(0 0 0 / 0.3)"
+      }
+    }
+  },
+  "shadow-md": {
+    "$type": "string",
+    "$value": "0 2px 6px rgb(0 0 0 / 0.05), 0 8px 24px rgb(0 0 0 / 0.07)",
+    "$extensions": {
+      "mode": {
+        "dark": "0 2px 6px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.4)"
+      }
+    }
+  },
+  "shadow-lg": {
+    "$type": "string",
+    "$value": "0 4px 12px rgb(0 0 0 / 0.06), 0 18px 44px rgb(0 0 0 / 0.11)",
+    "$extensions": {
+      "mode": {
+        "dark": "0 4px 12px rgb(0 0 0 / 0.45), 0 18px 44px rgb(0 0 0 / 0.55)"
+      }
+    }
+  },
+  "shadow-xl": {
+    "$type": "string",
+    "$value": "0 8px 24px rgb(0 0 0 / 0.08), 0 32px 80px rgb(0 0 0 / 0.18)",
+    "$extensions": {
+      "mode": {
+        "dark": "0 8px 24px rgb(0 0 0 / 0.5), 0 32px 80px rgb(0 0 0 / 0.65)"
+      }
+    }
+  },
+  "ouro": {
+    "backdrop": {
+      "color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.1137, 0.1137, 0.1216],
+          "hex": "#1d1d1f"
+        },
+        "$extensions": {
+          "mode": {
+            "dark": {
+              "colorSpace": "srgb",
+              "components": [0, 0, 0],
+              "hex": "#000000"
+            }
+          }
+        }
+      }
+    }
+  }
+}

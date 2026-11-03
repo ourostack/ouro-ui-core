@@ -30,83 +30,83 @@
  * Load it before the app's theme so a theme's values win.
  */
 @theme inline {
-  --color-input: var(--input);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
-  --color-warning: var(--warning);
-  --color-warning-foreground: var(--warning-foreground);
+  --color-input: {{color-input}};
+  --radius-sm: {{radius-sm}};
+  --radius-md: {{radius-md}};
+  --radius-lg: {{radius-lg}};
+  --radius-xl: {{radius-xl}};
+  --radius-2xl: {{radius-2xl}};
+  --radius-3xl: {{radius-3xl}};
+  --radius-4xl: {{radius-4xl}};
+  --color-destructive-foreground: {{color-destructive-foreground}};
+  --color-success: {{color-success}};
+  --color-success-foreground: {{color-success-foreground}};
+  --color-warning: {{color-warning}};
+  --color-warning-foreground: {{color-warning-foreground}};
 }
 
 :root {
-  --input: oklch(0.922 0 0);
-  --radius: 0.625rem;
-  --destructive-foreground: #ffffff;
-  --success: #157d3c;
-  --success-foreground: #ffffff;
-  --warning: #b05109;
-  --warning-foreground: #ffffff;
+  --input: {{shadcn.input}};
+  --radius: {{shadcn.radius}};
+  --destructive-foreground: {{destructive-foreground}};
+  --success: {{success}};
+  --success-foreground: {{success-foreground}};
+  --warning: {{warning}};
+  --warning-foreground: {{warning-foreground}};
   /* Avatar's initials hues (red, orange, gold, green, teal, blue, purple, magenta), tinted toward the background and foreground. */
-  --avatar-1: #c4314b;
-  --avatar-2: #ca5010;
-  --avatar-3: #986f0b;
-  --avatar-4: #498205;
-  --avatar-5: #038387;
-  --avatar-6: #0f6cbd;
-  --avatar-7: #8764b8;
-  --avatar-8: #c239b3;
-  --ouro-spring-duration: 750ms;
-  --ouro-ease-spring: linear(0, 0.0663, 0.2105, 0.3763, 0.5332, 0.6669, 0.7733, 0.8533, 0.9107, 0.9499, 0.9754, 0.9911, 1, 1.0044, 1.0061, 1.0062, 1.0055, 1.0045, 1.0035, 1.0026, 1.0018, 1.0012, 1.0008, 1, 1);
-  --ouro-ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* enter and exit */
-  --ouro-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1); /* movement on screen */
-  --ouro-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1); /* sheets */
-  --ouro-duration-press: 160ms; /* press feedback */
-  --ouro-duration-fast: 150ms; /* tooltips, colour, small-popup exits */
-  --ouro-duration-base: 200ms; /* popovers, menus, selects, accordions */
-  --ouro-duration-draw: 240ms; /* a stroke drawn along its path: the checkbox tick, a checklist strike */
-  --ouro-duration-slow: 300ms; /* dialogs, backdrops */
-  --ouro-duration-sheet: 500ms; /* sheets only */
-  --ouro-press-scale: 0.97;
+  --avatar-1: {{avatar-1}};
+  --avatar-2: {{avatar-2}};
+  --avatar-3: {{avatar-3}};
+  --avatar-4: {{avatar-4}};
+  --avatar-5: {{avatar-5}};
+  --avatar-6: {{avatar-6}};
+  --avatar-7: {{avatar-7}};
+  --avatar-8: {{avatar-8}};
+  --ouro-spring-duration: {{ouro.spring.duration}};
+  --ouro-ease-spring: {{ouro.ease.spring}};
+  --ouro-ease-out: {{ouro.ease.out}}; /* {{ouro.ease.out|description}} */
+  --ouro-ease-in-out: {{ouro.ease.in-out}}; /* {{ouro.ease.in-out|description}} */
+  --ouro-ease-drawer: {{ouro.ease.drawer}}; /* {{ouro.ease.drawer|description}} */
+  --ouro-duration-press: {{ouro.duration.press}}; /* {{ouro.duration.press|description}} */
+  --ouro-duration-fast: {{ouro.duration.fast}}; /* {{ouro.duration.fast|description}} */
+  --ouro-duration-base: {{ouro.duration.base}}; /* {{ouro.duration.base|description}} */
+  --ouro-duration-draw: {{ouro.duration.draw}}; /* {{ouro.duration.draw|description}} */
+  --ouro-duration-slow: {{ouro.duration.slow}}; /* {{ouro.duration.slow|description}} */
+  --ouro-duration-sheet: {{ouro.duration.sheet}}; /* {{ouro.duration.sheet|description}} */
+  --ouro-press-scale: {{ouro.press.scale}};
   /* The dimming layer behind sheets and dialogs, at full opacity when open. */
-  --ouro-backdrop-color: #18181b;
-  --ouro-backdrop-max: 0.4;
+  --ouro-backdrop-color: {{ouro.backdrop.color}};
+  --ouro-backdrop-max: {{ouro.backdrop.max}};
   /* The shadow under a sheet, by the side it comes from: a hairline on its open edge and a soft shadow. */
-  --ouro-shadow-sheet-bottom: 0 -1px 0 color-mix(in oklab, var(--border) 60%, transparent), 0 -8px 32px rgb(0 0 0 / 0.12);
-  --ouro-shadow-sheet-top: 0 1px 0 color-mix(in oklab, var(--border) 60%, transparent), 0 8px 32px rgb(0 0 0 / 0.12);
-  --ouro-shadow-sheet-left: 8px 0 32px rgb(0 0 0 / 0.12);
-  --ouro-shadow-sheet-right: -8px 0 32px rgb(0 0 0 / 0.12);
+  --ouro-shadow-sheet-bottom: {{ouro.shadow.sheet-bottom}};
+  --ouro-shadow-sheet-top: {{ouro.shadow.sheet-top}};
+  --ouro-shadow-sheet-left: {{ouro.shadow.sheet-left}};
+  --ouro-shadow-sheet-right: {{ouro.shadow.sheet-right}};
   /*
    * The stacking level of sheet and dialog portals, 50 as in shadcn's overlays. To raise
    * it, add a :root rule of your own after the Ouro tokens, outside any @layer, such as
    * :root { --ouro-layer: 60; }. Don't edit this line: shadcn add resets it. At an equal
    * level the portal still wins, because it is the last child of <body>.
    */
-  --ouro-layer: 50;
+  --ouro-layer: {{ouro.layer}};
 }
 
 .dark {
-  --input: oklch(1 0 0 / 15%);
-  --destructive-foreground: #000000;
-  --success: #4ade80;
-  --success-foreground: #000000;
-  --warning: #fbbf24;
-  --warning-foreground: #000000;
-  --avatar-1: #ee8a99;
-  --avatar-2: #f4a46c;
-  --avatar-3: #f2c661;
-  --avatar-4: #8bd17b;
-  --avatar-5: #4bc4c8;
-  --avatar-6: #6cb8f6;
-  --avatar-7: #c3a6ec;
-  --avatar-8: #ef85e2;
-  --ouro-backdrop-color: #000000;
+  --input: {{shadcn.input@dark}};
+  --destructive-foreground: {{destructive-foreground@dark}};
+  --success: {{success@dark}};
+  --success-foreground: {{success-foreground@dark}};
+  --warning: {{warning@dark}};
+  --warning-foreground: {{warning-foreground@dark}};
+  --avatar-1: {{avatar-1@dark}};
+  --avatar-2: {{avatar-2@dark}};
+  --avatar-3: {{avatar-3@dark}};
+  --avatar-4: {{avatar-4@dark}};
+  --avatar-5: {{avatar-5@dark}};
+  --avatar-6: {{avatar-6@dark}};
+  --avatar-7: {{avatar-7@dark}};
+  --avatar-8: {{avatar-8@dark}};
+  --ouro-backdrop-color: {{ouro.backdrop.color@dark}};
 }
 
 /*
