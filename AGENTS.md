@@ -12,7 +12,7 @@ Core is the platform-neutral part of Ouro UI: what is true on every platform, fo
 ## Ouro AX for Apple
 
 - `standard/ax/surfaces/apple.claims.json` is the claim set; `apple.md` beside it is its page, and a test fails when their claim lists differ. Change both in one PR and bump the set's `version`.
-- A claim starts as `should`. It becomes `must` only with a SiriEvaluations run that shows the failure, or a stated hazard with a check (web's admission rule). `checkClaimSet` in `src/ax-claims.mts` enforces the shape.
+- A claim starts as `should`. It becomes `must` only with a SiriEvaluations run that shows the failure, or a stated hazard with a check (web's admission rule). `checkAppleClaimSet` in `src/ax-claims.mts` enforces the shape, and `test/fixtures/canonical-json-vector.json` is the hash test vector every platform's copy asserts.
 - Platforms vendor `dist/ax/apple.claims.json` from a release, by hash; never edit their copies.
 
 ## Claims

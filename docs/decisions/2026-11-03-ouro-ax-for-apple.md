@@ -9,7 +9,7 @@ Status: accepted, 2026-11-03. Workstream W4 of the program in which Ouro HX and 
 3. **Every claim starts as `should`.** Web's admission rule applies unchanged: a claim becomes `must` only when an evaluation (here, a SiriEvaluations run) reproduces the failure it forbids and the fix removes it, or when it states a hazard with an executable check. No claim here has either yet.
 4. **The X-ray is black-box in two stages, both by bundle identifier.** `ouro-ax-xray`, in ourostack/ouro-ui-apple, imports nothing from the app:
    - **Metadata.** It reads `Metadata.appintents/extract.actionsdata` in the built app. That file is the App Intents metadata the build compiles and the system registers, so it is a complete inventory of the intents, parameters, entities, queries and App Shortcuts, with their titles and descriptions. Reading it needs no device.
-   - **Behaviour.** It runs Apple's AppIntentsTesting against the live app, from a test bundle: entity queries by identifier, `spotlightQuery`, `viewAnnotations()`, export and re-import, and intents given an entity reference that nothing can match, which must be refused with an error that names the fix. It runs nothing else, so it never acts on the person's data.
+   - **Behaviour.** It runs Apple's AppIntentsTesting against the live app, from a test bundle: entity queries by identifier, `spotlightQuery`, `viewAnnotations()`, export and re-import, and intents whose required parameters are all entities, given references that nothing can match, which must be refused with an error that names the fix. Those refusal runs are the only intents it performs, and only on a disposable device: an app that resolves a made-up identifier to a real entity would run the intent for real, which is itself the failure, so the X-ray never does this on a person's data.
    - The report has web's ax-xray shape (JSON, Markdown and HTML), pinned to the claim set's version and hash and to the app's commit. It names, lane by lane, what was proved, what needs SiriEvaluations and what needs a person.
 5. **Core publishes the claim set byte for byte.** `pnpm tokens` checks the file and writes it to `dist/ax/apple.claims.json`, listed in `dist-manifest.json`. The release attaches it, and platforms vendor it under `core-provenance.json`, as they vendor tokens.
 
@@ -43,6 +43,8 @@ These are the engineering facts the design rests on, each checked on 2026-11-03 
 
 - Which claims become `must`. That waits for SiriEvaluations runs, which need a 27.3 beta OS on an Apple Intelligence device.
 - Whether `checkedBy` moves back to web's claims too. Web's claims are all checked by one X-ray today.
+- Apple's finer skill rules: a name of at most 64 characters with no leading, trailing or doubled hyphen, a one-line description of at most 1,024 characters, and one skills bundle per target. `skill.names`, `skill.frontmatter` and `skill.bundle-shape` cover them once the linter reports them.
+- Dynamic options as a way to find entities. `entity.findable` counts only the index, listing and string search, so an app that relies on a parameter's dynamic options fails it today.
 - A claim on intent donations, which Apple names as a behavioural cue. The X-ray has no way to observe donations from outside yet.
 
 ## Prior art
