@@ -2,7 +2,7 @@
 
 **One set of tokens, every platform: the shared heart of Ouro HX (for people) and Ouro AX (for agents).** Change a colour once and watch it turn up everywhere, down to the last byte.
 
-Core holds what is true on every platform. Today that is the tokens: Ouro HX's colours, radii and motion, written once as [DTCG 2025.10](https://www.designtokens.org/tr/2025.10/format/) JSON and generated into each platform's own language. Each platform repository pins a core release by tag and builds from it. The HX design language, AX's claims standard and the [ui.ouro.bot](https://ui.ouro.bot/) site move here in later steps.
+Core holds what is true on every platform. Today that is two things: Ouro HX's colours, radii and motion, written once as [DTCG 2025.10](https://www.designtokens.org/tr/2025.10/format/) JSON and generated into each platform's own language; and Ouro AX for Apple's claims. Each platform repository pins a core release by tag and builds from it. The HX design language, web's AX claims standard and the [ui.ouro.bot](https://ui.ouro.bot/) site move here in later steps.
 
 | Platform | Where it lives | What core gives it |
 |---|---|---|
@@ -17,6 +17,8 @@ tokens/themes/<name>.tokens.json  each theme's changes: pearl, abyss, brass, cha
 templates/web/                    web's stylesheets with a placeholder where each value goes
 scripts/build.mts                 pnpm tokens: writes dist/
 scripts/parity.mts                pnpm tokens:parity: dist/web/ against web's files, byte for byte
+standard/ax/surfaces/apple.md     Ouro AX for Apple: the App Intents surfaces and their claims
+standard/ax/surfaces/apple.claims.json  the same claims as data, published as dist/ax/apple.claims.json
 docs/decisions/                   decision records, with their history from ouro-ui
 ```
 
@@ -25,7 +27,12 @@ docs/decisions/                   decision records, with their history from ouro
 - `dist/web/ouro-theme.css` and `dist/web/ouro-base.css`: what `shadcn add` installs from web's registry.
 - `dist/web/plain/` and `dist/web/themes/<name>.css`: the plain stylesheets ui.ouro.bot serves for pages without Tailwind.
 - `dist/apple/OuroTokens.swift`: SwiftUI with no dependencies. `OuroTokens.theme(.pearl).colors(scheme).primary` is a `Color`, `OuroTokens.Duration.fast` is a `Double` in seconds, and `OuroTokens.Spring.animation` is the spring.
+- `dist/ax/apple.claims.json`: Ouro AX for Apple's claim set, byte for byte, for `ouro-ax-xray` in ouro-ui-apple.
 - `dist/swatches.html`: every theme's colours in light and dark, to look at.
+
+## Ouro AX for Apple
+
+On Apple platforms the agent is Siri and the interface is App Intents. [`standard/ax/surfaces/apple.md`](standard/ax/surfaces/apple.md) says what an app's intents, entities, onscreen annotations and app skills should do for Siri: thirty checkable claims, each citing the Apple page it comes from and naming the lane that proves it (the bundle's App Intents metadata, AppIntentsTesting, the skills linter, SiriEvaluations, or a person on a device). The X-ray that checks them, `ouro-ax-xray`, lives in [ourostack/ouro-ui-apple](https://github.com/ourostack/ouro-ui-apple). Why, and what we found on the way: [the decision record](docs/decisions/2026-11-03-ouro-ax-for-apple.md).
 
 ## Build it
 
