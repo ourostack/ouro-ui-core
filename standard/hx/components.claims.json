@@ -41,7 +41,7 @@
         "finding": "WCAG 2.3.3, and Apple's HIG on Motion (https://developer.apple.com/design/human-interface-guidelines/motion): motion triggered by interaction must be possible to turn off, unless it is essential, as following a finger is."
       },
       "checks": {
-        "web": "The Button test \"does not scale with reduced motion\", the Sheet test \"drops transform motion under reduced motion and keeps an opacity fade\" and the Toaster test \"slides on the ease-out curve in 300ms or less, never animates height, and only fades with reduced motion\". Not yet checked on web: the Alert.",
+        "web": "The Button test \"does not scale with reduced motion\", the Sheet test \"drops transform motion under reduced motion and keeps an opacity fade\" and the Toaster test \"slides on the ease-out curve in 300ms or less, never animates height, and only fades with reduced motion\". Not yet checked on web: the Alert. The drag allowance: the Toaster test \"still follows the finger with reduced motion, then returns or fades with no travel\".",
         "apple": "ComponentMotionTests (Tests/OuroHXTests/ComponentTests.swift) read each component's transition and press scale with reduceMotion true and false: a crossfade with it on, never a move or a scale."
       },
       "fix": "Pick the animation from the Reduce Motion setting: OuroMotion's step on Apple, `motion-reduce:` on web."
@@ -64,7 +64,7 @@
         "finding": "WCAG 4.1.2. Apple: https://developer.apple.com/documentation/accessibility/supporting-voiceover-in-your-app."
       },
       "checks": {
-        "web": "Each component's browser tests query by role and name (\"renders the title as an <h3>…\", \"shows a dismiss button with onDismiss, named by dismissLabel\"); the axe lane checks names.",
+        "web": "The Empty test \"renders the title as an <h3>, the description, the icon and the action\", the Alert test \"shows a dismiss button with onDismiss, named by dismissLabel\" and the Sheet test \"renders a Close button last in the sheet, hidden until keyboard focus, that closes it\" query by role and name; the axe lane checks names on every component.",
         "apple": "The gallery's ComponentClaimTests.testVoiceOverLabels finds each control by its VoiceOver label as a button, each title as text, and no decorative icon; testEveryComponentPagePassesTheAccessibilityAudit runs performAccessibilityAudit's sufficientElementDescription and trait audits on every page."
       },
       "fix": "Pass a visible title or an explicit accessibility label; mark titles as headers; hide decorative images."
@@ -110,7 +110,7 @@
       },
       "checks": {
         "web": "The axe lane's color-contrast rule, 4.5:1 in light and dark. Not yet checked on web: 7:1 under increased contrast.",
-        "apple": "ContrastTests (Tests/OuroHXTests/ComponentTests.swift) compute the WCAG ratio of every component's text and icons on its surface, every tone and variant, in all six themes, light and dark, standard and increased contrast; performAccessibilityAudit's contrast audit runs on the gallery."
+        "apple": "ContrastTests (Tests/OuroHXTests/ComponentTests.swift) compute the WCAG ratio of every component's text and icons on its surface, every tone and variant, in all six themes, light and dark, standard and increased contrast; performAccessibilityAudit's contrast audit runs on the gallery. ComponentSnapshotTests keeps references of every component in light, dark and increased contrast."
       },
       "fix": "Take text colours from the theme's foreground pairs, and raise them under increased contrast (OuroColor.increasedContrast on Apple)."
     },
@@ -129,7 +129,7 @@
         "finding": "WCAG 4.1.3 asks for status messages a screen reader announces without moving focus."
       },
       "checks": {
-        "web": "The Alert test \"renders the title and description in a status region by default\" and the Toaster test \"is announced once, its message and description only: politely, and a destructive toast assertively (Review Focus 5)\".",
+        "web": "The Alert test \"uses role=%s for a %s alert\" (alert.test.tsx, an it.each: destructive and warning give role=alert, the rest role=status) and the Toaster test \"is announced once, its message and description only: politely, and a destructive toast assertively (Review Focus 5)\". Not yet checked on web: that a warning toast waits its turn.",
         "apple": "AnnouncementTests (Tests/OuroHXTests/ComponentTests.swift) read each tone's announcement priority for a banner and for a toast."
       },
       "fix": "Announce on appear with the tone's priority for that component: role=alert or role=status on web, AccessibilityNotification.Announcement with a priority on Apple."
