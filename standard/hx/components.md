@@ -37,7 +37,7 @@ The claims section below is generated from the data with `pnpm hx:page`; edit th
 - Why: A control without a name is announced as "button" or skipped, so a blind person cannot tell what it does.
 - Source: <https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html>. WCAG 4.1.2. Apple: https://developer.apple.com/documentation/accessibility/supporting-voiceover-in-your-app.
 
-- Checked on web: The Empty test "renders the title as an <h3>, the description, the icon and the action", the Alert test "shows a dismiss button with onDismiss, named by dismissLabel" and the Sheet test "renders a Close button last in the sheet, hidden until keyboard focus, that closes it" query by role and name; the axe lane checks names on every component.
+- Checked on web: The Empty test "renders the title as an <h3>, the description, the icon and the action", the Alert test "shows a dismiss button with onDismiss, named by dismissLabel" and the Sheet test "renders a Close button last in the sheet, hidden until keyboard focus, that closes it" query by role and name; the axe lane checks names.
 - Checked on apple: The gallery's ComponentClaimTests.testVoiceOverLabels finds each control by its VoiceOver label as a button, each title as text, and no decorative icon; testEveryComponentPagePassesTheAccessibilityAudit runs performAccessibilityAudit's sufficientElementDescription and trait audits on every page.
 - Fix: Pass a visible title or an explicit accessibility label; mark titles as headers; hide decorative images.
 

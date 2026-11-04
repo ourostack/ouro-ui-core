@@ -64,7 +64,7 @@
         "finding": "WCAG 4.1.2. Apple: https://developer.apple.com/documentation/accessibility/supporting-voiceover-in-your-app."
       },
       "checks": {
-        "web": "The Empty test \"renders the title as an <h3>, the description, the icon and the action\", the Alert test \"shows a dismiss button with onDismiss, named by dismissLabel\" and the Sheet test \"renders a Close button last in the sheet, hidden until keyboard focus, that closes it\" query by role and name; the axe lane checks names on every component.",
+        "web": "The Empty test \"renders the title as an <h3>, the description, the icon and the action\", the Alert test \"shows a dismiss button with onDismiss, named by dismissLabel\" and the Sheet test \"renders a Close button last in the sheet, hidden until keyboard focus, that closes it\" query by role and name; the axe lane checks names.",
         "apple": "The gallery's ComponentClaimTests.testVoiceOverLabels finds each control by its VoiceOver label as a button, each title as text, and no decorative icon; testEveryComponentPagePassesTheAccessibilityAudit runs performAccessibilityAudit's sufficientElementDescription and trait audits on every page."
       },
       "fix": "Pass a visible title or an explicit accessibility label; mark titles as headers; hide decorative images."
