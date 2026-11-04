@@ -32,14 +32,15 @@ export interface FeelSpec {
     naming: string;
     t0: { macos: string; windows: string; optional: string };
     stages: { name: string; required: boolean; means: string }[];
-    namespaces: { web: { name: string; means: string }[]; native: { name: string; means: string }[]; app: string; appExamples: string[] };
+    namespaces: { web: { name: string; means: string }[]; native: { name: string; means: string }[]; app: string; appDocs: string };
     dimensions: { service: string[]; launch: string[] };
     reports: string;
+    variants: string;
     signpost: { api: string; subsystem: string; category: string; mark: string; case: string; content: string };
   };
   measures: FeelMeasure[];
   seed: { prng: string; vector: { seed: number; first: number[] }; data: string };
-  report: { file: string; entry: string[]; measure: string[]; content: string };
+  report: { file: string; entry: string[]; measure: string[]; content: string; t0: string };
   drivers: { id: string; repository: string; path?: string; how: string; status: "building" | "on hold" }[];
 }
 
@@ -128,9 +129,6 @@ export function checkFeelSpec(value: unknown): string[] {
         if (!isRecord(entry) || !isText(entry["means"])) problems.push(`launch: the ${driver} mark ${JSON.stringify(mark)} does not say what it marks. Fix: { "name": "${String(mark)}", "means": "<one sentence>" }.`);
       }
     }
-    for (const mark of Array.isArray(namespaces["appExamples"]) ? namespaces["appExamples"] : []) {
-      if (!isText(mark) || !/^[a-z][a-zA-Z0-9]*\.[a-z][a-zA-Z0-9]*$/.test(mark) || /^(web|native)\./.test(mark)) problems.push(`launch: the app mark ${JSON.stringify(mark)} is not <app>.<camelCase>. Fix: such as "tandem.firstActivityItem".`);
-    }
   }
   const signpost = launch["signpost"];
   if (!isRecord(signpost) || signpost["category"] !== "feel") problems.push("launch.signpost.category is not \"feel\". Fix: OSSignposter with the app's bundle id as subsystem and category feel.");
@@ -174,7 +172,8 @@ export function feelSpecPage(spec: FeelSpec): string {
   for (const mark of [...launch.namespaces.web, ...launch.namespaces.native]) out.push(`| \`${mark.name}\` | ${mark.means} |`);
   out.push(
     "",
-    `- An app's own marks: \`${launch.namespaces.app}\`, such as ${code(launch.namespaces.appExamples)}.`,
+    `- An app's own marks: \`${launch.namespaces.app}\`. ${launch.namespaces.appDocs}`,
+    `- ${launch.variants}`,
     `- Dimensions: \`service\` is ${code(launch.dimensions.service).replace(", ", " or ")}; \`launch\` is ${code(launch.dimensions.launch)}.`,
     `- ${launch.reports}`,
     `- os_signpost: ${launch.signpost.api}, with subsystem ${launch.signpost.subsystem} and category \`${launch.signpost.category}\`. A mark is ${launch.signpost.mark}; a case is ${launch.signpost.case}. ${launch.signpost.content}`,
@@ -187,7 +186,7 @@ export function feelSpecPage(spec: FeelSpec): string {
     "",
     "### Report",
     "",
-    `\`${spec.report.file}\` holds one entry per scenario and engine: ${spec.report.entry.map((f) => `\`${f}\``).join(", ")}. Each measure has ${spec.report.measure.map((f) => `\`${f}\``).join(", ")}. ${spec.report.content}`,
+    `\`${spec.report.file}\` holds one entry per scenario and engine: ${spec.report.entry.map((f) => `\`${f}\``).join(", ")}. Each measure has ${spec.report.measure.map((f) => `\`${f}\``).join(", ")}. ${spec.report.t0} ${spec.report.content}`,
     "",
     "### Drivers",
     "",
