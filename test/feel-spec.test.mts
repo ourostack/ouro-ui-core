@@ -17,8 +17,8 @@ test("the spec keeps the first app gate's scenario ids and launch stages", () =>
   for (const id of ["launch-cold", "launch-warm", "switch", "scroll", "typing", "typing-120wpm", "network-drop", "wake", "history-prepend"]) assert.ok(ids.includes(id), id);
   const { launch } = loadFeelSpec(spec);
   assert.deepEqual(launch.stages.map((stage) => stage.name), ["processStart", "firstFrame", "firstLayout", "firstRow", "authReturn"]);
-  assert.deepEqual(launch.namespaces.web, ["web.viewCreated", "web.navigationStart", "web.navigationCommit", "web.htmlLoaded", "web.scriptRun", "web.runtimeReady"]);
-  assert.deepEqual(launch.namespaces.native, ["native.appLaunched", "native.windowShown"]);
+  assert.deepEqual(launch.namespaces.web.map((mark) => mark.name), ["web.viewCreated", "web.loadRequested", "web.navigationStart", "web.navigationCommit", "web.htmlLoaded", "web.scriptRun", "web.runtimeReady"]);
+  assert.deepEqual(launch.namespaces.native.map((mark) => mark.name), ["native.appLaunched", "native.windowShown"]);
   assert.deepEqual(launch.signpost.category, "feel");
   assert.deepEqual(spec.scenarios.find((s) => s["id"] === "launch-warm")!["measures"], ["launchToFirstFrameMs", "launchToFirstLayoutMs", "launchToFirstRowMs", "firstRowMs"]);
   assert.ok((spec.scenarios.find((s) => s["id"] === "launch-cold")!["measures"] as string[]).includes("launchToRowMs"));

@@ -75,8 +75,18 @@ Cases and components are kebab-case; marks and measures are camelCase. A run rep
 | `firstRow` | yes | The first readable row painted, two frames after it is in the DOM or view tree. |
 | `authReturn` | no | Back from the identity provider, only when the launch went there. |
 
-- Web's marks: `web.viewCreated`, `web.navigationStart`, `web.navigationCommit`, `web.htmlLoaded`, `web.scriptRun`, `web.runtimeReady`.
-- Native marks: `native.appLaunched`, `native.windowShown`.
+| Driver mark | What it marks |
+| --- | --- |
+| `web.viewCreated` | The shell created its web view. |
+| `web.loadRequested` | The shell asked the web view to load the page. |
+| `web.navigationStart` | The page's performance.timeOrigin, Navigation Timing's start, which firstRowMs counts from. |
+| `web.navigationCommit` | The engine's commit callback: WKNavigationDelegate's didCommit, or WebView2's equivalent. |
+| `web.htmlLoaded` | The page's HTML has arrived. |
+| `web.scriptRun` | The page's own script started running. |
+| `web.runtimeReady` | The app's runtime in the page is ready. |
+| `native.appLaunched` | The app finished launching. |
+| `native.windowShown` | The app's window is on screen. |
+
 - An app's own marks: `<app>.<mark>`, such as `tandem.serviceAnswered`, `tandem.tunnelReady`, `tandem.reading`, `tandem.firstActivityItem`.
 - Dimensions: `service` is `running` or `started`; `launch` is `first`, `afterUpdate`, `repeat`.
 - launch-warm reports launchToFirstFrameMs, launchToFirstLayoutMs, launchToFirstRowMs and firstRowMs; launch-cold reports the same, and its harness-relative launchToRowMs as it is for now. Each time is the median of at least 3 runs with its spread, beside every mark the launch hit.

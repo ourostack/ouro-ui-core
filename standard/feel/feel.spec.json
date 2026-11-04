@@ -180,16 +180,44 @@
     ],
     "namespaces": {
       "web": [
-        "web.viewCreated",
-        "web.navigationStart",
-        "web.navigationCommit",
-        "web.htmlLoaded",
-        "web.scriptRun",
-        "web.runtimeReady"
+        {
+          "name": "web.viewCreated",
+          "means": "The shell created its web view."
+        },
+        {
+          "name": "web.loadRequested",
+          "means": "The shell asked the web view to load the page."
+        },
+        {
+          "name": "web.navigationStart",
+          "means": "The page's performance.timeOrigin, Navigation Timing's start, which firstRowMs counts from."
+        },
+        {
+          "name": "web.navigationCommit",
+          "means": "The engine's commit callback: WKNavigationDelegate's didCommit, or WebView2's equivalent."
+        },
+        {
+          "name": "web.htmlLoaded",
+          "means": "The page's HTML has arrived."
+        },
+        {
+          "name": "web.scriptRun",
+          "means": "The page's own script started running."
+        },
+        {
+          "name": "web.runtimeReady",
+          "means": "The app's runtime in the page is ready."
+        }
       ],
       "native": [
-        "native.appLaunched",
-        "native.windowShown"
+        {
+          "name": "native.appLaunched",
+          "means": "The app finished launching."
+        },
+        {
+          "name": "native.windowShown",
+          "means": "The app's window is on screen."
+        }
       ],
       "app": "<app>.<mark>",
       "appExamples": [

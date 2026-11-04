@@ -32,7 +32,7 @@ export interface FeelSpec {
     naming: string;
     t0: { macos: string; windows: string; optional: string };
     stages: { name: string; required: boolean; means: string }[];
-    namespaces: { web: string[]; native: string[]; app: string; appExamples: string[] };
+    namespaces: { web: { name: string; means: string }[]; native: { name: string; means: string }[]; app: string; appExamples: string[] };
     dimensions: { service: string[]; launch: string[] };
     reports: string;
     signpost: { api: string; subsystem: string; category: string; mark: string; case: string; content: string };
@@ -121,8 +121,10 @@ export function checkFeelSpec(value: unknown): string[] {
   if (!isRecord(namespaces) || !Array.isArray(namespaces["web"])) problems.push("launch.namespaces is not { web, native, app }. Fix: start from standard/feel/feel.spec.json.");
   else {
     for (const [driver, marks] of [["web", namespaces["web"]], ["native", namespaces["native"]]] as const) {
-      for (const mark of Array.isArray(marks) ? marks : []) {
+      for (const entry of Array.isArray(marks) ? marks : []) {
+        const mark = isRecord(entry) ? entry["name"] : entry;
         if (!isText(mark) || !new RegExp(`^${driver}\\.[a-z][a-zA-Z0-9]*$`).test(mark)) problems.push(`launch: the ${driver} mark ${JSON.stringify(mark)} is not ${driver}.<camelCase>. Fix: such as "${driver}.${driver === "web" ? "navigationStart" : "windowShown"}".`);
+        if (!isRecord(entry) || !isText(entry["means"])) problems.push(`launch: the ${driver} mark ${JSON.stringify(mark)} does not say what it marks. Fix: { "name": "${String(mark)}", "means": "<one sentence>" }.`);
       }
     }
     for (const mark of Array.isArray(namespaces["appExamples"]) ? namespaces["appExamples"] : []) {
@@ -167,10 +169,10 @@ export function feelSpecPage(spec: FeelSpec): string {
   const { launch } = spec;
   out.push("", "### Launch", "", launch.naming, "", `- t0 on macOS: ${launch.t0.macos}`, `- t0 on Windows: ${launch.t0.windows}`, `- Optional: ${launch.t0.optional}`, "", "| Shared mark | Required | What it marks |", "| --- | --- | --- |");
   for (const stage of launch.stages) out.push(`| \`${stage.name}\` | ${stage.required ? "yes" : "no"} | ${stage.means} |`);
+  out.push("", "| Driver mark | What it marks |", "| --- | --- |");
+  for (const mark of [...launch.namespaces.web, ...launch.namespaces.native]) out.push(`| \`${mark.name}\` | ${mark.means} |`);
   out.push(
     "",
-    `- Web's marks: ${code(launch.namespaces.web)}.`,
-    `- Native marks: ${code(launch.namespaces.native)}.`,
     `- An app's own marks: \`${launch.namespaces.app}\`, such as ${code(launch.namespaces.appExamples)}.`,
     `- Dimensions: \`service\` is ${code(launch.dimensions.service).replace(", ", " or ")}; \`launch\` is ${code(launch.dimensions.launch)}.`,
     `- ${launch.reports}`,
