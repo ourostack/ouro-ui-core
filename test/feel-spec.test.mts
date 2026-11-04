@@ -23,6 +23,8 @@ test("the spec keeps the first app gate's scenario ids and launch stages", () =>
   assert.deepEqual(spec.scenarios.find((s) => s["id"] === "launch-warm")!["measures"], ["launchToFirstFrameMs", "launchToFirstLayoutMs", "launchToFirstRowMs", "firstRowMs"]);
   assert.ok((spec.scenarios.find((s) => s["id"] === "launch-cold")!["measures"] as string[]).includes("launchToRowMs"));
   assert.equal(launchMeasure("firstRow"), "launchToFirstRowMs");
+  const launchMeasures = loadFeelSpec(spec).measures.map((m) => m.name).filter((name) => name.startsWith("launchTo"));
+  assert.deepEqual(launchMeasures, ["launchToFirstFrameMs", "launchToFirstLayoutMs", "launchToFirstRowMs", "launchToAuthReturnMs", "launchToRowMs"]);
   assert.ok(loadFeelSpec(spec).report.entry.includes("marks"));
   assert.deepEqual(launch.dimensions, { service: ["running", "started"], launch: ["first", "afterUpdate", "repeat"] });
 });
@@ -47,6 +49,7 @@ test("checkFeelSpec names each problem with its fix", () => {
   const bad = structuredClone(spec);
   bad.scenarios.push({ id: "Scroll Fast", scope: "page", does: "", measures: ["frameDrops"], drivers: { android: "soon" } });
   bad.measures.push({ name: "blank_frames", unit: "ms", status: "maybe", means: "" });
+  bad.measures.push({ name: "launchToWebNavigationStartMs", unit: "ms", status: "planned", means: "x" });
   (bad["judging"] as Record<string, unknown>)["minTimeRuns"] = 1;
   (bad["launch"] as { stages: unknown[] }).stages = [{ name: "processStart", required: true, means: "" }];
   const problems = checkFeelSpec(bad);
@@ -61,5 +64,6 @@ test("checkFeelSpec names each problem with its fix", () => {
     "Scroll Fast: drivers names \"android\". Fix:",
     "launch: the required stage firstFrame is missing. Fix:",
     "launch: the required stage firstLayout is missing. Fix:",
+    "launchToWebNavigationStartMs: driver marks are not measures. Fix:",
   ]) assert.ok(problems.some((p) => p.startsWith(start)), `${start}\n${problems.join("\n")}`);
 });

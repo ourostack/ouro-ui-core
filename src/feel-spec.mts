@@ -70,6 +70,7 @@ export function checkFeelSpec(value: unknown): string[] {
 
   const measures = new Map<string, Record<string, unknown>>();
   for (const m of value["measures"] as unknown[]) {
+    if (isRecord(m) && isText(m["name"]) && /^launchTo(Web|Native)[A-Z]/.test(m["name"])) problems.push(`${m["name"]}: driver marks are not measures. Fix: report the mark raw in marks, under its full name.`);
     if (!isRecord(m) || !isText(m["name"])) {
       problems.push("a measure has no name. Fix: { name, unit, status, means }.");
       continue;
@@ -115,7 +116,7 @@ export function checkFeelSpec(value: unknown): string[] {
   for (const stage of stages) {
     const name = stage["name"];
     if (!isText(name) || !camel.test(name)) problems.push(`launch: the stage ${JSON.stringify(name)} is not camelCase. Fix: such as "firstRow".`);
-    else if (name !== "processStart" && stage["required"] === true && !measures.has(launchMeasure(name))) problems.push(`launch: ${name} has no measure ${launchMeasure(name)}. Fix: add it to measures.`);
+    else if (name !== "processStart" && !measures.has(launchMeasure(name))) problems.push(`launch: ${name} has no measure ${launchMeasure(name)}. Fix: add it to measures; only shared marks become measures.`);
   }
   const namespaces = launch["namespaces"];
   if (!isRecord(namespaces) || !Array.isArray(namespaces["web"])) problems.push("launch.namespaces is not { web, native, app }. Fix: start from standard/feel/feel.spec.json.");

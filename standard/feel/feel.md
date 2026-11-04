@@ -52,6 +52,7 @@ Version 0.1.0.
 | `launchToFirstFrameMs` | ms | planned | The firstFrame mark: from t0 to the first painted frame that is not blank. |
 | `launchToFirstLayoutMs` | ms | planned | The firstLayout mark: from t0 to the live app's own frame and skeleton painted. |
 | `launchToFirstRowMs` | ms | planned | The firstRow mark: from t0 to the first readable row painted. |
+| `launchToAuthReturnMs` | ms | planned | The authReturn mark: from t0 to the return from the identity provider, only when the launch went there. |
 | `firstRowMs` | ms | planned | From navigation start to the first readable row painted, two frames after it is in the DOM or view tree: the first app gate's measure. |
 | `launchToRowMs` | ms | planned | launch-cold's harness-relative time from the launch to the first row, kept as the first app gate has it for now. |
 | `inputToMotionP95Ms` | ms | planned | The 95th percentile, over a scenario's wheel or scroll inputs, of the time from the input to the first painted frame where the list moved its way. |
@@ -61,7 +62,7 @@ Version 0.1.0.
 
 ### Launch
 
-Cases and components are kebab-case; marks and measures are camelCase. A run reports its marks raw, in a marks object: each mark's name and its ms from t0, a namespaced mark under its full name (web.navigationStart). A measure from t0 is launchTo<Mark>Ms.
+Cases and components are kebab-case; marks and measures are camelCase. A run reports its marks raw, in a marks object: each mark's full name (web.navigationStart) and its ms from t0. Only the shared marks become measures, as launchTo<Mark>Ms from t0; driver and app marks (web.*, native.*, <app>.*) appear only in marks.
 
 - t0 on macOS: The kernel's process start: kp_proc.p_starttime.
 - t0 on Windows: The kernel's process start: GetProcessTimes' creation time.
@@ -70,7 +71,7 @@ Cases and components are kebab-case; marks and measures are camelCase. A run rep
 | Shared mark | Required | What it marks |
 | --- | --- | --- |
 | `processStart` | yes | The app's process started: t0. |
-| `firstFrame` | yes | The first painted frame that is not blank, which may be a native snapshot. |
+| `firstFrame` | yes | The first painted frame that is not blank, which may be a native snapshot. The web driver uses the page's first-contentful-paint until a native first frame exists. |
 | `firstLayout` | yes | The live app's own frame and skeleton painted. |
 | `firstRow` | yes | The first readable row painted, two frames after it is in the DOM or view tree. |
 | `authReturn` | no | Back from the identity provider, only when the launch went there. |

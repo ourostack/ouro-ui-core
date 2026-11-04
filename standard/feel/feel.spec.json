@@ -145,7 +145,7 @@
     }
   ],
   "launch": {
-    "naming": "Cases and components are kebab-case; marks and measures are camelCase. A run reports its marks raw, in a marks object: each mark's name and its ms from t0, a namespaced mark under its full name (web.navigationStart). A measure from t0 is launchTo<Mark>Ms.",
+    "naming": "Cases and components are kebab-case; marks and measures are camelCase. A run reports its marks raw, in a marks object: each mark's full name (web.navigationStart) and its ms from t0. Only the shared marks become measures, as launchTo<Mark>Ms from t0; driver and app marks (web.*, native.*, <app>.*) appear only in marks.",
     "t0": {
       "macos": "The kernel's process start: kp_proc.p_starttime.",
       "windows": "The kernel's process start: GetProcessTimes' creation time.",
@@ -160,7 +160,7 @@
       {
         "name": "firstFrame",
         "required": true,
-        "means": "The first painted frame that is not blank, which may be a native snapshot."
+        "means": "The first painted frame that is not blank, which may be a native snapshot. The web driver uses the page's first-contentful-paint until a native first frame exists."
       },
       {
         "name": "firstLayout",
@@ -338,6 +338,12 @@
       "unit": "ms",
       "status": "planned",
       "means": "The firstRow mark: from t0 to the first readable row painted."
+    },
+    {
+      "name": "launchToAuthReturnMs",
+      "unit": "ms",
+      "status": "planned",
+      "means": "The authReturn mark: from t0 to the return from the identity provider, only when the launch went there."
     },
     {
       "name": "firstRowMs",
