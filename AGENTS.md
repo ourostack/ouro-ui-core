@@ -28,4 +28,5 @@ Meerkat mode: look around first. Before you design or build something new (a com
 - Every change after the initial import goes through a pull request, merged when CI is green.
 - Releases are tags `vX.Y.Z` matching `package.json`'s version; the release workflow attaches `dist/` to the GitHub release.
 - Other agents work in web and the platform repositories. Copy first, remove later, and never rebase or force-push someone else's branch.
+- Ouro uses Ari's personal Apple developer account only, never the work (Microsoft) account or anything in ~/.config/tandem-signing.
 - A move, split or rename isn't done until every repository whose readers are affected says what moved, where it went and the rule for new work, in its README and AGENTS.md, in the same change. Then open an issue labelled `moved` in each old repository (create the label if it's missing), saying what moved, where it went and the rule for new work, and close it once the old home's README and AGENTS.md say so.
