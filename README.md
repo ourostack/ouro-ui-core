@@ -2,7 +2,7 @@
 
 **One set of tokens, every platform: the shared heart of Ouro HX (for people) and Ouro AX (for agents).** Change a colour once and watch it turn up everywhere, down to the last byte.
 
-Core holds what is true on every platform. Today that is two things: Ouro HX's colours, radii and motion, written once as [DTCG 2025.10](https://www.designtokens.org/tr/2025.10/format/) JSON and generated into each platform's own language; and Ouro AX for Apple's claims. Each platform repository pins a core release by tag and builds from it. The HX design language, web's AX claims standard and the [ui.ouro.bot](https://ui.ouro.bot/) site move here in later steps.
+Core holds what is true on every platform. Today that is three things: Ouro HX's colours, radii and motion, written once as [DTCG 2025.10](https://www.designtokens.org/tr/2025.10/format/) JSON and generated into each platform's own language; what HX's components promise a person, as claims; and Ouro AX for Apple's claims. Each platform repository pins a core release by tag and builds from it. The HX design language, web's AX claims standard and the [ui.ouro.bot](https://ui.ouro.bot/) site move here in later steps.
 
 | Platform | Where it lives | What core gives it |
 |---|---|---|
@@ -17,6 +17,8 @@ tokens/themes/<name>.tokens.json  each theme's changes: pearl, abyss, brass, cha
 templates/web/                    web's stylesheets with a placeholder where each value goes
 scripts/build.mts                 pnpm tokens: writes dist/
 scripts/parity.mts                pnpm tokens:parity: dist/web/ against web's files, byte for byte
+standard/hx/components.md         Ouro HX: what Button, Empty, Alert, Sheet and Toast promise, on every platform
+standard/hx/components.claims.json  the same claims as data, published as dist/hx/components.claims.json
 standard/ax/surfaces/apple.md     Ouro AX for Apple: the App Intents surfaces and their claims
 standard/ax/surfaces/apple.claims.json  the same claims as data, published as dist/ax/apple.claims.json
 docs/ci-resources.md              the free CI and build resources Ouro can use, and how to switch each on
@@ -29,7 +31,12 @@ docs/decisions/                   decision records, with their history from ouro
 - `dist/web/plain/` and `dist/web/themes/<name>.css`: the plain stylesheets ui.ouro.bot serves for pages without Tailwind.
 - `dist/apple/OuroTokens.swift`: SwiftUI with no dependencies. `OuroTokens.theme(.pearl).colors(scheme).primary` is a `Color`, `OuroTokens.Duration.fast` is a `Double` in seconds, and `OuroTokens.Spring.animation` is the spring.
 - `dist/ax/apple.claims.json`: Ouro AX for Apple's claim set, byte for byte, for `ouro-ax-xray` in ouro-ui-apple.
+- `dist/hx/components.claims.json`: Ouro HX's component claims, byte for byte, which each platform's tests prove.
 - `dist/swatches.html`: every theme's colours in light and dark, to look at.
+
+## What the components promise
+
+[`standard/hx/components.md`](standard/hx/components.md) holds eight claims for Button, Empty, Alert, Sheet and Toast on every platform: 44-point targets, no animated movement under Reduce Motion, names a screen reader speaks, text that wraps at the largest sizes, 4.5:1 contrast (7:1 with increased contrast), announcements by urgency, toasts with an action that wait, and a close control a screen reader can reach. Each names how web and Apple prove it.
 
 ## Ouro AX for Apple
 

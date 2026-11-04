@@ -31,10 +31,10 @@ jobs:
       - name: Package dist/
         run: |
           cd dist && zip -qr "../ouro-ui-core-$GITHUB_REF_NAME-dist.zip" . && cd ..
-          cp dist/web/ouro-theme.css dist/web/ouro-base.css dist/apple/OuroTokens.swift dist/ax/apple.claims.json dist/swatches.html dist/dist-manifest.json .
+          cp dist/web/ouro-theme.css dist/web/ouro-base.css dist/apple/OuroTokens.swift dist/ax/apple.claims.json dist/hx/components.claims.json dist/swatches.html dist/dist-manifest.json .
       - name: Create the release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" --verify-tag --title "Ouro UI core $GITHUB_REF_NAME" --notes "Generated from tokens/ at $GITHUB_REF_NAME. dist-manifest.json lists every file in dist/ with its SHA-256, for core-provenance.json. dist/web/ is byte-identical to web's files at the tag in parity.json. apple.claims.json is Ouro AX for Apple's claim set." \
-            "ouro-ui-core-$GITHUB_REF_NAME-dist.zip" ouro-theme.css ouro-base.css OuroTokens.swift apple.claims.json swatches.html dist-manifest.json
+          gh release create "$GITHUB_REF_NAME" --verify-tag --title "Ouro UI core $GITHUB_REF_NAME" --notes "Generated from tokens/ at $GITHUB_REF_NAME. dist-manifest.json lists every file in dist/ with its SHA-256, for core-provenance.json. dist/web/ is byte-identical to web's files at the tag in parity.json. apple.claims.json is Ouro AX for Apple's claim set; components.claims.json is Ouro HX's component claims." \
+            "ouro-ui-core-$GITHUB_REF_NAME-dist.zip" ouro-theme.css ouro-base.css OuroTokens.swift apple.claims.json components.claims.json swatches.html dist-manifest.json
