@@ -181,6 +181,10 @@
     "namespaces": {
       "web": [
         {
+          "name": "web.environmentCreated",
+          "means": "The shell created the web view's environment, as WebView2 does before its view."
+        },
+        {
           "name": "web.viewCreated",
           "means": "The shell created its web view."
         },
@@ -193,12 +197,24 @@
           "means": "The page's performance.timeOrigin, Navigation Timing's start, which firstRowMs counts from."
         },
         {
+          "name": "web.htmlRequested",
+          "means": "The page's HTML was requested: Navigation Timing's requestStart."
+        },
+        {
+          "name": "web.htmlResponseStart",
+          "means": "The first byte of the page's HTML arrived: Navigation Timing's responseStart."
+        },
+        {
           "name": "web.navigationCommit",
           "means": "The engine's commit callback: WKNavigationDelegate's didCommit, or WebView2's equivalent."
         },
         {
           "name": "web.htmlLoaded",
           "means": "The page's HTML has arrived."
+        },
+        {
+          "name": "web.scriptsLoaded",
+          "means": "The page's scripts have loaded."
         },
         {
           "name": "web.scriptRun",
@@ -217,15 +233,14 @@
         {
           "name": "native.windowShown",
           "means": "The app's window is on screen."
+        },
+        {
+          "name": "native.notifyPermission",
+          "means": "The app asked for, or read, its permission to show notifications."
         }
       ],
       "app": "<app>.<mark>",
-      "appExamples": [
-        "tandem.serviceAnswered",
-        "tandem.tunnelReady",
-        "tandem.reading",
-        "tandem.firstActivityItem"
-      ]
+      "appDocs": "An app documents its own marks in its own docs, not in this spec."
     },
     "dimensions": {
       "service": [
@@ -246,7 +261,8 @@
       "mark": "an event named stage, whose message is the mark's name",
       "case": "an interval named case, whose message is the case's name",
       "content": "Names and counts only."
-    }
+    },
+    "variants": "A variant, such as a hang or a service start, is a run dimension, not a suffix on a measure's name: a report has one entry per variant, and every entry uses the same measure names."
   },
   "measures": [
     {
@@ -400,10 +416,12 @@
     "file": "feel-report.json",
     "entry": [
       "case",
+      "variant",
       "component",
       "engine",
       "engineVersion",
       "os",
+      "t0",
       "settled",
       "measures",
       "marks",
@@ -418,7 +436,8 @@
       "limit",
       "pass"
     ],
-    "content": "Counts and timings only, never the page's or the view's content."
+    "content": "Counts and timings only, never the page's or the view's content.",
+    "t0": "t0 says where the launch's zero came from: \"kernel\" (the process start the OS records) or \"harness\" (when the harness spawned the app, an upper bound)."
   },
   "drivers": [
     {

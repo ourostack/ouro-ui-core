@@ -78,17 +78,23 @@ Cases and components are kebab-case; marks and measures are camelCase. A run rep
 
 | Driver mark | What it marks |
 | --- | --- |
+| `web.environmentCreated` | The shell created the web view's environment, as WebView2 does before its view. |
 | `web.viewCreated` | The shell created its web view. |
 | `web.loadRequested` | The shell asked the web view to load the page. |
 | `web.navigationStart` | The page's performance.timeOrigin, Navigation Timing's start, which firstRowMs counts from. |
+| `web.htmlRequested` | The page's HTML was requested: Navigation Timing's requestStart. |
+| `web.htmlResponseStart` | The first byte of the page's HTML arrived: Navigation Timing's responseStart. |
 | `web.navigationCommit` | The engine's commit callback: WKNavigationDelegate's didCommit, or WebView2's equivalent. |
 | `web.htmlLoaded` | The page's HTML has arrived. |
+| `web.scriptsLoaded` | The page's scripts have loaded. |
 | `web.scriptRun` | The page's own script started running. |
 | `web.runtimeReady` | The app's runtime in the page is ready. |
 | `native.appLaunched` | The app finished launching. |
 | `native.windowShown` | The app's window is on screen. |
+| `native.notifyPermission` | The app asked for, or read, its permission to show notifications. |
 
-- An app's own marks: `<app>.<mark>`, such as `tandem.serviceAnswered`, `tandem.tunnelReady`, `tandem.reading`, `tandem.firstActivityItem`.
+- An app's own marks: `<app>.<mark>`. An app documents its own marks in its own docs, not in this spec.
+- A variant, such as a hang or a service start, is a run dimension, not a suffix on a measure's name: a report has one entry per variant, and every entry uses the same measure names.
 - Dimensions: `service` is `running` or `started`; `launch` is `first`, `afterUpdate`, `repeat`.
 - launch-warm reports launchToFirstFrameMs, launchToFirstLayoutMs, launchToFirstRowMs and firstRowMs; launch-cold reports the same, and its harness-relative launchToRowMs as it is for now. Each time is the median of at least 3 runs with its spread, beside every mark the launch hit.
 - os_signpost: OSSignposter, with subsystem the app's bundle id and category `feel`. A mark is an event named stage, whose message is the mark's name; a case is an interval named case, whose message is the case's name. Names and counts only.
@@ -101,7 +107,7 @@ Cases and components are kebab-case; marks and measures are camelCase. A run rep
 
 ### Report
 
-`feel-report.json` holds one entry per scenario and engine: `case`, `component`, `engine`, `engineVersion`, `os`, `settled`, `measures`, `marks`, `pass`, `shots`. Each measure has `unit`, `runs`, `median`, `spread`, `limit`, `pass`. Counts and timings only, never the page's or the view's content.
+`feel-report.json` holds one entry per scenario and engine: `case`, `variant`, `component`, `engine`, `engineVersion`, `os`, `t0`, `settled`, `measures`, `marks`, `pass`, `shots`. Each measure has `unit`, `runs`, `median`, `spread`, `limit`, `pass`. t0 says where the launch's zero came from: "kernel" (the process start the OS records) or "harness" (when the harness spawned the app, an upper bound). Counts and timings only, never the page's or the view's content.
 
 ### Drivers
 
