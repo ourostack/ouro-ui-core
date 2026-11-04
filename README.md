@@ -21,6 +21,8 @@ standard/hx/components.md         Ouro HX: what Button, Empty, Alert, Sheet and 
 standard/hx/components.claims.json  the same claims as data, published as dist/hx/components.claims.json
 standard/ax/surfaces/apple.md     Ouro AX for Apple: the App Intents surfaces and their claims
 standard/ax/surfaces/apple.claims.json  the same claims as data, published as dist/ax/apple.claims.json
+standard/feel/feel.md             Ouro Feel's spec: the scenarios, launch stages, measures, seed and report every driver shares
+standard/feel/feel.spec.json      the same spec as data, published as dist/feel/feel.spec.json
 docs/ci-resources.md              the free CI and build resources Ouro can use, and how to switch each on
 docs/decisions/                   decision records, with their history from ouro-ui; new ones go here, each with a "Prior art" section
 ```
@@ -32,6 +34,7 @@ docs/decisions/                   decision records, with their history from ouro
 - `dist/apple/OuroTokens.swift`: SwiftUI with no dependencies. `OuroTokens.theme(.pearl).colors(scheme).primary` is a `Color`, `OuroTokens.Duration.fast` is a `Double` in seconds, and `OuroTokens.Spring.animation` is the spring.
 - `dist/ax/apple.claims.json`: Ouro AX for Apple's claim set, byte for byte, for `ouro-ax-xray` in ouro-ui-apple.
 - `dist/hx/components.claims.json`: Ouro HX's component claims, byte for byte, which each platform's tests prove.
+- `dist/feel/feel.spec.json`: Ouro Feel's spec, byte for byte, which every Feel driver (web now, Apple and Windows later) reports under.
 - `dist/swatches.html`: every theme's colours in light and dark, to look at.
 
 ## What the components promise

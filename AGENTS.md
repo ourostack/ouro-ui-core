@@ -14,6 +14,12 @@ Core is the platform-neutral part of Ouro UI: what is true on every platform, fo
 - `standard/hx/components.claims.json` is the claim set for the components every platform shares (web's names: `button`, `empty`, `alert`, `sheet`, `toast`); `components.md` beside it is its page, whose claims section `pnpm hx:page` renders from the JSON (a test fails when they differ). Edit the JSON, run `pnpm hx:page`, and bump the set's `version` once a release has shipped it.
 - Same admission rule as AX: `must` needs a stated hazard with a check, or an evaluation. `checkHxClaimSet` in `src/hx-claims.mts` enforces the shape. Each claim's `checks` names the test that proves it on each platform; a platform adds its entry when its tests prove it.
 
+## Ouro Feel's spec
+
+- `standard/feel/feel.spec.json` is what every Feel driver shares: the scenario ids, launch stages, measure names and how they are judged, the seed and the report. `feel.md` beside it is its page, whose spec section `pnpm feel:page` renders from the JSON (a test fails when they differ). The design is `docs/decisions/2026-11-04-ouro-feel.md`.
+- Names are stable: drivers on every stack (web's `feel/` in `ourostack/ouro-ui`, Apple's and Windows' later) and app gates report under them. Add a name here first, in its own pull request, and never rename one a driver or gate uses. Bump `version` once a release has shipped it.
+- A native stack measures its components with these scenarios once its driver exists, and its components ship Feel budgets under these names.
+
 ## Ouro AX for Apple
 
 - `standard/ax/surfaces/apple.claims.json` is the claim set; `apple.md` beside it is its page, and a test fails when their claim lists differ. Change both in one PR and bump the set's `version`.

@@ -4,10 +4,12 @@
 //   dist/swatches.html            every theme's resolved colours, to look at
 //   dist/ax/apple.claims.json     Ouro AX for Apple's claim set, byte for byte from standard/ax/surfaces/
 //   dist/hx/components.claims.json  Ouro HX's component claims, byte for byte from standard/hx/
+//   dist/feel/feel.spec.json      Ouro Feel's spec, byte for byte from standard/feel/
 //   dist/dist-manifest.json       { coreTag, files: { "dist/<path>": sha256 } }, for core-provenance.json
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { loadAppleClaimSet } from "../src/ax-claims.mts";
+import { loadFeelSpec } from "../src/feel-spec.mts";
 import { loadHxClaimSet } from "../src/hx-claims.mts";
 import { renderApple } from "../src/apple.mts";
 import { renderSwatches } from "../src/swatches.mts";
@@ -28,6 +30,9 @@ files.set("ax/apple.claims.json", appleClaims);
 const hxClaims = await readFile(new URL("standard/hx/components.claims.json", root), "utf8");
 loadHxClaimSet(JSON.parse(hxClaims));
 files.set("hx/components.claims.json", hxClaims);
+const feelSpec = await readFile(new URL("standard/feel/feel.spec.json", root), "utf8");
+loadFeelSpec(JSON.parse(feelSpec));
+files.set("feel/feel.spec.json", feelSpec);
 
 const manifest = {
   coreTag: tag,
