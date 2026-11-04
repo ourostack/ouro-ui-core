@@ -1,0 +1,444 @@
+{
+  "version": "0.1.0",
+  "judging": {
+    "count": "every run: one run over the limit fails",
+    "distance": "every run: one run over the limit fails",
+    "time": "the median of at least 3 runs, reported with every run's value and the range",
+    "minTimeRuns": 3
+  },
+  "scenarios": [
+    {
+      "id": "history-prepend",
+      "scope": "component",
+      "component": "message-list",
+      "does": "A page of 200 older messages arrives above a reader who is up in a 200-message conversation.",
+      "measures": [
+        "jumps",
+        "shifts",
+        "anchorShiftPx",
+        "anchorMovePx",
+        "blankFrames",
+        "forcedLayouts",
+        "layoutReads",
+        "rowsMounted",
+        "longestFrameMs"
+      ],
+      "drivers": {
+        "web": "built"
+      }
+    },
+    {
+      "id": "launch-cold",
+      "scope": "app",
+      "does": "Start the app when its process is not running, and time each launch stage from t0.",
+      "measures": [
+        "launchToFirstFrameMs",
+        "launchToFirstLayoutMs",
+        "launchToFirstRowMs",
+        "firstRowMs",
+        "launchToRowMs"
+      ],
+      "drivers": {
+        "web": "planned",
+        "apple": "planned"
+      }
+    },
+    {
+      "id": "launch-warm",
+      "scope": "app",
+      "does": "Open the app's window when its process is already running, and time each launch stage from t0.",
+      "measures": [
+        "launchToFirstFrameMs",
+        "launchToFirstLayoutMs",
+        "launchToFirstRowMs",
+        "firstRowMs"
+      ],
+      "drivers": {
+        "web": "planned",
+        "apple": "planned"
+      }
+    },
+    {
+      "id": "switch",
+      "scope": "app",
+      "does": "Open the conversations at the top of the list in turn, by a real click, each timed to the frame its messages are in view.",
+      "measures": [
+        "blankFrames",
+        "jumps",
+        "longestFrameMs"
+      ],
+      "drivers": {
+        "web": "planned",
+        "apple": "planned"
+      }
+    },
+    {
+      "id": "scroll",
+      "scope": "app",
+      "does": "Flick a trackpad, with momentum, up the longest conversation to its start while older history loads, then back down to the newest.",
+      "measures": [
+        "blankFrames",
+        "jumps",
+        "shifts",
+        "anchorShiftPx",
+        "deadInput",
+        "inputToMotionP95Ms",
+        "longestFrameMs"
+      ],
+      "drivers": {
+        "web": "planned",
+        "apple": "planned"
+      }
+    },
+    {
+      "id": "typing",
+      "scope": "app",
+      "does": "Click in the reply box and type a sentence one key at a time, never sending it.",
+      "measures": [
+        "keyToPaintP95Ms",
+        "longestFrameMs"
+      ],
+      "drivers": {
+        "web": "planned",
+        "apple": "planned"
+      }
+    },
+    {
+      "id": "typing-120wpm",
+      "scope": "app",
+      "does": "Type at 120 words a minute in the reply box while new messages arrive.",
+      "measures": [
+        "keyToPaintP95Ms",
+        "longestFrameMs"
+      ],
+      "drivers": {
+        "web": "planned",
+        "apple": "planned"
+      }
+    },
+    {
+      "id": "network-drop",
+      "scope": "app",
+      "does": "Lose the network while reading and writing, then get it back.",
+      "measures": [
+        "blankFrames",
+        "jumps"
+      ],
+      "drivers": {
+        "web": "planned",
+        "apple": "planned"
+      }
+    },
+    {
+      "id": "wake",
+      "scope": "app",
+      "does": "Put the machine to sleep with the app open, wake it, and read the conversation that was open.",
+      "measures": [
+        "blankFrames",
+        "jumps",
+        "longestFrameMs"
+      ],
+      "drivers": {
+        "web": "planned",
+        "apple": "planned"
+      }
+    }
+  ],
+  "launch": {
+    "naming": "Cases and components are kebab-case; marks and measures are camelCase. A run reports its marks raw, in a marks object: each mark's full name (web.navigationStart) and its ms from t0. Only the shared marks become measures, as launchTo<Mark>Ms from t0; driver and app marks (web.*, native.*, <app>.*) appear only in marks.",
+    "t0": {
+      "macos": "The kernel's process start: kp_proc.p_starttime.",
+      "windows": "The kernel's process start: GetProcessTimes' creation time.",
+      "optional": "spawnMs, the harness's spawn time, as a mark from the same clock."
+    },
+    "stages": [
+      {
+        "name": "processStart",
+        "required": true,
+        "means": "The app's process started: t0."
+      },
+      {
+        "name": "firstFrame",
+        "required": true,
+        "means": "The first painted frame that is not blank, which may be a native snapshot. The web driver uses the page's first-contentful-paint until a native first frame exists."
+      },
+      {
+        "name": "firstLayout",
+        "required": true,
+        "means": "The live app's own frame and skeleton painted."
+      },
+      {
+        "name": "firstRow",
+        "required": true,
+        "means": "The first readable row painted, two frames after it is in the DOM or view tree."
+      },
+      {
+        "name": "authReturn",
+        "required": false,
+        "means": "Back from the identity provider, only when the launch went there."
+      }
+    ],
+    "namespaces": {
+      "web": [
+        {
+          "name": "web.viewCreated",
+          "means": "The shell created its web view."
+        },
+        {
+          "name": "web.loadRequested",
+          "means": "The shell asked the web view to load the page."
+        },
+        {
+          "name": "web.navigationStart",
+          "means": "The page's performance.timeOrigin, Navigation Timing's start, which firstRowMs counts from."
+        },
+        {
+          "name": "web.navigationCommit",
+          "means": "The engine's commit callback: WKNavigationDelegate's didCommit, or WebView2's equivalent."
+        },
+        {
+          "name": "web.htmlLoaded",
+          "means": "The page's HTML has arrived."
+        },
+        {
+          "name": "web.scriptRun",
+          "means": "The page's own script started running."
+        },
+        {
+          "name": "web.runtimeReady",
+          "means": "The app's runtime in the page is ready."
+        }
+      ],
+      "native": [
+        {
+          "name": "native.appLaunched",
+          "means": "The app finished launching."
+        },
+        {
+          "name": "native.windowShown",
+          "means": "The app's window is on screen."
+        }
+      ],
+      "app": "<app>.<mark>",
+      "appExamples": [
+        "tandem.serviceAnswered",
+        "tandem.tunnelReady",
+        "tandem.reading",
+        "tandem.firstActivityItem"
+      ]
+    },
+    "dimensions": {
+      "service": [
+        "running",
+        "started"
+      ],
+      "launch": [
+        "first",
+        "afterUpdate",
+        "repeat"
+      ]
+    },
+    "reports": "launch-warm reports launchToFirstFrameMs, launchToFirstLayoutMs, launchToFirstRowMs and firstRowMs; launch-cold reports the same, and its harness-relative launchToRowMs as it is for now. Each time is the median of at least 3 runs with its spread, beside every mark the launch hit.",
+    "signpost": {
+      "api": "OSSignposter",
+      "subsystem": "the app's bundle id",
+      "category": "feel",
+      "mark": "an event named stage, whose message is the mark's name",
+      "case": "an interval named case, whose message is the case's name",
+      "content": "Names and counts only."
+    }
+  },
+  "measures": [
+    {
+      "name": "jumps",
+      "unit": "count",
+      "status": "built",
+      "means": "Frames where the reader's row (the row in the middle of the list's view, followed from frame to frame) moved 100 px or more, net of the input's own movement, including between flicks."
+    },
+    {
+      "name": "shifts",
+      "unit": "count",
+      "status": "built",
+      "means": "The same moves of 8 px or more."
+    },
+    {
+      "name": "anchorShiftPx",
+      "unit": "px",
+      "status": "built",
+      "means": "The jumps added up."
+    },
+    {
+      "name": "anchorMovePx",
+      "unit": "px",
+      "status": "built",
+      "means": "How far the reader's row got from where it started, net of the input, at its farthest."
+    },
+    {
+      "name": "jumpsStrict",
+      "unit": "count",
+      "status": "built",
+      "means": "Moves of the reader's row of over 2 px with no input in the last 300 ms, against the wheel, or beyond the wheel's summed movement in that time."
+    },
+    {
+      "name": "blankFrames",
+      "unit": "count",
+      "status": "built",
+      "means": "Frames where none of 5 points down the list lands on a message, list item or day divider, while the list holds rows."
+    },
+    {
+      "name": "blankFramesInset",
+      "unit": "count",
+      "status": "built",
+      "means": "Frames with no row inside the list's view inset 40 px, or a loading placeholder in view."
+    },
+    {
+      "name": "deadInput",
+      "unit": "count",
+      "status": "built",
+      "means": "Wheel or scroll events that moved nothing for 100 ms, away from the list's ends."
+    },
+    {
+      "name": "forcedLayouts",
+      "unit": "count",
+      "status": "built",
+      "means": "Layout passes the app forced before the frame was due: on web, layout reads made while a change was waiting to be laid out; natively, layout passes run outside the display cycle."
+    },
+    {
+      "name": "layoutReads",
+      "unit": "count",
+      "status": "built",
+      "means": "Layout reads in the scenario (web only)."
+    },
+    {
+      "name": "rowsMounted",
+      "unit": "count",
+      "status": "built",
+      "means": "Rows added to the page or view tree."
+    },
+    {
+      "name": "longestFrameMs",
+      "unit": "ms",
+      "status": "built",
+      "means": "The longest gap between two painted frames."
+    },
+    {
+      "name": "launchToFirstFrameMs",
+      "unit": "ms",
+      "status": "planned",
+      "means": "The firstFrame mark: from t0 to the first painted frame that is not blank."
+    },
+    {
+      "name": "launchToFirstLayoutMs",
+      "unit": "ms",
+      "status": "planned",
+      "means": "The firstLayout mark: from t0 to the live app's own frame and skeleton painted."
+    },
+    {
+      "name": "launchToFirstRowMs",
+      "unit": "ms",
+      "status": "planned",
+      "means": "The firstRow mark: from t0 to the first readable row painted."
+    },
+    {
+      "name": "launchToAuthReturnMs",
+      "unit": "ms",
+      "status": "planned",
+      "means": "The authReturn mark: from t0 to the return from the identity provider, only when the launch went there."
+    },
+    {
+      "name": "firstRowMs",
+      "unit": "ms",
+      "status": "planned",
+      "means": "From navigation start to the first readable row painted, two frames after it is in the DOM or view tree: the first app gate's measure."
+    },
+    {
+      "name": "launchToRowMs",
+      "unit": "ms",
+      "status": "planned",
+      "means": "launch-cold's harness-relative time from the launch to the first row, kept as the first app gate has it for now."
+    },
+    {
+      "name": "inputToMotionP95Ms",
+      "unit": "ms",
+      "status": "planned",
+      "means": "The 95th percentile, over a scenario's wheel or scroll inputs, of the time from the input to the first painted frame where the list moved its way."
+    },
+    {
+      "name": "keyToPaintP95Ms",
+      "unit": "ms",
+      "status": "planned",
+      "means": "The 95th percentile, over a scenario's keys, of the time from the key to the first painted frame after its text changed."
+    },
+    {
+      "name": "hangs",
+      "unit": "count",
+      "status": "planned",
+      "means": "Times the main thread did not answer input for 250 ms or more."
+    },
+    {
+      "name": "commitsPerInput",
+      "unit": "count",
+      "status": "planned",
+      "means": "Renders per input: React commits on web, SwiftUI body passes natively."
+    }
+  ],
+  "seed": {
+    "prng": "mulberry32: state += 0x6d2b79f5; t = state; t = imul(t ^ t >>> 15, t | 1); t ^= t + imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 2^32, in unsigned 32-bit arithmetic",
+    "vector": {
+      "seed": 1,
+      "first": [
+        0.6270739405881613,
+        0.002735721180215478,
+        0.5274470399599522,
+        0.9810509674716741,
+        0.9683778982143849
+      ]
+    },
+    "data": "Made up only: people with invented names, agents with role names such as inbox-agent, never anything from a real account."
+  },
+  "report": {
+    "file": "feel-report.json",
+    "entry": [
+      "case",
+      "component",
+      "engine",
+      "engineVersion",
+      "os",
+      "settled",
+      "measures",
+      "marks",
+      "pass",
+      "shots"
+    ],
+    "measure": [
+      "unit",
+      "runs",
+      "median",
+      "spread",
+      "limit",
+      "pass"
+    ],
+    "content": "Counts and timings only, never the page's or the view's content."
+  },
+  "drivers": [
+    {
+      "id": "web",
+      "repository": "ourostack/ouro-ui",
+      "path": "feel/",
+      "how": "A probe script first in the page's head, driven by HTTP long-poll; engines WKWebView and WebView2 decide, Playwright's WebKit and Chromium are first looks.",
+      "status": "building"
+    },
+    {
+      "id": "apple",
+      "repository": "ourostack/ouro-ui-apple",
+      "how": "XCUITest drives the scenario; CADisplayLink times frames and samples the reader's row; os_signpost marks the launch stages; XCTest's measure runs time measures at least 3 times.",
+      "status": "on hold"
+    },
+    {
+      "id": "windows",
+      "repository": "",
+      "how": "WinUI, later.",
+      "status": "on hold"
+    }
+  ]
+}
