@@ -35,7 +35,6 @@ export interface FeelSpec {
     namespaces: { web: string[]; native: string[]; app: string; appExamples: string[] };
     dimensions: { service: string[]; launch: string[] };
     reports: string;
-    derived: { name: string; is: string; stored: boolean }[];
     signpost: { api: string; subsystem: string; category: string; mark: string; case: string; content: string };
   };
   measures: FeelMeasure[];
@@ -52,6 +51,11 @@ const kebab = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 /** A measure's unit, from its name: `Px` is a distance, `Ms` a time, anything else a count. */
 export function unitOfMeasure(name: string): FeelUnit {
   return name.endsWith("Px") ? "px" : name.endsWith("Ms") ? "ms" : "count";
+}
+
+/** A launch mark's measure from t0: `firstRow` is `launchToFirstRowMs`. */
+export function launchMeasure(mark: string): string {
+  return `launchTo${mark[0]!.toUpperCase()}${mark.slice(1)}Ms`;
 }
 
 /** Every problem with a Feel spec, each with its fix; empty when it is one. */
@@ -111,7 +115,7 @@ export function checkFeelSpec(value: unknown): string[] {
   for (const stage of stages) {
     const name = stage["name"];
     if (!isText(name) || !camel.test(name)) problems.push(`launch: the stage ${JSON.stringify(name)} is not camelCase. Fix: such as "firstRow".`);
-    else if (name !== "processStart" && stage["required"] === true && !measures.has(`${name}Ms`)) problems.push(`launch: ${name} has no measure ${name}Ms. Fix: add it to measures.`);
+    else if (name !== "processStart" && stage["required"] === true && !measures.has(launchMeasure(name))) problems.push(`launch: ${name} has no measure ${launchMeasure(name)}. Fix: add it to measures.`);
   }
   const namespaces = launch["namespaces"];
   if (!isRecord(namespaces) || !Array.isArray(namespaces["web"])) problems.push("launch.namespaces is not { web, native, app }. Fix: start from standard/feel/feel.spec.json.");
@@ -170,7 +174,6 @@ export function feelSpecPage(spec: FeelSpec): string {
     `- An app's own marks: \`${launch.namespaces.app}\`, such as ${code(launch.namespaces.appExamples)}.`,
     `- Dimensions: \`service\` is ${code(launch.dimensions.service).replace(", ", " or ")}; \`launch\` is ${code(launch.dimensions.launch)}.`,
     `- ${launch.reports}`,
-    ...launch.derived.map((d) => `- \`${d.name}\` is derived as \`${d.is}\`${d.stored ? "" : ", not stored"}.`),
     `- os_signpost: ${launch.signpost.api}, with subsystem ${launch.signpost.subsystem} and category \`${launch.signpost.category}\`. A mark is ${launch.signpost.mark}; a case is ${launch.signpost.case}. ${launch.signpost.content}`,
     "",
     "### Seed",

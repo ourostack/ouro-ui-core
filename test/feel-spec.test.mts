@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { test } from "node:test";
-import { checkFeelSpec, feelRandom, feelSpecPage, loadFeelSpec, unitOfMeasure } from "../src/feel-spec.mts";
+import { checkFeelSpec, feelRandom, feelSpecPage, launchMeasure, loadFeelSpec, unitOfMeasure } from "../src/feel-spec.mts";
 
 const raw = await readFile(new URL("../standard/feel/feel.spec.json", import.meta.url), "utf8");
 const spec = JSON.parse(raw) as Record<string, unknown> & { scenarios: Record<string, unknown>[]; measures: Record<string, unknown>[] };
@@ -20,7 +20,10 @@ test("the spec keeps the first app gate's scenario ids and launch stages", () =>
   assert.deepEqual(launch.namespaces.web, ["web.viewCreated", "web.navigationStart", "web.navigationCommit", "web.htmlLoaded", "web.scriptRun", "web.runtimeReady"]);
   assert.deepEqual(launch.namespaces.native, ["native.appLaunched", "native.windowShown"]);
   assert.deepEqual(launch.signpost.category, "feel");
-  for (const id of ["launch-cold", "launch-warm"]) assert.deepEqual(spec.scenarios.find((s) => s["id"] === id)!["measures"], ["firstFrameMs", "firstLayoutMs", "firstRowMs"]);
+  assert.deepEqual(spec.scenarios.find((s) => s["id"] === "launch-warm")!["measures"], ["launchToFirstFrameMs", "launchToFirstLayoutMs", "launchToFirstRowMs", "firstRowMs"]);
+  assert.ok((spec.scenarios.find((s) => s["id"] === "launch-cold")!["measures"] as string[]).includes("launchToRowMs"));
+  assert.equal(launchMeasure("firstRow"), "launchToFirstRowMs");
+  assert.ok(loadFeelSpec(spec).report.entry.includes("marks"));
   assert.deepEqual(launch.dimensions, { service: ["running", "started"], launch: ["first", "afterUpdate", "repeat"] });
 });
 

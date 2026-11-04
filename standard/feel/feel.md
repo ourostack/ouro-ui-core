@@ -21,8 +21,8 @@ Version 0.1.0.
 | Scenario | Scope | What happens | Measures | Drivers |
 | --- | --- | --- | --- | --- |
 | `history-prepend` | component: message-list | A page of 200 older messages arrives above a reader who is up in a 200-message conversation. | `jumps`, `shifts`, `anchorShiftPx`, `anchorMovePx`, `blankFrames`, `forcedLayouts`, `layoutReads`, `rowsMounted`, `longestFrameMs` | web built |
-| `launch-cold` | app | Start the app when its process is not running, and time each launch stage from t0. | `firstFrameMs`, `firstLayoutMs`, `firstRowMs` | web planned, apple planned |
-| `launch-warm` | app | Open the app's window when its process is already running, and time each launch stage from t0. | `firstFrameMs`, `firstLayoutMs`, `firstRowMs` | web planned, apple planned |
+| `launch-cold` | app | Start the app when its process is not running, and time each launch stage from t0. | `launchToFirstFrameMs`, `launchToFirstLayoutMs`, `launchToFirstRowMs`, `firstRowMs`, `launchToRowMs` | web planned, apple planned |
+| `launch-warm` | app | Open the app's window when its process is already running, and time each launch stage from t0. | `launchToFirstFrameMs`, `launchToFirstLayoutMs`, `launchToFirstRowMs`, `firstRowMs` | web planned, apple planned |
 | `switch` | app | Open the conversations at the top of the list in turn, by a real click, each timed to the frame its messages are in view. | `blankFrames`, `jumps`, `longestFrameMs` | web planned, apple planned |
 | `scroll` | app | Flick a trackpad, with momentum, up the longest conversation to its start while older history loads, then back down to the newest. | `blankFrames`, `jumps`, `shifts`, `anchorShiftPx`, `deadInput`, `inputToMotionP95Ms`, `longestFrameMs` | web planned, apple planned |
 | `typing` | app | Click in the reply box and type a sentence one key at a time, never sending it. | `keyToPaintP95Ms`, `longestFrameMs` | web planned, apple planned |
@@ -49,10 +49,11 @@ Version 0.1.0.
 | `layoutReads` | count | built | Layout reads in the scenario (web only). |
 | `rowsMounted` | count | built | Rows added to the page or view tree. |
 | `longestFrameMs` | ms | built | The longest gap between two painted frames. |
-| `firstFrameMs` | ms | planned | The firstFrame launch stage, from t0. |
-| `firstLayoutMs` | ms | planned | The firstLayout launch stage, from t0. |
-| `firstRowMs` | ms | planned | The firstRow launch stage, from t0. |
-| `spawnMs` | ms | planned | Optional: when the harness spawned the app, from t0's clock. |
+| `launchToFirstFrameMs` | ms | planned | The firstFrame mark: from t0 to the first painted frame that is not blank. |
+| `launchToFirstLayoutMs` | ms | planned | The firstLayout mark: from t0 to the live app's own frame and skeleton painted. |
+| `launchToFirstRowMs` | ms | planned | The firstRow mark: from t0 to the first readable row painted. |
+| `firstRowMs` | ms | planned | From navigation start to the first readable row painted, two frames after it is in the DOM or view tree: the first app gate's measure. |
+| `launchToRowMs` | ms | planned | launch-cold's harness-relative time from the launch to the first row, kept as the first app gate has it for now. |
 | `inputToMotionP95Ms` | ms | planned | The 95th percentile, over a scenario's wheel or scroll inputs, of the time from the input to the first painted frame where the list moved its way. |
 | `keyToPaintP95Ms` | ms | planned | The 95th percentile, over a scenario's keys, of the time from the key to the first painted frame after its text changed. |
 | `hangs` | count | planned | Times the main thread did not answer input for 250 ms or more. |
@@ -60,11 +61,11 @@ Version 0.1.0.
 
 ### Launch
 
-Cases and components are kebab-case; marks and measures are camelCase. A mark's measure is the mark plus Ms, in ms from t0, and a namespaced mark keeps its namespace (web.navigationStart is web.navigationStartMs).
+Cases and components are kebab-case; marks and measures are camelCase. A run reports its marks raw, in a marks object: each mark's name and its ms from t0, a namespaced mark under its full name (web.navigationStart). A measure from t0 is launchTo<Mark>Ms.
 
 - t0 on macOS: The kernel's process start: kp_proc.p_starttime.
 - t0 on Windows: The kernel's process start: GetProcessTimes' creation time.
-- Optional: spawnMs, the harness's spawn time, from the same clock.
+- Optional: spawnMs, the harness's spawn time, as a mark from the same clock.
 
 | Shared mark | Required | What it marks |
 | --- | --- | --- |
@@ -78,8 +79,7 @@ Cases and components are kebab-case; marks and measures are camelCase. A mark's 
 - Native marks: `native.appLaunched`, `native.windowShown`.
 - An app's own marks: `<app>.<mark>`, such as `tandem.serviceAnswered`, `tandem.tunnelReady`, `tandem.reading`, `tandem.firstActivityItem`.
 - Dimensions: `service` is `running` or `started`; `launch` is `first`, `afterUpdate`, `repeat`.
-- launch-cold and launch-warm report firstFrameMs, firstLayoutMs and firstRowMs, each the median of at least 3 runs with its spread, and every mark the launch hit.
-- `first-content` is derived as `firstRowMs - web.navigationStartMs`, not stored.
+- launch-warm reports launchToFirstFrameMs, launchToFirstLayoutMs, launchToFirstRowMs and firstRowMs; launch-cold reports the same, and its harness-relative launchToRowMs as it is for now. Each time is the median of at least 3 runs with its spread, beside every mark the launch hit.
 - os_signpost: OSSignposter, with subsystem the app's bundle id and category `feel`. A mark is an event named stage, whose message is the mark's name; a case is an interval named case, whose message is the case's name. Names and counts only.
 
 ### Seed
@@ -90,7 +90,7 @@ Cases and components are kebab-case; marks and measures are camelCase. A mark's 
 
 ### Report
 
-`feel-report.json` holds one entry per scenario and engine: `case`, `component`, `engine`, `engineVersion`, `os`, `settled`, `measures`, `pass`, `shots`. Each measure has `unit`, `runs`, `median`, `spread`, `limit`, `pass`. Counts and timings only, never the page's or the view's content.
+`feel-report.json` holds one entry per scenario and engine: `case`, `component`, `engine`, `engineVersion`, `os`, `settled`, `measures`, `marks`, `pass`, `shots`. Each measure has `unit`, `runs`, `median`, `spread`, `limit`, `pass`. Counts and timings only, never the page's or the view's content.
 
 ### Drivers
 

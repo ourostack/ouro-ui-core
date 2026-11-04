@@ -32,9 +32,11 @@
       "scope": "app",
       "does": "Start the app when its process is not running, and time each launch stage from t0.",
       "measures": [
-        "firstFrameMs",
-        "firstLayoutMs",
-        "firstRowMs"
+        "launchToFirstFrameMs",
+        "launchToFirstLayoutMs",
+        "launchToFirstRowMs",
+        "firstRowMs",
+        "launchToRowMs"
       ],
       "drivers": {
         "web": "planned",
@@ -46,8 +48,9 @@
       "scope": "app",
       "does": "Open the app's window when its process is already running, and time each launch stage from t0.",
       "measures": [
-        "firstFrameMs",
-        "firstLayoutMs",
+        "launchToFirstFrameMs",
+        "launchToFirstLayoutMs",
+        "launchToFirstRowMs",
         "firstRowMs"
       ],
       "drivers": {
@@ -142,11 +145,11 @@
     }
   ],
   "launch": {
-    "naming": "Cases and components are kebab-case; marks and measures are camelCase. A mark's measure is the mark plus Ms, in ms from t0, and a namespaced mark keeps its namespace (web.navigationStart is web.navigationStartMs).",
+    "naming": "Cases and components are kebab-case; marks and measures are camelCase. A run reports its marks raw, in a marks object: each mark's name and its ms from t0, a namespaced mark under its full name (web.navigationStart). A measure from t0 is launchTo<Mark>Ms.",
     "t0": {
       "macos": "The kernel's process start: kp_proc.p_starttime.",
       "windows": "The kernel's process start: GetProcessTimes' creation time.",
-      "optional": "spawnMs, the harness's spawn time, from the same clock."
+      "optional": "spawnMs, the harness's spawn time, as a mark from the same clock."
     },
     "stages": [
       {
@@ -207,14 +210,7 @@
         "repeat"
       ]
     },
-    "reports": "launch-cold and launch-warm report firstFrameMs, firstLayoutMs and firstRowMs, each the median of at least 3 runs with its spread, and every mark the launch hit.",
-    "derived": [
-      {
-        "name": "first-content",
-        "is": "firstRowMs - web.navigationStartMs",
-        "stored": false
-      }
-    ],
+    "reports": "launch-warm reports launchToFirstFrameMs, launchToFirstLayoutMs, launchToFirstRowMs and firstRowMs; launch-cold reports the same, and its harness-relative launchToRowMs as it is for now. Each time is the median of at least 3 runs with its spread, beside every mark the launch hit.",
     "signpost": {
       "api": "OSSignposter",
       "subsystem": "the app's bundle id",
@@ -298,28 +294,34 @@
       "means": "The longest gap between two painted frames."
     },
     {
-      "name": "firstFrameMs",
+      "name": "launchToFirstFrameMs",
       "unit": "ms",
       "status": "planned",
-      "means": "The firstFrame launch stage, from t0."
+      "means": "The firstFrame mark: from t0 to the first painted frame that is not blank."
     },
     {
-      "name": "firstLayoutMs",
+      "name": "launchToFirstLayoutMs",
       "unit": "ms",
       "status": "planned",
-      "means": "The firstLayout launch stage, from t0."
+      "means": "The firstLayout mark: from t0 to the live app's own frame and skeleton painted."
+    },
+    {
+      "name": "launchToFirstRowMs",
+      "unit": "ms",
+      "status": "planned",
+      "means": "The firstRow mark: from t0 to the first readable row painted."
     },
     {
       "name": "firstRowMs",
       "unit": "ms",
       "status": "planned",
-      "means": "The firstRow launch stage, from t0."
+      "means": "From navigation start to the first readable row painted, two frames after it is in the DOM or view tree: the first app gate's measure."
     },
     {
-      "name": "spawnMs",
+      "name": "launchToRowMs",
       "unit": "ms",
       "status": "planned",
-      "means": "Optional: when the harness spawned the app, from t0's clock."
+      "means": "launch-cold's harness-relative time from the launch to the first row, kept as the first app gate has it for now."
     },
     {
       "name": "inputToMotionP95Ms",
@@ -370,6 +372,7 @@
       "os",
       "settled",
       "measures",
+      "marks",
       "pass",
       "shots"
     ],
