@@ -9,6 +9,11 @@ Core is the platform-neutral part of Ouro UI: what is true on every platform, fo
 - `pnpm tokens:parity` must pass: `dist/web/` equals web's files at `parity.json`'s `webTag`, byte for byte. A token change lands in web first, then here with a `webTag` bump, until web builds from core.
 - Before you push, run `pnpm typecheck`, `pnpm tokens`, `pnpm tokens:parity`, `pnpm test`, and on a Mac, `pnpm apple:check`.
 
+## Ouro HX's component claims
+
+- `standard/hx/components.claims.json` is the claim set for the components every platform shares (web's names: `button`, `empty`, `alert`, `sheet`, `toast`); `components.md` beside it is its page, and a test fails when their claim lists differ. Change both in one PR and bump the set's `version`.
+- Same admission rule as AX: `must` needs a stated hazard with a check, or an evaluation. `checkHxClaimSet` in `src/hx-claims.mts` enforces the shape. Each claim's `checks` names the test that proves it on each platform; a platform adds its entry when its tests prove it.
+
 ## Ouro AX for Apple
 
 - `standard/ax/surfaces/apple.claims.json` is the claim set; `apple.md` beside it is its page, and a test fails when their claim lists differ. Change both in one PR and bump the set's `version`.
