@@ -269,13 +269,13 @@
       "name": "jumps",
       "unit": "count",
       "status": "built",
-      "means": "Frames where the reader's row (the row in the middle of the list's view, followed from frame to frame) moved 100 px or more, net of the input's own movement, including between flicks."
+      "means": "Frames where the reader's row (the row in the middle of the list's view, followed from frame to frame) moved 100 px or more outside what the input explains: with no input, against the input, or beyond the input's own distance, including between flicks."
     },
     {
       "name": "shifts",
       "unit": "count",
       "status": "built",
-      "means": "The same moves of 8 px or more."
+      "means": "The same unexplained moves of 8 px or more."
     },
     {
       "name": "anchorShiftPx",
