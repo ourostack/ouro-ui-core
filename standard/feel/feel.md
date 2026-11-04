@@ -37,8 +37,8 @@ Version 0.1.0.
 
 | Measure | Unit | Status | What it counts |
 | --- | --- | --- | --- |
-| `jumps` | count | built | Frames where the reader's row (the row in the middle of the list's view, followed from frame to frame) moved 100 px or more, net of the input's own movement, including between flicks. |
-| `shifts` | count | built | The same moves of 8 px or more. |
+| `jumps` | count | built | Frames where the reader's row (the row in the middle of the list's view, followed from frame to frame) moved 100 px or more outside what the input explains: with no input, against the input, or beyond the input's own distance, including between flicks. |
+| `shifts` | count | built | The same unexplained moves of 8 px or more. |
 | `anchorShiftPx` | px | built | The jumps added up. |
 | `anchorMovePx` | px | built | How far the reader's row got from where it started, net of the input, at its farthest. |
 | `jumpsStrict` | count | built | Moves of the reader's row of over 2 px with no input in the last 300 ms, against the wheel, or beyond the wheel's summed movement in that time. |
