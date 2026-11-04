@@ -36,7 +36,7 @@ docs/decisions/                   decision records, with their history from ouro
 
 ## What the components promise
 
-[`standard/hx/components.md`](standard/hx/components.md) holds eight claims for Button, Empty, Alert, Sheet and Toast on every platform: 44-point targets, no motion under Reduce Motion, names a screen reader speaks, text that wraps at the largest sizes, 4.5:1 contrast (7:1 with increased contrast), announcements by urgency, toasts with an action that wait, and a close control a screen reader can reach. Each names how web and Apple prove it.
+[`standard/hx/components.md`](standard/hx/components.md) holds eight claims for Button, Empty, Alert, Sheet and Toast on every platform: 44-point targets, no animated movement under Reduce Motion, names a screen reader speaks, text that wraps at the largest sizes, 4.5:1 contrast (7:1 with increased contrast), announcements by urgency, toasts with an action that wait, and a close control a screen reader can reach. Each names how web and Apple prove it.
 
 ## Ouro AX for Apple
 

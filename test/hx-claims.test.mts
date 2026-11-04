@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { test } from "node:test";
-import { HX_COMPONENTS, checkHxClaimSet, loadHxClaimSet } from "../src/hx-claims.mts";
+import { HX_COMPONENTS, checkHxClaimSet, hxClaimsPage, loadHxClaimSet } from "../src/hx-claims.mts";
 
 const raw = await readFile(new URL("../standard/hx/components.claims.json", import.meta.url), "utf8");
 const set = JSON.parse(raw) as { version: string; claims: Record<string, unknown>[] };
@@ -20,6 +20,17 @@ test("every claim says how Apple proves it, and every component is covered", () 
 test("the page lists exactly the claims in the data", () => {
   const onPage = [...page.matchAll(/^### `([a-z]+\.[a-z-]+)`/gm)].map((m) => m[1]);
   assert.deepEqual(onPage, set.claims.map((c) => c["id"]));
+});
+
+test("the page's claims section is rendered from the data, word for word (pnpm hx:page)", () => {
+  const section = page.slice(page.indexOf("## The claims"));
+  assert.equal(section, hxClaimsPage(loadHxClaimSet(set)));
+});
+
+test("a principle basis may leave the finding empty; a hazard may not", () => {
+  const good = set.claims[0]!;
+  const problems = checkHxClaimSet({ version: "0.1.0", claims: [{ ...good, id: "a.one", evidence: { basis: "hazard", source: "https://x", finding: "" } }] });
+  assert.ok(problems.some((p) => p.startsWith("a.one: evidence.finding is empty, but a hazard basis needs one. Fix:")), problems.join("\n"));
 });
 
 test("checkHxClaimSet names each problem with its fix", () => {

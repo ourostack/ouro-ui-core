@@ -67,7 +67,7 @@ export function checkHxClaimSet(value: unknown): string[] {
     }
     for (const k of extra(e, EVIDENCE_FIELDS)) problems.push(`${id}: evidence has a field it does not have, ${JSON.stringify(k)}. Fix: { basis, source, finding } only.`);
     if (!/^https:\/\//.test(e["source"] as string) && e["basis"] !== "evaluation") problems.push(`${id}: evidence.source is not a link. Fix: link the WCAG or HIG page the claim comes from.`);
-    if (e["basis"] !== "principle" && !isText(e["finding"])) problems.push(`${id}: a ${e["basis"]} is stated. Fix: evidence.finding: "<the harm it prevents, or what the run showed>".`);
+    if (e["basis"] !== "principle" && !isText(e["finding"])) problems.push(`${id}: evidence.finding is empty, but a ${e["basis"]} basis needs one. Fix: evidence.finding: "<the harm it prevents, or what the run showed>".`);
     if (c["tier"] === "must" && e["basis"] === "principle") problems.push(`${id}: a must claim needs an evaluation that shows the failure, or a stated hazard. Fix: tier: "should", or state the hazard.`);
   });
   return problems;
@@ -78,6 +78,18 @@ export function loadHxClaimSet(value: unknown): HxClaimSet {
   const problems = checkHxClaimSet(value);
   if (problems.length) throw new Error(`hx-claims: the claim set has ${problems.length} problem${problems.length === 1 ? "" : "s"}:\n${problems.join("\n")}`);
   return value as HxClaimSet;
+}
+
+/** The "The claims" section of `standard/hx/components.md`, rendered from the data, so the page cannot drift from it. */
+export function hxClaimsPage(set: HxClaimSet): string {
+  const out = ["## The claims", ""];
+  for (const c of set.claims) {
+    out.push(`### \`${c.id}\``, "", `**${c.tier}**, for ${c.appliesTo.join(", ")}. ${c.rule}`, "");
+    out.push(`- Why: ${c.why}`, `- Source: <${c.evidence.source}>. ${c.evidence.finding}`, "");
+    for (const p of HX_PLATFORMS) if (c.checks[p]) out.push(`- Checked on ${p}: ${c.checks[p]}`);
+    out.push(`- Fix: ${c.fix}`, "");
+  }
+  return out.join("\n");
 }
 
 export { claimSetHash, claimSetText };
