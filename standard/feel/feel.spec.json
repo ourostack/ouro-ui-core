@@ -432,13 +432,13 @@
       "id": "apple",
       "repository": "ourostack/ouro-ui-apple",
       "how": "XCUITest drives the scenario; CADisplayLink times frames and samples the reader's row; os_signpost marks the launch stages; XCTest's measure runs time measures at least 3 times.",
-      "status": "planned"
+      "status": "on hold"
     },
     {
       "id": "windows",
       "repository": "",
       "how": "WinUI, later.",
-      "status": "later"
+      "status": "on hold"
     }
   ]
 }

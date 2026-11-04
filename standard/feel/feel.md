@@ -10,7 +10,7 @@ Ouro Feel measures how an Ouro app feels in real use. This spec is the part ever
 - Report counts and timings only, never content.
 - A component's budgets use these names. Ouro HX's definition of done includes a component's Feel budgets on every stack it ships on, once that stack's driver exists.
 
-The web driver is in web, `ourostack/ouro-ui`, under `feel/`. The Apple driver is planned in `ourostack/ouro-ui-apple`, and Windows comes later.
+The web driver is in web, `ourostack/ouro-ui`, under `feel/`. Native drivers (Apple in `ourostack/ouro-ui-apple`, then Windows) are on hold until web works for everyone (Ari, 2026-11-04), and their standards will be stricter.
 
 ## The spec
 
@@ -108,5 +108,5 @@ Cases and components are kebab-case; marks and measures are camelCase. A run rep
 | Driver | Where | How | Status |
 | --- | --- | --- | --- |
 | web | ourostack/ouro-ui (`feel/`) | A probe script first in the page's head, driven by HTTP long-poll; engines WKWebView and WebView2 decide, Playwright's WebKit and Chromium are first looks. | building |
-| apple | ourostack/ouro-ui-apple | XCUITest drives the scenario; CADisplayLink times frames and samples the reader's row; os_signpost marks the launch stages; XCTest's measure runs time measures at least 3 times. | planned |
-| windows | not yet | WinUI, later. | later |
+| apple | ourostack/ouro-ui-apple | XCUITest drives the scenario; CADisplayLink times frames and samples the reader's row; os_signpost marks the launch stages; XCTest's measure runs time measures at least 3 times. | on hold |
+| windows | not yet | WinUI, later. | on hold |

@@ -40,7 +40,7 @@ export interface FeelSpec {
   measures: FeelMeasure[];
   seed: { prng: string; vector: { seed: number; first: number[] }; data: string };
   report: { file: string; entry: string[]; measure: string[]; content: string };
-  drivers: { id: string; repository: string; path?: string; how: string; status: "building" | "planned" | "later" }[];
+  drivers: { id: string; repository: string; path?: string; how: string; status: "building" | "on hold" }[];
 }
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
