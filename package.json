@@ -15,7 +15,7 @@
     "tokens:import": "node scripts/import-from-web.mts",
     "apple:check": "sh scripts/apple-check.sh",
     "typecheck": "tsc --noEmit",
-    "test": "node --test 'test/**/*.test.mts'"
+    "test": "node --test 'test/**/*.test.mts' 'scripts/*.test.mjs'"
   },
   "devDependencies": {
     "@terrazzo/parser": "2.10.0",

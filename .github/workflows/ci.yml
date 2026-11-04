@@ -9,6 +9,31 @@ permissions:
   contents: read
 
 jobs:
+  attribution:
+    # No AI attribution in a pull request's commits (AGENTS.md): every commit it adds to its base
+    # branch is the maintainer's, github-actions[bot]'s or GitHub's, and credits no AI tool
+    # (scripts/attribution.mjs). Commits already on main are not checked. It installs nothing, and
+    # fails when it cannot read the range.
+    name: attribution
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          # Every commit of every branch, without their trees and files, so the range reads.
+          fetch-depth: 0
+          filter: tree:0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: No AI attribution in the pull request's commits
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/attribution.mjs "origin/$BASE_REF" "$PR_HEAD"
+
   parity:
     name: tokens:parity
     runs-on: ubuntu-latest

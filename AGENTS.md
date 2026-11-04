@@ -26,6 +26,7 @@ Meerkat mode: look around first. Before you design or build something new (a com
 ## Working here
 
 - Every change after the initial import goes through a pull request, merged when CI is green.
+- Never add AI attribution to commits, pull requests, code or docs: no `Co-authored-by:` (or other `*-by:` trailer) naming an AI tool or a bot, and no "Generated with" line. CI's `attribution` job runs `scripts/attribution.mjs` over every commit a pull request adds and fails on one; commits already on main are not checked.
 - Releases are tags `vX.Y.Z` matching `package.json`'s version; the release workflow attaches `dist/` to the GitHub release.
 - Other agents work in web and the platform repositories. Copy first, remove later, and never rebase or force-push someone else's branch.
 - Ouro uses Ari's personal Apple developer account only, never the work (Microsoft) account or anything in ~/.config/tandem-signing.
