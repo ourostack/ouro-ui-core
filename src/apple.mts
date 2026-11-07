@@ -76,7 +76,7 @@ export async function renderApple(version: string): Promise<string> {
 
 import SwiftUI
 
-/// The themes Ouro HX ships, as on https://ui.ouro.bot/.
+/// The themes Ouro HX ships, as on https://ui.ouroboros.bot/.
 public enum OuroThemeName: String, CaseIterable, Sendable {
 ${THEMES.map((t) => `    case ${t}`).join("\n")}
 }
@@ -134,7 +134,7 @@ public struct OuroCubicBezier: Sendable, Equatable {
 
 /// Ouro HX's tokens: motion, and every theme's colours.
 public struct OuroTokens: Sendable {
-    /// The theme ui.ouro.bot opens on.
+    /// The theme ui.ouroboros.bot opens on.
     public static let defaultTheme: OuroThemeName = .pearl
 
     /// Durations in seconds.

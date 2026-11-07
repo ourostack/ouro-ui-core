@@ -8,7 +8,7 @@
 
 **One set of tokens, every platform: the shared heart of Ouro HX (for people) and Ouro AX (for agents).** Change a colour once and watch it turn up everywhere, down to the last byte.
 
-Core holds what is true on every platform. Today that is three things: Ouro HX's colours, radii and motion, written once as [DTCG 2025.10](https://www.designtokens.org/tr/2025.10/format/) JSON and generated into each platform's own language; what HX's components promise a person, as claims; and Ouro AX for Apple's claims. Each platform repository pins a core release by tag and builds from it. The HX design language, web's AX claims standard and the [ui.ouro.bot](https://ui.ouro.bot/) site move here in later steps.
+Core holds what is true on every platform. Today that is three things: Ouro HX's colours, radii and motion, written once as [DTCG 2025.10](https://www.designtokens.org/tr/2025.10/format/) JSON and generated into each platform's own language; what HX's components promise a person, as claims; and Ouro AX for Apple's claims. Each platform repository pins a core release by tag and builds from it. The HX design language, web's AX claims standard and the [ui.ouroboros.bot](https://ui.ouroboros.bot/) site move here in later steps.
 
 | Platform | Where it lives | What core gives it |
 |---|---|---|
@@ -36,7 +36,7 @@ docs/decisions/                   decision records, with their history from ouro
 `pnpm tokens` writes:
 
 - `dist/web/ouro-theme.css` and `dist/web/ouro-base.css`: what `shadcn add` installs from web's registry.
-- `dist/web/plain/` and `dist/web/themes/<name>.css`: the plain stylesheets ui.ouro.bot serves for pages without Tailwind.
+- `dist/web/plain/` and `dist/web/themes/<name>.css`: the plain stylesheets ui.ouroboros.bot serves for pages without Tailwind.
 - `dist/apple/OuroTokens.swift`: SwiftUI with no dependencies. `OuroTokens.theme(.pearl).colors(scheme).primary` is a `Color`, `OuroTokens.Duration.fast` is a `Double` in seconds, and `OuroTokens.Spring.animation` is the spring.
 - `dist/ax/apple.claims.json`: Ouro AX for Apple's claim set, byte for byte, for `ouro-ax-xray` in ouro-ui-apple.
 - `dist/hx/components.claims.json`: Ouro HX's component claims, byte for byte, which each platform's tests prove.
