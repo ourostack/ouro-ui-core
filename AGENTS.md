@@ -1,6 +1,6 @@
 # Ouro UI core
 
-Core is the platform-neutral part of Ouro UI: what is true on every platform, for Ouro HX (people) and Ouro AX (agents). Today it holds the tokens and their generators, and the decision records. The HX design language, AX's claims standard and the ui.ouro.bot site arrive later. Platform code lives in its platform's repository: web in `ourostack/ouro-ui`, Apple in `ourostack/ouro-ui-apple`.
+Core is the platform-neutral part of Ouro UI: what is true on every platform, for Ouro HX (people) and Ouro AX (agents). Today it holds the tokens and their generators, and the decision records. The HX design language, AX's claims standard and the ui.ouroboros.bot site arrive later. Platform code lives in its platform's repository: web in `ourostack/ouro-ui`, Apple in `ourostack/ouro-ui-apple`.
 
 ## Tokens
 

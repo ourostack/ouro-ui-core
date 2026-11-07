@@ -16,5 +16,5 @@ Core starts as a copy. Nothing has been removed from web (`ourostack/ouro-ui`), 
 ## Later, each its own step
 
 1. Web consumes core's release, pinned in its `core-provenance.json`, and its copies gain a one-line header pointing here.
-2. The AX claims standard, its tooling and the ui.ouro.bot site move here, copied with history first.
+2. The AX claims standard, its tooling and the ui.ouroboros.bot site move here, copied with history first.
 3. Web's copies are removed only after every open pull request that touches them has merged or closed.
