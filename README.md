@@ -8,12 +8,18 @@
 
 **One set of tokens, every platform: the shared heart of Ouro HX (for people) and Ouro AX (for agents).** Change a colour once and watch it turn up everywhere, down to the last byte.
 
+[ui.ouroboros.bot](https://ui.ouroboros.bot/) · [Releases](https://github.com/ourostack/ouro-ui-core/releases) · [Ouro UI for web](https://github.com/ourostack/ouro-ui) · [Ouro UI for Apple](https://github.com/ourostack/ouro-ui-apple) · [More from Ouro](https://github.com/ourostack)
+
+```sh
+pnpm install && pnpm tokens   # writes dist/ for web and Apple
+```
+
 Core holds what is true on every platform. Today that is three things: Ouro HX's colours, radii and motion, written once as [DTCG 2025.10](https://www.designtokens.org/tr/2025.10/format/) JSON and generated into each platform's own language; what HX's components promise a person, as claims; and Ouro AX for Apple's claims. Each platform repository pins a core release by tag and builds from it. The HX design language, web's AX claims standard and the [ui.ouroboros.bot](https://ui.ouroboros.bot/) site move here in later steps.
 
 | Platform | Where it lives | What core gives it |
 |---|---|---|
 | Ouro HX for web | [ourostack/ouro-ui](https://github.com/ourostack/ouro-ui) | `dist/web/*.css` |
-| Ouro HX for Apple | `ourostack/ouro-ui-apple` (coming) | `dist/apple/OuroTokens.swift` |
+| Ouro HX for Apple | [ourostack/ouro-ui-apple](https://github.com/ourostack/ouro-ui-apple) | `dist/apple/OuroTokens.swift` |
 
 ## What's inside
 
