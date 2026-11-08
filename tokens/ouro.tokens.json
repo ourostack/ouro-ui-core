@@ -1,5 +1,5 @@
 {
-  "$description": "Ouro UI's tokens: the default colours (Pearl) and what every Ouro component needs. DTCG 2025.10. Derived from ourostack/ouro-ui@v1.3.3.",
+  "$description": "Ouro UI's tokens: the default colours (Pearl) and what every Ouro component needs. DTCG 2025.10. Derived from ourostack/ouro-ui@v1.3.7.",
   "radius": {
     "$type": "dimension",
     "$value": {

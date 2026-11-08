@@ -1,5 +1,5 @@
 {
-  "$description": "The Cookbook theme: the tokens it sets over tokens/ouro.tokens.json. DTCG 2025.10. Derived from ourostack/ouro-ui@v1.3.3.",
+  "$description": "The Cookbook theme: the tokens it sets over tokens/ouro.tokens.json. DTCG 2025.10. Derived from ourostack/ouro-ui@v1.3.7.",
   "font-sans": {
     "$type": "fontFamily",
     "$value": ["Geist", "ui-sans-serif", "system-ui", "sans-serif"]
@@ -590,6 +590,31 @@
       }
     }
   },
+  "sj-photo-action": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [0.8392, 0.6431, 0.4157],
+      "hex": "#d6a46a"
+    }
+  },
+  "sj-photo-action-hover": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [0.8863, 0.7098, 0.498],
+      "hex": "#e2b57f"
+    }
+  },
+  "sj-on-photo-action": {
+    "$type": "color",
+    "$value": "{sj-photo-charcoal}",
+    "$extensions": {
+      "mode": {
+        "dark": "{sj-photo-charcoal}"
+      }
+    }
+  },
   "sj-shadow": {
     "$type": "string",
     "$value": "0 24px 80px color-mix(in srgb, var(--sj-charcoal) 14%, transparent)",
@@ -661,6 +686,24 @@
       }
     }
   },
+  "card": {
+    "$type": "color",
+    "$value": "{sj-panel-solid}",
+    "$extensions": {
+      "mode": {
+        "dark": "{sj-panel-solid}"
+      }
+    }
+  },
+  "card-foreground": {
+    "$type": "color",
+    "$value": "{sj-ink}",
+    "$extensions": {
+      "mode": {
+        "dark": "{sj-ink}"
+      }
+    }
+  },
   "popover": {
     "$type": "color",
     "$value": "{sj-panel-solid}",
@@ -695,6 +738,66 @@
       "mode": {
         "dark": "{sj-paper}"
       }
+    }
+  },
+  "ouro": {
+    "action": {
+      "$type": "color",
+      "$value": "{sj-action}",
+      "$extensions": {
+        "mode": {
+          "dark": "{sj-action}"
+        }
+      }
+    },
+    "action-foreground": {
+      "$type": "color",
+      "$value": "{sj-on-action}",
+      "$extensions": {
+        "mode": {
+          "dark": "{sj-on-action}"
+        }
+      }
+    },
+    "action-hover": {
+      "$type": "color",
+      "$value": "{sj-action-hover}",
+      "$extensions": {
+        "mode": {
+          "dark": "{sj-action-hover}"
+        }
+      }
+    },
+    "action-active": {
+      "$type": "color",
+      "$value": "{sj-action-hover}",
+      "$extensions": {
+        "mode": {
+          "dark": "{sj-action-hover}"
+        }
+      }
+    },
+    "action-disabled": {
+      "$type": "color",
+      "$value": "{sj-action-disabled}",
+      "$extensions": {
+        "mode": {
+          "dark": "{sj-action-disabled}"
+        }
+      }
+    },
+    "action-disabled-foreground": {
+      "$type": "color",
+      "$value": "{sj-on-action-disabled}",
+      "$extensions": {
+        "mode": {
+          "dark": "{sj-on-action-disabled}"
+        }
+      }
+    },
+    "action-disabled-opacity": {
+      "$type": "number",
+      "$value": 1
     }
   },
   "secondary": {
@@ -818,23 +921,9 @@
     "$type": "dimension",
     "$value": "{sj-radius-control}"
   },
-  "card": {
-    "$type": "color",
-    "$value": "{sj-panel-solid}",
-    "$extensions": {
-      "mode": {
-        "dark": "{sj-panel-solid}"
-      }
-    }
-  },
-  "card-foreground": {
-    "$type": "color",
-    "$value": "{sj-ink}",
-    "$extensions": {
-      "mode": {
-        "dark": "{sj-ink}"
-      }
-    }
+  "font-heading": {
+    "$type": "fontFamily",
+    "$value": "{font-sj-display}"
   },
   "chart-1": {
     "$type": "color",
@@ -953,10 +1042,6 @@
       }
     }
   },
-  "font-heading": {
-    "$type": "fontFamily",
-    "$value": "{font-sj-display}"
-  },
   "shadow-xs": {
     "$type": "string",
     "$value": "0 1px 2px color-mix(in srgb, var(--sj-charcoal) 8%, transparent)"
@@ -989,26 +1074,6 @@
     "$extensions": {
       "mode": {
         "dark": "{sj-shadow}"
-      }
-    }
-  },
-  "ouro": {
-    "action": {
-      "$type": "color",
-      "$value": "{sj-action}",
-      "$extensions": {
-        "mode": {
-          "dark": "{sj-action}"
-        }
-      }
-    },
-    "action-foreground": {
-      "$type": "color",
-      "$value": "{sj-on-action}",
-      "$extensions": {
-        "mode": {
-          "dark": "{sj-on-action}"
-        }
       }
     }
   },

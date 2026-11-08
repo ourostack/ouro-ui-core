@@ -1,7 +1,7 @@
 /*
  * Ouro HX "Cookbook" theme as plain CSS: spoonjoy's own look, synced from the app. shadcn/ui's tokens,
  * --font-sans, --font-mono, --font-heading and the --shadow-* scale, in light and dark. Load
- * ouro-base.css with it. Preview: https://ui.ouro.bot/
+ * ouro-base.css with it. Preview: https://ui.ouroboros.bot/
  * Dark mode: a .dark class on <html> as in shadcn, or, with neither .light nor .dark there,
  * the system's setting (prefers-color-scheme).
  * Fonts: Geist, Geist Mono, Fraunces, from ../../fonts/ (SIL Open Font License; LICENSE.txt there).
@@ -79,6 +79,9 @@
   --sj-photo-shade-soft: {{sj-photo-shade-soft}};
   --sj-photo-glass: {{sj-photo-glass}};
   --sj-photo-line: {{sj-photo-line}};
+  --sj-photo-action: {{sj-photo-action}};
+  --sj-photo-action-hover: {{sj-photo-action-hover}};
+  --sj-on-photo-action: {{sj-on-photo-action}};
   --sj-shadow: {{sj-shadow}};
   --sj-shadow-soft: {{sj-shadow-soft}};
   --sj-radius-control: {{sj-radius-control}};
@@ -102,6 +105,11 @@
   --ouro-ease-drawer: {{ouro.ease.drawer}};
   --ouro-duration-press: {{ouro.duration.press}};
   --ouro-duration-sheet: {{ouro.duration.sheet}};
+  --ouro-duration-draw: {{ouro.duration.draw}};
+  --ouro-shadow-sheet-bottom: {{ouro.shadow.sheet-bottom}};
+  --ouro-shadow-sheet-top: {{ouro.shadow.sheet-top}};
+  --ouro-shadow-sheet-left: {{ouro.shadow.sheet-left}};
+  --ouro-shadow-sheet-right: {{ouro.shadow.sheet-right}};
 }
 
 .dark {
@@ -193,10 +201,19 @@
 :root, .dark {
   --background: {{background}};
   --foreground: {{foreground}};
+  --card: {{card}};
+  --card-foreground: {{card-foreground}};
   --popover: {{popover}};
   --popover-foreground: {{popover-foreground}};
   --primary: {{primary}};
   --primary-foreground: {{primary-foreground}};
+  --ouro-action: {{ouro.action}};
+  --ouro-action-foreground: {{ouro.action-foreground}};
+  --ouro-action-hover: {{ouro.action-hover}};
+  --ouro-action-active: {{ouro.action-active}};
+  --ouro-action-disabled: {{ouro.action-disabled}};
+  --ouro-action-disabled-foreground: {{ouro.action-disabled-foreground}};
+  --ouro-action-disabled-opacity: {{ouro.action-disabled-opacity}};
   --secondary: {{secondary}};
   --secondary-foreground: {{secondary-foreground}};
   --muted: {{muted}};
@@ -211,6 +228,7 @@
   --input: {{input}};
   --ring: {{ring}};
   --radius: {{radius}};
+  --font-heading: {{font-heading}};
 }
 
 :root, .dark {
