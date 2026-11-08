@@ -1,5 +1,5 @@
 {
-  "$description": "The Brass theme: the tokens it sets over tokens/ouro.tokens.json. DTCG 2025.10. Derived from ourostack/ouro-ui@v1.3.3.",
+  "$description": "The Brass theme: the tokens it sets over tokens/ouro.tokens.json. DTCG 2025.10. Derived from ourostack/ouro-ui@v1.3.7.",
   "font-sans": {
     "$type": "fontFamily",
     "$value": ["Geist", "ui-sans-serif", "system-ui", "sans-serif"]

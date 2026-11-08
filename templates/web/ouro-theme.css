@@ -3,7 +3,7 @@
  * and dark values on .dark. An app that already has a shadcn theme keeps it and skips
  * this file; Ouro components read the same variables. ouro-base.css (required) adds
  * what shadcn's themes lack. These are the colors of Pearl, the default theme on
- * https://ui.ouro.bot/ (site/src/themes/pearl.css).
+ * https://ui.ouroboros.bot/ (site/src/themes/pearl.css).
  */
 :root {
   --radius: {{radius}};
