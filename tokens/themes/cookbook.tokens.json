@@ -1011,5 +1011,274 @@
         }
       }
     }
+  },
+  "sj-space-unit": {
+    "$type": "dimension",
+    "$value": {
+      "value": 4,
+      "unit": "px"
+    },
+    "$description": "Spoonjoy's spacing step: every gap and inset is a multiple of it",
+    "$extensions": {
+      "bot.ouro": {
+        "web": false
+      }
+    }
+  },
+  "sj-margin-compact": {
+    "$type": "dimension",
+    "$value": {
+      "value": 24,
+      "unit": "px"
+    },
+    "$description": "Page margin on a compact width (a phone, or one Duo screen)",
+    "$extensions": {
+      "bot.ouro": {
+        "web": false
+      }
+    }
+  },
+  "sj-margin-regular": {
+    "$type": "dimension",
+    "$value": {
+      "value": 32,
+      "unit": "px"
+    },
+    "$description": "Page margin on a regular width (an iPad, a Mac window)",
+    "$extensions": {
+      "bot.ouro": {
+        "web": false
+      }
+    }
+  },
+  "sj-margin-fold": {
+    "$type": "dimension",
+    "$value": {
+      "value": 40,
+      "unit": "px"
+    },
+    "$description": "Page margin either side of the fold when a Duo lies open as a book",
+    "$extensions": {
+      "bot.ouro": {
+        "web": false
+      }
+    }
+  },
+  "sj-tracking-eyebrow": {
+    "$type": "number",
+    "$value": 0.18,
+    "$description": "Eyebrow letter spacing in em, a fraction of the font size (web's .sj-eyebrow)",
+    "$extensions": {
+      "bot.ouro": {
+        "web": false
+      }
+    }
+  },
+  "sj-type-display": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "{font-sj-display}",
+      "fontWeight": 600,
+      "fontSize": {
+        "value": 3,
+        "unit": "rem"
+      },
+      "letterSpacing": {
+        "value": 0,
+        "unit": "rem"
+      },
+      "lineHeight": 1.1
+    },
+    "$description": "Page hero titles: Fraunces semibold, text-5xl",
+    "$extensions": {
+      "bot.ouro": {
+        "web": false,
+        "appleTextStyle": "largeTitle"
+      }
+    }
+  },
+  "sj-type-title": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "{font-sj-display}",
+      "fontWeight": 600,
+      "fontSize": {
+        "value": 1.875,
+        "unit": "rem"
+      },
+      "letterSpacing": {
+        "value": 0,
+        "unit": "rem"
+      },
+      "lineHeight": 1.2
+    },
+    "$description": "Recipe and cookbook titles: Fraunces semibold, text-3xl",
+    "$extensions": {
+      "bot.ouro": {
+        "web": false,
+        "appleTextStyle": "title"
+      }
+    }
+  },
+  "sj-type-section": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "{font-sj-display}",
+      "fontWeight": 600,
+      "fontSize": {
+        "value": 1.5,
+        "unit": "rem"
+      },
+      "letterSpacing": {
+        "value": 0,
+        "unit": "rem"
+      },
+      "lineHeight": 1.25
+    },
+    "$description": "Section headings: Fraunces semibold, text-2xl",
+    "$extensions": {
+      "bot.ouro": {
+        "web": false,
+        "appleTextStyle": "title2"
+      }
+    }
+  },
+  "sj-type-step": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "{font-sj-display}",
+      "fontWeight": 600,
+      "fontSize": {
+        "value": 1.5,
+        "unit": "rem"
+      },
+      "letterSpacing": {
+        "value": 0,
+        "unit": "rem"
+      },
+      "lineHeight": 1.25
+    },
+    "$description": "A cook step's name: Fraunces semibold, text-2xl (StepCard)",
+    "$extensions": {
+      "bot.ouro": {
+        "web": false,
+        "appleTextStyle": "title2"
+      }
+    }
+  },
+  "sj-type-instruction": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "{font-sj-display}",
+      "fontWeight": 400,
+      "fontSize": {
+        "value": 1.25,
+        "unit": "rem"
+      },
+      "letterSpacing": {
+        "value": 0,
+        "unit": "rem"
+      },
+      "lineHeight": 1.4
+    },
+    "$description": "The current cook step's instruction, read at a distance: Fraunces regular",
+    "$extensions": {
+      "bot.ouro": {
+        "web": false,
+        "appleTextStyle": "title3"
+      }
+    }
+  },
+  "sj-type-body": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "{font-sj-body}",
+      "fontWeight": 400,
+      "fontSize": {
+        "value": 1,
+        "unit": "rem"
+      },
+      "letterSpacing": {
+        "value": 0,
+        "unit": "rem"
+      },
+      "lineHeight": 1.5
+    },
+    "$description": "Ingredients, instructions, notes and stories: Source Serif 4",
+    "$extensions": {
+      "bot.ouro": {
+        "web": false,
+        "appleTextStyle": "body"
+      }
+    }
+  },
+  "sj-type-ui": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "{font-sj-ui}",
+      "fontWeight": 600,
+      "fontSize": {
+        "value": 0.875,
+        "unit": "rem"
+      },
+      "letterSpacing": {
+        "value": 0,
+        "unit": "rem"
+      },
+      "lineHeight": 1.25
+    },
+    "$description": "Buttons and labels: IBM Plex Sans Condensed semibold, text-sm",
+    "$extensions": {
+      "bot.ouro": {
+        "web": false,
+        "appleTextStyle": "subheadline"
+      }
+    }
+  },
+  "sj-type-eyebrow": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "{font-sj-ui}",
+      "fontWeight": 700,
+      "fontSize": {
+        "value": 0.72,
+        "unit": "rem"
+      },
+      "letterSpacing": {
+        "value": 0.1296,
+        "unit": "rem"
+      },
+      "lineHeight": 1
+    },
+    "$description": "Eyebrows: IBM Plex Sans Condensed bold, uppercase, tracked 0.18em (web's .sj-eyebrow)",
+    "$extensions": {
+      "bot.ouro": {
+        "web": false,
+        "appleTextStyle": "caption"
+      }
+    }
+  },
+  "sj-type-meta": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "{font-sj-ui}",
+      "fontWeight": 600,
+      "fontSize": {
+        "value": 0.75,
+        "unit": "rem"
+      },
+      "letterSpacing": {
+        "value": 0,
+        "unit": "rem"
+      },
+      "lineHeight": 1.25
+    },
+    "$description": "Meta lines (times, counts, sources): IBM Plex Sans Condensed semibold, text-xs",
+    "$extensions": {
+      "bot.ouro": {
+        "web": false,
+        "appleTextStyle": "caption"
+      }
+    }
   }
 }

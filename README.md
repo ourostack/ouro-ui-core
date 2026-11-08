@@ -43,7 +43,7 @@ docs/decisions/                   decision records, with their history from ouro
 
 - `dist/web/ouro-theme.css` and `dist/web/ouro-base.css`: what `shadcn add` installs from web's registry.
 - `dist/web/plain/` and `dist/web/themes/<name>.css`: the plain stylesheets ui.ouroboros.bot serves for pages without Tailwind.
-- `dist/apple/OuroTokens.swift`: SwiftUI with no dependencies. `OuroTokens.theme(.pearl).colors(scheme).primary` is a `Color`, `OuroTokens.Duration.fast` is a `Double` in seconds, and `OuroTokens.Spring.animation` is the spring.
+- `dist/apple/OuroTokens.swift`: SwiftUI with no dependencies. `OuroTokens.theme(.pearl).colors(scheme).primary` is a `Color`, `OuroTokens.Duration.fast` is a `Double` in seconds, and `OuroTokens.Spring.animation` is the spring. A theme's own tokens, the ones no other theme defines (Cookbook's `sj-*` colours, fonts, lengths, shadows and text roles), are in `OuroTokens.theme(.cookbook).extras`: `extras.color(.sjBrass, scheme)`, `extras.type[.sjTypeEyebrow]`. A token marked `"web": false` reaches Apple only, so web's files stay byte-identical.
 - `dist/ax/apple.claims.json`: Ouro AX for Apple's claim set, byte for byte, for `ouro-ax-xray` in ouro-ui-apple.
 - `dist/hx/components.claims.json`: Ouro HX's component claims, byte for byte, which each platform's tests prove.
 - `dist/feel/feel.spec.json`: Ouro Feel's spec, byte for byte, which every Feel driver (web now, Apple and Windows later) reports under.

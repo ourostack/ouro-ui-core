@@ -1,6 +1,6 @@
 {
   "name": "@ouro.bot/ui-core",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "The platform-neutral core of Ouro UI: one token source that every platform builds from.",
   "license": "MIT",
