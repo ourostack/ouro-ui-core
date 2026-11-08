@@ -7,7 +7,7 @@
 import { evaluateColor, rgbaToDtcg, type Lookup } from "./color.mts";
 import { cssNameToPath, pathToCssName } from "./names.mts";
 
-export type DtcgType = "color" | "dimension" | "duration" | "number" | "cubicBezier" | "fontFamily" | "string";
+export type DtcgType = "color" | "dimension" | "duration" | "number" | "cubicBezier" | "fontFamily" | "string" | "typography";
 
 export interface DtcgColor {
   colorSpace: string;
@@ -56,6 +56,9 @@ export function formatValue(type: DtcgType, value: unknown): string | null {
       return (value as string[]).map((f) => (GENERIC_FAMILIES.has(f) ? f : `"${f}"`)).join(", ");
     case "string":
       return value as string;
+    case "typography":
+      // A composite: no single CSS value spells it. Typography tokens are Apple-only (web: false).
+      return null;
   }
 }
 

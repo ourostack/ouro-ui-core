@@ -14,6 +14,8 @@ export interface OuroExtension {
   cssDark?: string;
   /** false: a token for platforms other than web, which no stylesheet writes. */
   web?: boolean;
+  /** A typography token's Dynamic Type style on Apple, which its size scales with. */
+  appleTextStyle?: string;
 }
 
 export interface RawToken {

@@ -28,5 +28,17 @@ expect(String(OuroTokens.Press.scale), "0.97", "press scale")
 expect(String(OuroTokens.Ease.out.x1), "0.23", "ease out x1")
 expect(String(OuroThemeName.allCases.count), "6", "theme count")
 
+// A theme's own tokens (Cookbook's sj-*), resolved like web's CSS.
+let cookbook = OuroTokens.theme(.cookbook).extras
+expect(hex(cookbook.color(.sjBrass, .light)!), "#9b6834", "cookbook extra sjBrass (light)")
+expect(hex(cookbook.color(.sjPhotoCharcoal, .dark)!), "#1d1915", "cookbook extra sjPhotoCharcoal (dark)")
+expect(String(format: "%.2f", NSColor(cookbook.color(.sjBorder, .light)!).alphaComponent), "0.18", "cookbook extra sjBorder alpha, color-mix(in srgb, var(--sj-charcoal) 18%, transparent)")
+expect(cookbook.fonts[.sjDisplay]!.first!, "Fraunces", "cookbook font sjDisplay")
+expect(String(cookbook.lengths[.sjMarginFold]!), "40.0", "cookbook sjMarginFold in points")
+let eyebrow = cookbook.type[.sjTypeEyebrow]!
+expect("\(eyebrow.family) \(eyebrow.weight) \(eyebrow.size) \(eyebrow.textStyle)", "sjUi 700 11.52 caption", "cookbook eyebrow role")
+expect("\(cookbook.shadows[.sjShadowSoft]!.layer(.light).radius)", "18.0", "cookbook sjShadowSoft radius, half web's 36px blur")
+expect(String(OuroTokens.theme(.pearl).extras.light.count), "0", "pearl has no extras")
+
 if failures > 0 { print("\(failures) failed"); exit(1) }
 print("all Swift token checks passed")

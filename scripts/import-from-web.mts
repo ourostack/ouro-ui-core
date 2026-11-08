@@ -13,7 +13,7 @@ import { parseArgs } from "node:util";
 import { readDeclarations } from "../src/css-reader.mts";
 import { isAlias, aliasPath, parseValue } from "../src/css-value.mts";
 import { cssNameToPath } from "../src/names.mts";
-import { nest, pinDarkAliases, THEMES, type RawToken, type ThemeName, type TokenMap } from "../src/tokens.mts";
+import { flatten, nest, pinDarkAliases, THEMES, type RawToken, type ThemeName, type TokenMap } from "../src/tokens.mts";
 import { render } from "../src/web.mts";
 
 const { values: args } = parseArgs({ options: { from: { type: "string" } } });
@@ -165,6 +165,10 @@ for (const theme of THEMES) {
     const strip = (t: RawToken) => JSON.stringify({ ...t, $description: undefined });
     if (!inherited || strip(inherited) !== strip(token)) set.set(id, token);
   }
+  // Tokens for platforms other than web ("web": false, such as Cookbook's sj-type-* roles) have no
+  // stylesheet to come from, so a re-import keeps them from the current set instead of dropping them.
+  const current = JSON.parse(await readFile(new URL(`tokens/themes/${theme}.tokens.json`, root), "utf8").catch(() => "{}")) as Record<string, unknown>;
+  for (const [id, token] of flatten(current)) if (token.$extensions?.["bot.ouro"]?.web === false && !set.has(id)) set.set(id, token);
   typeAliases(set, baseTokens);
   for (const [id, token] of pinDarkAliases(set, baseTokens)) set.set(id, token);
   themeTokens.set(theme, set);
