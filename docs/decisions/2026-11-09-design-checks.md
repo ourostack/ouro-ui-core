@@ -72,3 +72,20 @@ Read on 2026-11-09.
 | [axe-core](https://github.com/dequelabs/axe-core) | **Adopt** (already) | Contrast and the rest of WCAG A/AA stay axe's. |
 | [flow-review](https://github.com/ourostack/flow-review) | **Borrow** | Its evidence model (a finding, its numbers and a cropped picture) is the shape Ouro check already had; declared flows stay there. |
 | [Percy](https://percy.io/) and [Chromatic](https://www.chromatic.com/) visual diffing | **Ignore** | They flag that pixels changed, not that a design is wrong, and need a person to look. |
+
+## Amendment, 2026-11-10: every family of defect
+
+Ari, 2026-11-09, after seeing Tandem's window controls drawn over its logo: "we need to make sure everything of this sort is both deterministically flagged (e.g. dont make agents notice it themselves) AND fixed", and "we need to be looking for all sorts of this type of thing". So Ouro check grows by family, one module per family, each rule with a page that fails it, a page that passes, tests at full coverage in Chromium and WebKit, and a calibration on Tandem's mock, CIT Pages, ouroboros.bot and Ouro's own site before it gates. This table is the map of every family and who owns each rule.
+
+| Family | Rules | Where |
+| --- | --- | --- |
+| Text | `leaked-value` (`undefined`, `NaN`, `[object Object]`, an id or GUID, a translation key, lorem, a developer's `TODO:`), `odd-timestamp` (`Invalid Date`, 1 January 1970, a raw epoch or machine timestamp, a negative age) | `text-check.ts`, ourostack/ouro-ui#833 |
+| Runtime | `console-error` (an uncaught error, `console.error` or `console.warn`), `failed-request` (a request to the page's own origin that fails) | `check.ts`, ourostack/ouro-ui#845 |
+| Layout | `off-screen` (content cut at the screen's edge where nothing scrolls to it), `duplicate-control` (the same control twice in one place), `stray-scrollbar` (a region that scrolls by 1 to 8px); `overlap`, `sideways-scroll` and `clipped-text` as before, with an opaque overlay covering what is under it (ourostack/ouro-ui#837) | `layout-check.ts`, ourostack/ouro-ui#846 |
+| Images | `stretched-image` (drawn out of its own shape); `blurry-image`, `broken-image` and `image-fade` as before | `size-check.ts`, ourostack/ouro-ui#851 |
+| Native window | Chrome over content, content under the title bar: the window's own frames, read from a hidden capture | Ouro Feel's hidden window probe and window rules, proposed in ourostack/ouro-ui#840 (the native-window lane) |
+| Accessibility | axe-core's serious and critical rules, Base UI's focus guards left out as the axe kit leaves them out | `in-page.ts`, ourostack/ouro-ui#837 |
+| Gradients | Banned gradients stay with `image-fade` | `fades.ts` |
+| Interaction | `disabled-no-reason` only, next | not yet |
+
+Each calibration removed what it flagged that a person would call right, before the rule gated: a SHA beside its label, a build stamp a site prints on purpose (the site fixes or allows it; the rule makes no exception), code blocks that scroll by their padding, a demo's control beside the page's own, and a list whose rows run a few pixels over. Tandem's mock home had no finding from any new rule.
