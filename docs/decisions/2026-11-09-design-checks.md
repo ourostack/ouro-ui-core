@@ -83,7 +83,7 @@ Ari, 2026-11-09, after seeing Tandem's window controls drawn over its logo: "we 
 | Runtime | `console-error` (an uncaught error, `console.error` or `console.warn`), `failed-request` (a request to the page's own origin that fails) | `check.ts`, ourostack/ouro-ui#845 |
 | Layout | `off-screen` (content cut at the screen's edge where nothing scrolls to it), `duplicate-control` (the same control twice in one place), `stray-scrollbar` (a region that scrolls by 1 to 8px); `overlap`, `sideways-scroll` and `clipped-text` as before, with an opaque overlay covering what is under it (ourostack/ouro-ui#837) | `layout-check.ts`, ourostack/ouro-ui#846 |
 | Images | `stretched-image` (drawn out of its own shape); `blurry-image`, `broken-image` and `image-fade` as before | `size-check.ts`, ourostack/ouro-ui#851 |
-| Native window | Chrome over content, content under the title bar: the window's own frames, read from a hidden capture | Ouro Feel's window probe and `window-check.ts`, the native-window lane |
+| Native window | Chrome over content, content under the title bar: the window's own frames, read from a hidden capture | Ouro Feel's hidden window probe and window rules, proposed in ourostack/ouro-ui#840 (the native-window lane) |
 | Accessibility | axe-core's serious and critical rules, Base UI's focus guards left out as the axe kit leaves them out | `in-page.ts`, ourostack/ouro-ui#837 |
 | Gradients | Banned gradients stay with `image-fade` | `fades.ts` |
 | Interaction | `disabled-no-reason` only, next | not yet |
