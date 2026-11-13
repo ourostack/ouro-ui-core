@@ -56,7 +56,7 @@
         }
       ],
       "flags": {
-        "canEdit": {
+        "can-edit": {
           "type": "boolean",
           "description": "Whether they may change the list, not only see it."
         }

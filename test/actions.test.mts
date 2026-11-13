@@ -59,6 +59,16 @@ test("defineAction refuses a declaration that isn't one, with the fix", () => {
     /x.*arg.*required/,
   );
   assert.throws(() => defineAction({ ...base, input: { x: field.enum({ label: "X", description: "x", values: [] }) } }), /values/);
+  // arg only on a required string, since web's CLI arguments are strings.
+  assert.throws(() => defineAction({ ...base, input: { n: field.integer({ label: "N", description: "n", arg: true } as never) } }), /n.*arg.*string/);
+  // An input may not shadow web's kit's own flags or the App Intent's members; an output may use those names.
+  for (const name of ["json", "help", "why", "whyFile", "dryRun", "agent", "quiet", "input", "perform"]) {
+    assert.throws(() => defineAction({ ...base, input: { [name]: field.string({ label: "X", description: "x" }) } }), /taken by a surface.*Fix:/, name);
+  }
+  assert.doesNotThrow(() => defineAction({ ...base, output: { id: field.string({ label: "Id", description: "x" }) } }));
+  // Web reserves some ids for the person; only a person-only action may take one.
+  assert.throws(() => defineAction({ ...base, id: "share" }), /web reserves "share" for the person.*Fix:/);
+  assert.doesNotThrow(() => defineAction({ ...base, id: "share", consent: "person-only", personOnly: { reason: "Only they share.", how: "with Share" } }));
 });
 
 test("defineActions refuses two actions that collide on any surface, naming both", () => {
@@ -67,6 +77,8 @@ test("defineActions refuses two actions that collide on any surface, naming both
   assert.throws(() => defineActions("x", [a, b]), /pin_recipe.*pin_recipe_now.*CLI words "pin-recipe"/);
   assert.throws(() => defineActions("x", [a, a]), /used twice/);
   assert.throws(() => defineActions("Bad Name", [a]), /set name/);
+  // Two ids whose camelCase names agree would generate one Swift type and one Reins node.
+  assert.throws(() => defineActions("x", [defineAction({ ...base, id: "add_item2" }), defineAction({ ...base, id: "add_item_2" })]), /add_item2.*add_item_2/);
 });
 
 test("MCP annotations are web's effectAnnotations for each consent class", () => {
@@ -76,19 +88,21 @@ test("MCP annotations are web's effectAnnotations for each consent class", () =>
 });
 
 test("the typed refusal is web's refused outcome with a person-only error", () => {
+  const problem = "You can't place an order or pay for the person; only they can. Ask the person, who does it with Place order on the shopping list";
+  const message = `list order: ${problem}.`;
+  // Byte for byte web's cli.ts answer to a person-only word under --json: outcome({ action, state: "refused", summary, error }).
   assert.deepEqual(refusal(placeGroceryOrder), {
-    ax: 1,
-    action: "place-grocery-order",
+    ax: "outcome/1",
+    action: "list order",
+    effect: "private",
+    audience: { only: true, who: "only you" },
+    target: null,
     state: "refused",
-    error: {
-      code: "person-only",
-      exit: 2,
-      thing: "list order",
-      problem: "You can't place an order or pay for the person; only they can.",
-      fix: null,
-      message: "list order: You can't place an order or pay for the person; only they can.",
-    },
-    how: "with Place order on the shopping list",
+    summary: message,
+    postcondition: { checked: false, holds: null, how: "not checked" },
+    receipt: null,
+    next: [],
+    error: { code: "person-only", exit: 2, thing: "list order", problem, fix: null, message },
   });
   assert.throws(() => refusal(addShoppingListItem), /not person-only/);
 });
@@ -121,7 +135,7 @@ test("the CLI projection is a defineCommand definition: args, optional flags, ef
   });
   assert.equal(toCommand(getShoppingList).readOnly, true);
   assert.equal(toCommand(shareShoppingList).effect, "others");
-  assert.deepEqual(toCommand(shareShoppingList).flags, { canEdit: { type: "boolean", description: "Whether they may change the list, not only see it." } });
+  assert.deepEqual(toCommand(shareShoppingList).flags, { "can-edit": { type: "boolean", description: "Whether they may change the list, not only see it." } });
   assert.throws(() => toCommand(placeGroceryOrder), /person-only/);
 });
 
@@ -196,7 +210,7 @@ test("compareMcp passes the generated tools and names each way a live server dri
   const tools = structuredClone(generated.tools) as Record<string, unknown>[];
   tools[1]!["description"] = "Adds an item.";
   (tools[1]!["inputSchema"] as { required: string[] }).required = [];
-  tools[2]!["annotations"] = { readOnlyHint: false };
+  tools[2]!["annotations"] = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
   tools.splice(0, 1);
   tools.push({ name: "place_grocery_order", description: "", inputSchema: {} }, { name: "secret_tool", description: "", inputSchema: {} });
   const problems = compareMcp(shopping, { tools });
@@ -212,6 +226,18 @@ test("compareMcp passes the generated tools and names each way a live server dri
   assert.equal(problems.length, starts.length, problems.join("\n"));
   starts.forEach((start, i) => assert.ok(problems[i]!.startsWith(start), `${problems[i]} should start with ${start}`));
   assert.match(compareMcp(shopping, { nope: 1 })[0]!, /not a tools\/list result/);
+
+  // A missing hint is MCP's default (readOnlyHint false, destructiveHint and openWorldHint true), which is right for a
+  // consequential action and wrong for a read; a null entry and a tool listed twice are named, not thrown.
+  const defaults = structuredClone(generated.tools) as Record<string, unknown>[];
+  delete defaults[2]!["annotations"];
+  assert.deepEqual(compareMcp(shopping, { tools: defaults }), []);
+  delete defaults[0]!["annotations"];
+  assert.ok(compareMcp(shopping, { tools: defaults }).some((p) => p.startsWith("get_shopping_list: annotation readOnlyHint")));
+  const odd = [...(structuredClone(generated.tools) as unknown[]), null, structuredClone(generated.tools[1])];
+  const oddProblems = compareMcp(shopping, { tools: odd });
+  assert.ok(oddProblems.some((p) => /^tools\[\d+\]: is not a tool with a name/.test(p)), oddProblems.join("\n"));
+  assert.ok(oddProblems.some((p) => p.startsWith("add_shopping_list_item: the server lists it twice")), oddProblems.join("\n"));
 });
 
 test("the CLI: check exits 0 on the fixture and 1 with findings on drift; usage exits 2", async () => {
@@ -240,6 +266,10 @@ test("the CLI: check exits 0 on the fixture and 1 with findings on drift; usage 
     const fresh = join(tmp, "fresh");
     assert.equal((await run(["generate", decl, fresh])).code, 0);
     assert.equal((await run(["check", decl, fresh])).code, 0);
+    // A subfolder of the generated folder is not a generated file, and reading it doesn't throw.
+    const withSub = await run(["check", decl, tmp]);
+    assert.equal(withSub.code, 1);
+    assert.doesNotMatch(withSub.err, /fresh|EISDIR/);
     await writeFile(join(tmp, "tools.json"), JSON.stringify({ tools: [] }));
     assert.equal((await run(["compare-mcp", decl, join(tmp, "tools.json")])).code, 1);
   } finally {
@@ -264,6 +294,11 @@ test("Swift: one App Intent per agent door, Button(intent:), confirmation only w
   assert.doesNotMatch(swift, /PlaceGroceryOrderIntent/);
   assert.match(swift, /IntentDescription\("Add one item to the person's shopping list\./);
   assert.match(swift, /description: "What to buy, as the person said it, such as \\"oat milk\\"\."/);
+  // An enum's Swift type is the action, the field and "Value", so it can't clash with another generated type.
+  assert.match(swift, /public enum GetShoppingListShowValue: String/);
+  const tricky = defineActions("tricky", [defineAction({ ...base, label: 'Pin \\ "it"', description: "A \\ path." })]);
+  const trickySwift = renderActions(tricky).get("OuroActions.swift")!;
+  assert.match(trickySwift, /LocalizedStringResource = "Pin \\\\ \\"it\\""/);
   const reins = renderActions(shopping).get("OuroActionsReins.swift")!;
   assert.match(reins, /public static func addShoppingListItem\(\) -> ReinsAction/);
   assert.match(reins, /public static func placeGroceryOrder\(\) -> ReinsAction/);

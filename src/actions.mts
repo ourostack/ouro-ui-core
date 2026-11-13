@@ -41,14 +41,14 @@ interface FieldBase {
   optional?: boolean;
 }
 export interface StringField extends FieldBase { kind: "string"; arg?: boolean }
-export interface NumberField extends FieldBase { kind: "number" | "integer"; min?: number; max?: number; arg?: boolean }
+export interface NumberField extends FieldBase { kind: "number" | "integer"; min?: number; max?: number }
 export interface BooleanField extends FieldBase { kind: "boolean" }
-export interface EnumField<V extends string = string> extends FieldBase { kind: "enum"; values: readonly V[]; arg?: boolean }
+export interface EnumField<V extends string = string> extends FieldBase { kind: "enum"; values: readonly V[] }
 export type Field = StringField | NumberField | BooleanField | EnumField;
 export type Fields = Readonly<Record<string, Field>>;
 
 type Opt = { optional?: boolean };
-/** Field builders; `arg: true` makes a required field a positional CLI argument instead of a flag. */
+/** Field builders; `arg: true` makes a required string field a positional CLI argument instead of a flag (web's arguments are strings). */
 export const field = Object.freeze({
   string: <O extends Omit<StringField, "kind">>(o: O) => ({ ...o, kind: "string" as const }),
   number: <O extends Omit<NumberField, "kind">>(o: O) => ({ ...o, kind: "number" as const }),
@@ -118,6 +118,19 @@ export interface Names {
 
 const ID = /^[a-z][a-z0-9]*(_[a-z0-9]+)*$/;
 const FIELD_NAME = /^[a-z][a-zA-Z0-9]*$/;
+/**
+ * Input field names a surface already uses: web's kit's own flags (`--json`, `--help`, `--why`, `--why-file`,
+ * `--dry-run`, `--agent`, `--quiet`), which the field's flag would shadow, and the generated App Intent's own members
+ * (`input`, `perform`), which its `@Parameter` would clash with. Swift keywords are escaped, so they are allowed.
+ */
+const RESERVED_INPUTS = Object.freeze(["json", "help", "why", "whyFile", "dryRun", "agent", "quiet", "input", "perform"]);
+/**
+ * Ids web's `defineComponentAx` reserves for the person (its `RESERVED_PERSON_ONLY`), which only a person-only action may
+ * take. Web also reads an id's meaning (`share-screen`, `mic-on`); its defineComponentAx and X-ray still apply that.
+ */
+const WEB_RESERVED_IDS = Object.freeze(["unmute", "camera", "camera_on", "share", "answer", "decline", "admit", "record"]);
+/** A camelCase field name as web's kebab-case flag: `canEdit` is `can-edit`. */
+const flagName = (field: string) => field.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
 const oneLine = (v: unknown): v is string => typeof v === "string" && v.trim() !== "" && !/[\r\n]/.test(v);
 
 /** The names an id derives: `add_shopping_list_item` is `add-shopping-list-item`, `addShoppingListItem`, `AddShoppingListItem`. */
@@ -135,7 +148,8 @@ function checkFields(where: string, fields: unknown, input: boolean): void {
     if (!["string", "number", "integer", "boolean", "enum"].includes(f?.kind)) throw new Error(`${at}: has no kind. Fix: build it with field.string, field.number, field.integer, field.boolean or field.enum.`);
     if (!oneLine(f.label)) throw new Error(`${at}: label is empty or more than one line. Fix: the person's word for it, such as "Quantity".`);
     if (!oneLine(f.description)) throw new Error(`${at}: description is empty or more than one line. Fix: one sentence for the agent.`);
-    if ("arg" in f && f.arg && (f.optional || !input)) throw new Error(`${at}: arg is only for a required input field. Fix: drop arg, or drop optional.`);
+    if (input && RESERVED_INPUTS.includes(name)) throw new Error(`${at}: the name is taken by a surface (web's kit's own flags, or the App Intent's members: ${RESERVED_INPUTS.join(", ")}). Fix: rename it, such as "${name}Value".`);
+    if ("arg" in f && f.arg && (f.kind !== "string" || f.optional || !input)) throw new Error(`${at}: arg is only for a required string input field, since web's CLI arguments are strings. Fix: drop arg, or make it a required string.`);
     if (f.kind === "enum" && (!Array.isArray(f.values) || f.values.length === 0 || !f.values.every((v) => /^[a-z][a-z0-9-]*$/.test(v)))) {
       throw new Error(`${at}: values is empty or not lowercase words. Fix: values: ["all", "unchecked"].`);
     }
@@ -159,6 +173,7 @@ export function defineAction<const I extends Fields, const O extends Fields>(def
     if (def.personOnly !== undefined) throw new Error(`${at}: personOnly is only for consent "person-only". Fix: drop personOnly, or make the consent "person-only".`);
     if (def.reaches !== undefined) throw new Error(`${at}: reaches is only for consent "person-only"; the consent class decides who sees the others. Fix: drop reaches.`);
   }
+  if (def.consent !== "person-only" && WEB_RESERVED_IDS.includes(id)) throw new Error(`${at}: web reserves "${names(id).kebab}" for the person, so only a person-only action may use it. Fix: consent "person-only" with personOnly, or another id.`);
   if (def.reaches !== undefined && def.reaches !== "private" && def.reaches !== "others") throw new Error(`${at}: reaches is ${JSON.stringify(def.reaches)}. Fix: "private" or "others".`);
   if (def.cli !== undefined && !/^[a-z][a-z0-9-]*( [a-z][a-z0-9-]*)*$/.test(def.cli)) throw new Error(`${at}: cli is not lowercase words. Fix: such as "list add".`);
   checkFields(`${at} input`, def.input, true);
@@ -204,26 +219,43 @@ export function annotationsOf(a: Action): { readOnlyHint: boolean; destructiveHi
 }
 
 export interface Refusal {
-  ax: 1;
+  ax: "outcome/1";
   action: string;
+  effect: "private";
+  audience: { only: true; who: "only you" };
+  target: null;
   state: "refused";
+  summary: string;
+  postcondition: { checked: false; holds: null; how: "not checked" };
+  receipt: null;
+  next: [];
   error: { code: "person-only"; exit: 2; thing: string; problem: string; fix: null; message: string };
-  how: string;
 }
 
+const sentence = (text: string) => text.trim().replace(/[.\s]+$/, "");
+
 /**
- * The answer every agent door gives a person-only action: web's outcome `refused` with an `AxErrorShape` whose code is
- * `person-only` and exit 2 (web's `usage`, which `refused` maps to), plus how the person does it.
+ * The answer every agent door gives a person-only action, byte for byte what web's CLI answers a person-only word
+ * under `--json` (cli.ts: `outcome({ action, state: "refused", summary, error })` over `personOnlyError`): a refused
+ * outcome whose error has code `person-only`, exit 2 (web's `usage`), the reason and how the person does it.
  */
 export function refusal(a: Action): Refusal {
   if (a.consent !== "person-only" || !a.personOnly) throw new Error(`action "${a.id}" is not person-only, so nothing refuses it. Fix: refuse only person-only actions.`);
-  const problem = a.personOnly.reason;
+  const thing = a.cliWords;
+  const problem = `${sentence(a.personOnly.reason)}. Ask the person, who does it ${sentence(a.personOnly.how)}`;
+  const message = `${thing}: ${sentence(problem)}.`;
   return {
-    ax: 1,
-    action: a.names.kebab,
+    ax: "outcome/1",
+    action: thing,
+    effect: "private",
+    audience: { only: true, who: "only you" },
+    target: null,
     state: "refused",
-    error: { code: "person-only", exit: 2, thing: a.cliWords, problem, fix: null, message: `${a.cliWords}: ${problem}` },
-    how: a.personOnly.how,
+    summary: message,
+    postcondition: { checked: false, holds: null, how: "not checked" },
+    receipt: null,
+    next: [],
+    error: { code: "person-only", exit: 2, thing, problem, fix: null, message },
   };
 }
 
@@ -284,7 +316,7 @@ export function toCommand(a: Action): CommandJson {
   if (a.consent === "read") cmd.readOnly = true;
   const fields = Object.entries(a.input);
   const args = fields.filter(([, f]) => "arg" in f && f.arg).map(([name, f]) => ({ name, description: f.description, required: true as const }));
-  const flags = Object.fromEntries(fields.filter(([, f]) => !("arg" in f && f.arg)).map(([name, f]) => [name, flagSpec(f)]));
+  const flags = Object.fromEntries(fields.filter(([, f]) => !("arg" in f && f.arg)).map(([name, f]) => [flagName(name), flagSpec(f)]));
   if (args.length) cmd.args = args;
   if (Object.keys(flags).length) cmd.flags = flags;
   const out = Object.keys(a.output);
@@ -372,7 +404,7 @@ const swiftLit = (s: string) => `"${s.replace(/\\/g, "\\\\").replace(/"/g, '\\"'
 const SWIFT_KEYWORDS = new Set(["as", "break", "case", "catch", "class", "continue", "default", "defer", "do", "else", "enum", "extension", "fallthrough", "false", "for", "func", "guard", "if", "import", "in", "init", "inout", "internal", "is", "let", "nil", "operator", "private", "protocol", "public", "repeat", "rethrows", "return", "self", "Self", "static", "struct", "subscript", "super", "switch", "throw", "throws", "true", "try", "typealias", "var", "where", "while"]);
 const swiftId = (name: string) => (SWIFT_KEYWORDS.has(name) ? `\`${name}\`` : name);
 const caseName = (v: string) => swiftId(names(v.replace(/-/g, "_")).camel);
-const enumType = (a: Action, field: string) => `${a.names.pascal}${field.charAt(0).toUpperCase()}${field.slice(1)}`;
+const enumType = (a: Action, field: string) => `${a.names.pascal}${field.charAt(0).toUpperCase()}${field.slice(1)}Value`;
 
 function swiftType(a: Action, name: string, f: Field): string {
   const base = f.kind === "string" ? "String" : f.kind === "number" ? "Double" : f.kind === "integer" ? "Int" : f.kind === "boolean" ? "Bool" : enumType(a, name);
@@ -423,11 +455,14 @@ function renderSwift(set: ActionSet): string {
     '    case read, write, consequential, personOnly = "person-only"',
     "}",
     "",
-    "/// The typed refusal of a person-only action: the same fields as web's refused outcome.",
+    "/// The typed refusal of a person-only action: the error fields of web's refused outcome (code, exit, thing,",
+    "/// problem, message), plus the declaration's reason and how the person does it.",
     "public struct OuroActionRefusal: Error, Sendable, Equatable {",
-    "    public let action: String",
     '    public let code = "person-only"',
+    "    public let exit = 2",
     "    public let thing: String",
+    "    public let problem: String",
+    "    public let message: String",
     "    public let reason: String",
     "    public let how: String",
     "}",
@@ -449,7 +484,8 @@ function renderSwift(set: ActionSet): string {
   ];
   for (const a of set.actions.filter((x) => x.consent === "person-only")) {
     L.push(`        case ${swiftLit(a.id)}, ${swiftLit(a.names.kebab)}, ${swiftLit(a.names.camel)}:`);
-    L.push(`            return OuroActionRefusal(action: ${swiftLit(a.names.kebab)}, thing: ${swiftLit(a.cliWords)}, reason: ${swiftLit(a.personOnly!.reason)}, how: ${swiftLit(a.personOnly!.how)})`);
+    const r = refusal(a).error;
+    L.push(`            return OuroActionRefusal(thing: ${swiftLit(r.thing)}, problem: ${swiftLit(r.problem)}, message: ${swiftLit(r.message)}, reason: ${swiftLit(a.personOnly!.reason)}, how: ${swiftLit(a.personOnly!.how)})`);
   }
   L.push("        default:", "            return nil", "        }", "    }", "}", "");
 
@@ -464,7 +500,9 @@ function renderSwift(set: ActionSet): string {
     L.push("@MainActor", `public enum ${P}Action {`);
     L.push(`    public static let id = ${swiftLit(a.id)}`);
     L.push(`    /// The app's handler; every door calls it.`);
-    L.push(`    public static var perform: (@MainActor @Sendable (${P}Input) async throws -> ${P}Output)?`, "");
+    L.push(`    public static var perform: (@MainActor @Sendable (${P}Input) async throws -> ${P}Output)?`);
+    if (!agentDoor) L.push("    /// Called with the error when the person's press fails, since a plain button has nowhere to show it.", "    public static var failed: (@MainActor @Sendable (any Error) -> Void)?");
+    L.push("");
     L.push(`    public static func run(_ input: ${P}Input) async throws -> ${P}Output {`);
     L.push(`        guard let perform else { throw OuroActionNotBound(action: id) }`);
     L.push("        return try await perform(input)", "    }", "}", "");
@@ -494,7 +532,7 @@ function renderSwift(set: ActionSet): string {
     L.push(`    public init(_ input: ${P}Input, @ViewBuilder label: () -> Label) {`, "        self.input = input", "        self.label = label()", "    }", "");
     L.push("    public var body: some View {");
     if (agentDoor) L.push(`        Button(intent: ${P}Intent(input)) { label }`);
-    else L.push(`        Button { Task { _ = try? await ${P}Action.run(input) } } label: { label }`);
+    else L.push(`        Button { Task { do { _ = try await ${P}Action.run(input) } catch { ${P}Action.failed?(error) } } } label: { label }`);
     L.push(`            .accessibilityHint(Text(verbatim: ${swiftLit(a.description)}))`, "    }", "}", "");
     L.push("@available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, *)");
     L.push(`extension ${P}Button where Label == Text {`);
@@ -575,6 +613,7 @@ export function checkGenerated(set: ActionSet, found: ReadonlyMap<string, string
   return problems;
 }
 
+const MCP_HINT_DEFAULTS: Readonly<Record<string, boolean>> = Object.freeze({ readOnlyHint: false, destructiveHint: true, openWorldHint: true });
 const sortKeys = (v: unknown): unknown =>
   Array.isArray(v) ? v.map(sortKeys) : v && typeof v === "object" ? Object.fromEntries(Object.keys(v).sort().map((k) => [k, sortKeys((v as Record<string, unknown>)[k])])) : v;
 const same = (a: unknown, b: unknown) => JSON.stringify(sortKeys(a)) === JSON.stringify(sortKeys(b));
@@ -588,8 +627,13 @@ export function compareMcp(set: ActionSet, tools: unknown): string[] {
   const list = Array.isArray(tools) ? tools : (tools as { tools?: unknown })?.tools;
   if (!Array.isArray(list)) return ["tools: is not a tools/list result. Fix: pass the server's tools/list result, { tools: [...] }."];
   const live = new Map<string, Record<string, unknown>>();
-  for (const t of list as Record<string, unknown>[]) live.set(String(t["name"]), t);
   const problems: string[] = [];
+  list.forEach((t: unknown, i: number) => {
+    if (typeof t !== "object" || t === null || typeof (t as Record<string, unknown>)["name"] !== "string") return void problems.push(`tools[${i}]: is not a tool with a name. Fix: serve each tool as { name, description, inputSchema, annotations }.`);
+    const name = (t as { name: string }).name;
+    if (live.has(name)) problems.push(`${name}: the server lists it twice. Fix: list each tool once.`);
+    live.set(name, t as Record<string, unknown>);
+  });
   for (const a of set.actions) {
     const t = live.get(a.id);
     if (a.consent === "person-only") {
@@ -604,7 +648,8 @@ export function compareMcp(set: ActionSet, tools: unknown): string[] {
     if (t["description"] !== want.description) problems.push(`${a.id}: description drifted: expected ${JSON.stringify(want.description)}, found ${JSON.stringify(t["description"])}. Fix: serve the declaration's agent description.`);
     if (!same(t["inputSchema"], want.inputSchema)) problems.push(`${a.id}: input schema drifted: expected ${JSON.stringify(sortKeys(want.inputSchema))}, found ${JSON.stringify(sortKeys(t["inputSchema"]))}. Fix: serve the declaration's input schema.`);
     const ann = (t["annotations"] ?? {}) as Record<string, unknown>;
-    for (const [k, v] of Object.entries(want.annotations)) if ((ann[k] ?? false) !== v) problems.push(`${a.id}: annotation ${k} is ${JSON.stringify(ann[k] ?? null)}, the consent class "${a.consent}" says ${v}. Fix: serve the declaration's annotations.`);
+    // A missing hint means MCP's default, which a client acts on: readOnlyHint false, destructiveHint and openWorldHint true.
+    for (const [k, v] of Object.entries(want.annotations)) if ((ann[k] ?? MCP_HINT_DEFAULTS[k]) !== v) problems.push(`${a.id}: annotation ${k} is ${JSON.stringify(ann[k] ?? null)}, the consent class "${a.consent}" says ${v}. Fix: serve the declaration's annotations.`);
   }
   for (const name of live.keys()) if (!set.actions.some((a) => a.id === name)) problems.push(`${name}: the server lists a tool no declaration has. Fix: declare it with defineAction.`);
   return problems;
@@ -629,7 +674,11 @@ async function readDir(dir: string): Promise<Map<string, string>> {
   } catch {
     return found;
   }
-  for (const name of entries.sort()) if (!name.startsWith(".")) found.set(name, await readFile(join(dir, name), "utf8"));
+  for (const name of entries.sort()) {
+    if (name.startsWith(".")) continue;
+    const text = await readFile(join(dir, name), "utf8").catch((error: { code?: string }) => (error.code === "EISDIR" ? null : Promise.reject(error)));
+    if (text !== null) found.set(name, text);
+  }
   return found;
 }
 
@@ -662,7 +711,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     (code) => process.exit(code),
     (error: unknown) => {
       process.stderr.write(`ouro-actions: ${error instanceof Error ? error.message : String(error)}\n`);
-      process.exit(2);
+      process.exit(1);
     },
   );
 }

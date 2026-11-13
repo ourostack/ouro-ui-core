@@ -11,11 +11,14 @@ public enum OuroActionConsent: String, Sendable {
     case read, write, consequential, personOnly = "person-only"
 }
 
-/// The typed refusal of a person-only action: the same fields as web's refused outcome.
+/// The typed refusal of a person-only action: the error fields of web's refused outcome (code, exit, thing,
+/// problem, message), plus the declaration's reason and how the person does it.
 public struct OuroActionRefusal: Error, Sendable, Equatable {
-    public let action: String
     public let code = "person-only"
+    public let exit = 2
     public let thing: String
+    public let problem: String
+    public let message: String
     public let reason: String
     public let how: String
 }
@@ -38,7 +41,7 @@ public enum OuroActions {
     public static func refusal(for action: String) -> OuroActionRefusal? {
         switch action {
         case "place_grocery_order", "place-grocery-order", "placeGroceryOrder":
-            return OuroActionRefusal(action: "place-grocery-order", thing: "list order", reason: "You can't place an order or pay for the person; only they can.", how: "with Place order on the shopping list")
+            return OuroActionRefusal(thing: "list order", problem: "You can't place an order or pay for the person; only they can. Ask the person, who does it with Place order on the shopping list", message: "list order: You can't place an order or pay for the person; only they can. Ask the person, who does it with Place order on the shopping list.", reason: "You can't place an order or pay for the person; only they can.", how: "with Place order on the shopping list")
         default:
             return nil
         }
@@ -47,19 +50,19 @@ public enum OuroActions {
 
 // MARK: get_shopping_list (read)
 
-public enum GetShoppingListShow: String, Codable, Sendable, Hashable, CaseIterable, AppEnum {
+public enum GetShoppingListShowValue: String, Codable, Sendable, Hashable, CaseIterable, AppEnum {
     case all = "all"
     case unchecked = "unchecked"
     public static let typeDisplayRepresentation: TypeDisplayRepresentation = "Show"
-    public static let caseDisplayRepresentations: [GetShoppingListShow: DisplayRepresentation] = [
+    public static let caseDisplayRepresentations: [GetShoppingListShowValue: DisplayRepresentation] = [
         .all: "all",
         .unchecked: "unchecked",
     ]
 }
 
 public struct GetShoppingListInput: Codable, Sendable, Hashable {
-    public var show: GetShoppingListShow?
-    public init(show: GetShoppingListShow? = nil) {
+    public var show: GetShoppingListShowValue?
+    public init(show: GetShoppingListShowValue? = nil) {
         self.show = show
     }
 }
@@ -89,7 +92,7 @@ public struct GetShoppingListIntent: AppIntent {
     public static let description = IntentDescription("Read the person's shopping list: each item's id, name, quantity, unit and whether it is checked.")
 
     @Parameter(title: "Show", description: "Which items to list; all of them when left out.")
-    public var show: GetShoppingListShow?
+    public var show: GetShoppingListShowValue?
 
     public init() {}
 
@@ -308,14 +311,14 @@ extension ShareShoppingListButton where Label == Text {
 
 // MARK: place_grocery_order (person-only)
 
-public enum PlaceGroceryOrderStore: String, Codable, Sendable, Hashable, CaseIterable {
+public enum PlaceGroceryOrderStoreValue: String, Codable, Sendable, Hashable, CaseIterable {
     case corner = "corner"
     case market = "market"
 }
 
 public struct PlaceGroceryOrderInput: Codable, Sendable, Hashable {
-    public var store: PlaceGroceryOrderStore
-    public init(store: PlaceGroceryOrderStore) {
+    public var store: PlaceGroceryOrderStoreValue
+    public init(store: PlaceGroceryOrderStoreValue) {
         self.store = store
     }
 }
@@ -331,6 +334,8 @@ public enum PlaceGroceryOrderAction {
     public static let id = "place_grocery_order"
     /// The app's handler; every door calls it.
     public static var perform: (@MainActor @Sendable (PlaceGroceryOrderInput) async throws -> PlaceGroceryOrderOutput)?
+    /// Called with the error when the person's press fails, since a plain button has nowhere to show it.
+    public static var failed: (@MainActor @Sendable (any Error) -> Void)?
 
     public static func run(_ input: PlaceGroceryOrderInput) async throws -> PlaceGroceryOrderOutput {
         guard let perform else { throw OuroActionNotBound(action: id) }
@@ -350,7 +355,7 @@ public struct PlaceGroceryOrderButton<Label: View>: View {
     }
 
     public var body: some View {
-        Button { Task { _ = try? await PlaceGroceryOrderAction.run(input) } } label: { label }
+        Button { Task { do { _ = try await PlaceGroceryOrderAction.run(input) } catch { PlaceGroceryOrderAction.failed?(error) } } } label: { label }
             .accessibilityHint(Text(verbatim: "Order everything on your list and pay for it."))
     }
 }

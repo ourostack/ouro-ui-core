@@ -83,18 +83,31 @@
   ],
   "refusals": {
     "place_grocery_order": {
-      "ax": 1,
-      "action": "place-grocery-order",
+      "ax": "outcome/1",
+      "action": "list order",
+      "effect": "private",
+      "audience": {
+        "only": true,
+        "who": "only you"
+      },
+      "target": null,
       "state": "refused",
+      "summary": "list order: You can't place an order or pay for the person; only they can. Ask the person, who does it with Place order on the shopping list.",
+      "postcondition": {
+        "checked": false,
+        "holds": null,
+        "how": "not checked"
+      },
+      "receipt": null,
+      "next": [],
       "error": {
         "code": "person-only",
         "exit": 2,
         "thing": "list order",
-        "problem": "You can't place an order or pay for the person; only they can.",
+        "problem": "You can't place an order or pay for the person; only they can. Ask the person, who does it with Place order on the shopping list",
         "fix": null,
-        "message": "list order: You can't place an order or pay for the person; only they can."
-      },
-      "how": "with Place order on the shopping list"
+        "message": "list order: You can't place an order or pay for the person; only they can. Ask the person, who does it with Place order on the shopping list."
+      }
     }
   }
 }
