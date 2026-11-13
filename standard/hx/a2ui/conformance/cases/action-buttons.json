@@ -74,6 +74,7 @@
   "expect": {
     "surfaces": {
       "buttons": {
+        "id": "root",
         "component": "Stack",
         "props": {
           "direction": "vertical",
@@ -81,6 +82,7 @@
         },
         "children": [
           {
+            "id": "open",
             "component": "ActionButton",
             "props": {
               "emphasis": "secondary",
@@ -95,6 +97,7 @@
             "children": []
           },
           {
+            "id": "shop",
             "component": "ActionButton",
             "props": {
               "emphasis": "primary",
@@ -110,6 +113,7 @@
             "children": []
           },
           {
+            "id": "share",
             "component": "ActionButton",
             "props": {
               "emphasis": "secondary",
@@ -139,6 +143,7 @@
             "children": []
           },
           {
+            "id": "order",
             "component": "ActionButton",
             "props": {
               "emphasis": "secondary",

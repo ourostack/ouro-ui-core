@@ -99,6 +99,7 @@
   "expect": {
     "surfaces": {
       "plan": {
+        "id": "root",
         "component": "Stack",
         "props": {
           "direction": "vertical",
@@ -106,10 +107,12 @@
         },
         "children": [
           {
+            "id": "day",
             "component": "Card",
             "props": {},
             "children": [
               {
+                "id": "day_name",
                 "component": "Heading",
                 "props": {
                   "text": "Monday",
@@ -118,6 +121,7 @@
                 "children": []
               },
               {
+                "id": "meals",
                 "component": "List",
                 "props": {
                   "items": [
@@ -129,6 +133,7 @@
                 "children": []
               },
               {
+                "id": "facts",
                 "component": "DescriptionList",
                 "props": {
                   "items": [
@@ -147,10 +152,12 @@
             ]
           },
           {
+            "id": "day",
             "component": "Card",
             "props": {},
             "children": [
               {
+                "id": "day_name",
                 "component": "Heading",
                 "props": {
                   "text": "Tuesday",
@@ -159,6 +166,7 @@
                 "children": []
               },
               {
+                "id": "meals",
                 "component": "List",
                 "props": {
                   "items": [
@@ -169,6 +177,7 @@
                 "children": []
               },
               {
+                "id": "facts",
                 "component": "DescriptionList",
                 "props": {
                   "items": [

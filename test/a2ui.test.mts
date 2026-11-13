@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { test } from "node:test";
 import { Ajv2020 } from "ajv/dist/2020.js";
@@ -188,4 +189,11 @@ test("an empty relative path in a template is the item itself, as A2UI's collect
 test("a protocol-only field is the app's to add, so a composed button's input never offers it", () => {
   const add = (catalog(recipe).metadata as { extensions: { bot_ouroboros_hx: { actions: Record<string, { input: Record<string, unknown> }> } } }).extensions.bot_ouroboros_hx.actions.add_recipe_to_shopping_list!;
   assert.deepEqual(Object.keys(add.input), ["recipe", "servings"]);
+});
+
+test("each resolved node carries its component id, for the action message's sourceComponentId", () => {
+  const c = JSON.parse(readFileSync(new URL("standard/hx/a2ui/conformance/cases/action-buttons.json", root), "utf8"));
+  const out = resolveMessages(JSON.parse(renderCatalog(recipe)), c.messages);
+  assert.ok("surfaces" in out);
+  assert.deepEqual([out.surfaces.buttons!.id, ...out.surfaces.buttons!.children.map((n) => n.id)], ["root", "open", "shop", "share", "order"]);
 });

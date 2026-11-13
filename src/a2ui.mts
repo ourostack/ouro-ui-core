@@ -321,7 +321,11 @@ function checkComponent(w: Walk, comp: unknown, path: string, refs: Map<string, 
         else
           v.forEach((it, i) => {
             if (!isObj(it) || Object.keys(it).some((k) => k !== "term" && k !== "detail")) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: `${at}/${i}`, message: "Each item is { term, detail }." });
-            else for (const k of ["term", "detail"]) it[k] === undefined ? w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: `${at}/${i}/${k}`, message: `Each item needs ${k}.` }) : checkDynamic(w, it[k], "string", `${at}/${i}/${k}`);
+            else
+              for (const k of ["term", "detail"]) {
+                if (it[k] === undefined) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: `${at}/${i}/${k}`, message: `Each item needs ${k}.` });
+                else checkDynamic(w, it[k], "string", `${at}/${i}/${k}`);
+              }
           });
         break;
       case "action":
@@ -448,6 +452,8 @@ function childRefs(comp: Record<string, unknown>, path: string): [string, string
 
 /** A resolved node: the component, its props with every binding resolved and defaults filled, and its children. */
 export interface Resolved {
+  /** The component's id, which a pressed button's action message names as its sourceComponentId. A template's instances share it. */
+  id: string;
   component: string;
   props: Obj;
   children: Resolved[];
@@ -615,7 +621,7 @@ export function resolveSurface(catalogJson: unknown, surface: Surface): Resolved
       if (a.personOnly) props.handoff = a.personOnly.how;
     }
     if (isObj(comp["@accessibility"]) && comp["@accessibility"].label !== undefined) props["@label"] = asText(resolveValue(surface.data, scope, comp["@accessibility"].label));
-    return { component: name, props, children };
+    return { id: String(comp.id), component: name, props, children };
   };
   return node(root, "");
 }

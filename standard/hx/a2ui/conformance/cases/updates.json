@@ -111,6 +111,7 @@
   "expect": {
     "surfaces": {
       "timer": {
+        "id": "root",
         "component": "Stack",
         "props": {
           "direction": "horizontal",
@@ -118,6 +119,7 @@
         },
         "children": [
           {
+            "id": "state",
             "component": "Alert",
             "props": {
               "title": "Ready",
@@ -127,6 +129,7 @@
             "children": []
           },
           {
+            "id": "facts",
             "component": "DescriptionList",
             "props": {
               "items": [
