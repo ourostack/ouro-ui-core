@@ -1,5 +1,5 @@
 {
-  "generator": "ouro-actions 0.5.0",
+  "generator": "ouro-actions 0.6.0",
   "set": "shopping",
   "tool": "shop",
   "actions": [
@@ -41,6 +41,7 @@
           "label": "Item",
           "description": "What to buy, as the person said it, such as \"oat milk\".",
           "arg": true,
+          "ask": "What should I add to your list?",
           "kind": "string"
         },
         "quantity": {
@@ -54,6 +55,13 @@
           "label": "Unit",
           "description": "The unit of the quantity, such as g, cups or cans.",
           "optional": true,
+          "kind": "string"
+        },
+        "idempotencyKey": {
+          "label": "Idempotency key",
+          "description": "Send the same key again when retrying this exact call, and the item is added once.",
+          "optional": true,
+          "protocolOnly": true,
           "kind": "string"
         }
       },

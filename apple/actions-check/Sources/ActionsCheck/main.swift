@@ -28,6 +28,23 @@ func check() async throws {
     expect(calls == [AddShoppingListItemInput(name: "flour", quantity: 500, unit: "g")], "the App Intent calls the handler with its input")
     expect(AddShoppingListItemIntent.title == "Add to list", "the intent's title is the person's label")
 
+    // A protocol-only field (the idempotency key) is on the input but never on the person's doors: the intent leaves it nil.
+    let keyed = AddShoppingListItemIntent(AddShoppingListItemInput(name: "salt", idempotencyKey: "retry-1"))
+    expect(keyed.input == AddShoppingListItemInput(name: "salt"), "the App Intent drops a protocol-only field")
+
+    // The intent always speaks: the app's dialog hears the input and the result, success or failure.
+    var heard: [String] = []
+    AddShoppingListItemAction.dialog = { input, result in
+        switch result {
+        case .success: heard.append("added \(input.name)")
+        case .failure: heard.append("failed \(input.name)")
+        }
+        return IntentDialog(stringLiteral: "Added \(input.name).")
+    }
+    _ = try await keyed.perform()
+    expect(heard == ["added salt"], "the dialog hears the handler's result")
+    calls.removeLast()
+
     let reins = ReinsAction.addShoppingListItem()
     expect(reins.name == "addShoppingListItem" && reins.title == "Add to list", "Reins names the action from the declaration")
     expect(

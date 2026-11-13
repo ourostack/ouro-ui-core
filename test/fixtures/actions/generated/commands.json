@@ -1,5 +1,5 @@
 {
-  "generator": "ouro-actions 0.5.0",
+  "generator": "ouro-actions 0.6.0",
   "set": "shopping",
   "tool": "shop",
   "commands": [
@@ -40,6 +40,10 @@
         "unit": {
           "type": "string",
           "description": "The unit of the quantity, such as g, cups or cans."
+        },
+        "idempotency-key": {
+          "type": "string",
+          "description": "Send the same key again when retrying this exact call, and the item is added once."
         }
       },
       "output": "{ id, name }"
