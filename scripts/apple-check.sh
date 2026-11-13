@@ -11,6 +11,7 @@ apple/check/.build/ouro-tokens-check
 
 # The one action model: build the shopping fixture's generated Swift (App Intents, Button(intent:), Reins) against
 # OuroReins from a pinned ouro-ui-apple release, and run its checks (apple/actions-check).
+rm -rf apple/actions-check/Sources/ActionsCheck/Generated
 mkdir -p apple/actions-check/Sources/ActionsCheck/Generated
 cp test/fixtures/actions/generated/OuroActions.swift test/fixtures/actions/generated/OuroActionsReins.swift apple/actions-check/Sources/ActionsCheck/Generated/
 (cd apple/actions-check && swift run -q ActionsCheck)
