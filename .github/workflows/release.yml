@@ -31,10 +31,10 @@ jobs:
       - name: Package dist/
         run: |
           cd dist && zip -qr "../ouro-ui-core-$GITHUB_REF_NAME-dist.zip" . && cd ..
-          cp dist/web/ouro-theme.css dist/web/ouro-base.css dist/apple/OuroTokens.swift dist/ax/apple.claims.json dist/hx/components.claims.json dist/actions/ouro-actions.mts dist/ax/actions.claims.json dist/swatches.html dist/dist-manifest.json .
+          cp dist/hx/a2ui/catalog.json ouro-hx-a2ui-catalog.json && cp dist/web/ouro-theme.css dist/web/ouro-base.css dist/apple/OuroTokens.swift dist/ax/apple.claims.json dist/hx/components.claims.json dist/actions/ouro-actions.mts dist/ax/actions.claims.json dist/a2ui/ouro-a2ui.mts dist/a2ui/ouro-a2ui-catalog.mts dist/swatches.html dist/dist-manifest.json .
       - name: Create the release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" --verify-tag --title "Ouro UI core $GITHUB_REF_NAME" --notes "Generated from tokens/ at $GITHUB_REF_NAME. dist-manifest.json lists every file in dist/ with its SHA-256, for core-provenance.json. dist/web/ is byte-identical to web's files at the tag in parity.json. apple.claims.json is Ouro AX for Apple's claim set; components.claims.json is Ouro HX's component claims. ouro-actions.mts is the one action model's generator, for apps to vendor (docs/guides/actions.md); actions.claims.json is Ouro AX's action claims." \
-            "ouro-ui-core-$GITHUB_REF_NAME-dist.zip" ouro-theme.css ouro-base.css OuroTokens.swift apple.claims.json components.claims.json ouro-actions.mts actions.claims.json swatches.html dist-manifest.json
+          gh release create "$GITHUB_REF_NAME" --verify-tag --title "Ouro UI core $GITHUB_REF_NAME" --notes "Generated from tokens/ at $GITHUB_REF_NAME. dist-manifest.json lists every file in dist/ with its SHA-256, for core-provenance.json. dist/web/ is byte-identical to web's files at the tag in parity.json. apple.claims.json is Ouro AX for Apple's claim set; components.claims.json is Ouro HX's component claims. ouro-actions.mts is the one action model's generator, for apps to vendor (docs/guides/actions.md); actions.claims.json is Ouro AX's action claims. ouro-a2ui.mts and ouro-a2ui-catalog.mts are Ouro HX's A2UI validator, resolver, MCP Apps helpers and catalog generator, and ouro-hx-a2ui-catalog.json is HX's A2UI catalog (docs/guides/a2ui.md)." \
+            "ouro-ui-core-$GITHUB_REF_NAME-dist.zip" ouro-theme.css ouro-base.css OuroTokens.swift apple.claims.json components.claims.json ouro-actions.mts actions.claims.json ouro-a2ui.mts ouro-a2ui-catalog.mts ouro-hx-a2ui-catalog.json swatches.html dist-manifest.json

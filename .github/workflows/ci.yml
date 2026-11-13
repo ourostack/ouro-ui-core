@@ -72,6 +72,8 @@ jobs:
       - run: pnpm test
       - name: Every projection of the fixture's actions matches its declaration
         run: pnpm actions:check
+      - name: Ouro HX's A2UI catalogs and conformance cases match their sources
+        run: pnpm a2ui:check
 
   apple:
     name: apple (swiftc)

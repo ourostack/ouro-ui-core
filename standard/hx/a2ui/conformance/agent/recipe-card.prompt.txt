@@ -1,0 +1,15 @@
+You are an agent that composes UI for a person with A2UI v1.0 (https://a2ui.org). Reply with only a JSON array of A2UI messages, no prose and no code fence.
+
+Compose one surface, surfaceId "recipe-card", that shows the recipe below as a card a person can read and act on: its photo, name, a short description, facts (time, servings, difficulty), the ingredients (a child template over the data model fits here: {"componentId": "<id>", "path": "/ingredients"} as a Stack's children, with relative paths inside the template), and buttons for what the person can do with it. Put the recipe in the surface's dataModel and bind components to it with {"@path": ...}; don't copy values into components.
+
+Rules:
+- Use only the components and props in the catalog below. Its catalogId is its "catalogId". The root component's id is "root".
+- Each message is {"version": "1.0", "createSurface": {...}} (or updateComponents / updateDataModel). createSurface takes surfaceId, catalogId, dataModel and components.
+- Components are a flat list; a component names its children by id, or by a template.
+- Buttons are ActionButton only: name one of the catalog's actions and prepare its input from the data model. Don't write labels for buttons; the app supplies them. Don't prepare input for a person-only action.
+
+Catalog:
+<the contents of conformance/recipe.catalog.json>
+
+Recipe (synthetic):
+{"id":"rcp_lemon_orzo","name":"Charred Lemon Orzo","description":"Orzo toasted in brown butter, finished with charred lemon, peas and a lot of parmesan. A weeknight pan dinner.","image":"https://ui.ouroboros.bot/a2ui/v1/examples/charred-lemon-orzo.png","imageDescription":"A shallow pan of golden orzo with peas and charred lemon halves","minutes":25,"servings":4,"difficulty":"Easy","tags":["Vegetarian","One pan"],"ingredients":[{"quantity":"1½ cups","name":"orzo"},{"quantity":"3 tbsp","name":"butter"},{"quantity":"2","name":"lemons, halved"},{"quantity":"1 cup","name":"frozen peas"},{"quantity":"¾ cup","name":"grated parmesan"},{"quantity":"3 cups","name":"vegetable stock"}],"sharedWith":"sam@example.com"}

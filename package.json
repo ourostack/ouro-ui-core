@@ -1,6 +1,6 @@
 {
   "name": "@ouro.bot/ui-core",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "private": true,
   "description": "The platform-neutral core of Ouro UI: one token source that every platform builds from.",
   "license": "MIT",
@@ -20,11 +20,14 @@
     "feel:page": "node scripts/feel-page.mts",
     "actions:generate": "node src/actions.mts generate test/fixtures/actions/shopping.actions.mts test/fixtures/actions/generated",
     "actions:check": "node src/actions.mts check test/fixtures/actions/shopping.actions.mts test/fixtures/actions/generated",
-    "actions:page": "node scripts/actions-page.mts"
+    "actions:page": "node scripts/actions-page.mts",
+    "a2ui:generate": "node scripts/a2ui-conformance.mts",
+    "a2ui:check": "node scripts/a2ui-conformance.mts --check"
   },
   "devDependencies": {
     "@terrazzo/parser": "2.10.0",
     "@types/node": "24.19.2",
+    "ajv": "8.17.1",
     "typescript": "5.9.3"
   }
 }

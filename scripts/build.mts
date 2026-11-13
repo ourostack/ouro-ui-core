@@ -7,6 +7,9 @@
 //   dist/feel/feel.spec.json      Ouro Feel's spec, byte for byte from standard/feel/
 //   dist/actions/ouro-actions.mts the one action model's generator, byte for byte from src/actions.mts, for apps to vendor
 //   dist/ax/actions.claims.json   Ouro AX's action claims, byte for byte from standard/ax/
+//   dist/a2ui/ouro-a2ui.mts       the A2UI validator, resolver and MCP Apps helpers, byte for byte from src/a2ui.mts
+//   dist/a2ui/ouro-a2ui-catalog.mts  the catalog generator, from src/a2ui-catalog.mts with its imports renamed to the vendored files
+//   dist/hx/a2ui/catalog.json     Ouro HX's A2UI catalog, byte for byte from standard/hx/a2ui/
 //   dist/dist-manifest.json       { coreTag, files: { "dist/<path>": sha256 } }, for core-provenance.json
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
@@ -45,6 +48,14 @@ if (ACTIONS_VERSION !== version) throw new Error(`src/actions.mts says ${ACTIONS
 const actions = await readFile(new URL("src/actions.mts", root), "utf8");
 if (/^(?:import|export)\b[^;]*?\bfrom\s+["'](?!node:)/m.test(actions)) throw new Error("src/actions.mts imports something other than node: modules, so a vendored copy can't run alone. Fix: inline it.");
 files.set("actions/ouro-actions.mts", actions);
+// The A2UI module imports nothing at all, so web and Apple can vendor or port it whole.
+const a2ui = await readFile(new URL("src/a2ui.mts", root), "utf8");
+if (/^(?:import|export)\b[^;]*?\bfrom\s+["']/m.test(a2ui)) throw new Error("src/a2ui.mts imports something, so a vendored copy can't run alone. Fix: inline it.");
+files.set("a2ui/ouro-a2ui.mts", a2ui);
+const a2uiCatalog = (await readFile(new URL("src/a2ui-catalog.mts", root), "utf8")).replace('from "./actions.mts"', 'from "./ouro-actions.mts"').replace('from "./a2ui.mts"', 'from "./ouro-a2ui.mts"');
+if (/from\s+["']\.\/(?!ouro-actions\.mts|ouro-a2ui\.mts)/.test(a2uiCatalog)) throw new Error("src/a2ui-catalog.mts imports a file the release doesn't ship. Fix: import only ./actions.mts and ./a2ui.mts.");
+files.set("a2ui/ouro-a2ui-catalog.mts", a2uiCatalog);
+files.set("hx/a2ui/catalog.json", await readFile(new URL("standard/hx/a2ui/catalog.json", root), "utf8"));
 
 const manifest = {
   coreTag: tag,
