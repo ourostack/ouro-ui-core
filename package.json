@@ -19,7 +19,8 @@
     "hx:page": "node scripts/hx-page.mts",
     "feel:page": "node scripts/feel-page.mts",
     "actions:generate": "node src/actions.mts generate test/fixtures/actions/shopping.actions.mts test/fixtures/actions/generated",
-    "actions:check": "node src/actions.mts check test/fixtures/actions/shopping.actions.mts test/fixtures/actions/generated"
+    "actions:check": "node src/actions.mts check test/fixtures/actions/shopping.actions.mts test/fixtures/actions/generated",
+    "actions:page": "node scripts/actions-page.mts"
   },
   "devDependencies": {
     "@terrazzo/parser": "2.10.0",
