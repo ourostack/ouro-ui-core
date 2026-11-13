@@ -1,3 +1,8 @@
+export const A2UI_VERSION = "1.0";
+
+// A2UI_VERSION above is A2UI's protocol version these catalogs target. (No comment goes before the first statement:
+// shadcn's CLI drops it when web's registry installs this file.)
+//
 // Ouro HX as an A2UI v1.0 catalog, the part every renderer and server runs: the components, the validator, the
 // reference resolver every renderer is checked against, the action message a composed button sends, and the MCP Apps
 // helpers. Decision: docs/decisions/2026-11-13-a2ui-catalog.md. Guide: docs/guides/a2ui.md.
@@ -9,9 +14,6 @@
 // It imports nothing, so it runs in a browser, a server or a test as it is. Apps vendor it from a release as
 // `ouro-a2ui.mts` (web's renderer vendors it byte for byte); `a2ui-catalog.mts` writes the catalogs.
 
-
-/** A2UI's protocol version these catalogs target. */
-export const A2UI_VERSION = "1.0";
 /** Ouro HX's catalog id; an app's catalog, with its actions, takes its own. */
 export const HX_CATALOG_ID = "https://ui.ouroboros.bot/a2ui/v1/catalog.json";
 /** The catalog-scope extension key that carries what each action's button does. */
