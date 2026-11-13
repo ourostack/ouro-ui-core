@@ -675,6 +675,8 @@ export function compareMcp(set: ActionSet, tools: unknown): string[] {
 // The CLI
 // ---------------------------------------------------------------------------------------------------------------
 
+const count = (n: number, noun: string) => `${n} ${noun}${n === 1 ? "" : "s"}`;
+
 async function loadSet(path: string): Promise<ActionSet> {
   const mod = (await import(pathToFileURL(resolve(path)).href)) as { default?: ActionSet };
   const set = mod.default;
@@ -712,13 +714,13 @@ export async function main(argv: readonly string[], io: { out(s: string): void; 
     await mkdir(target, { recursive: true });
     const files = renderActions(set);
     for (const [path, text] of files) await writeFile(join(target, path), text);
-    io.out(`ouro-actions: wrote ${files.size} files for ${set.actions.length} actions into ${target}.\n`);
+    io.out(`ouro-actions: wrote ${files.size} files for ${count(set.actions.length, "action")} into ${target}.\n`);
     return 0;
   }
   const problems = cmd === "check" ? checkGenerated(set, await readDir(target)) : compareMcp(set, JSON.parse(await readFile(target, "utf8")));
   for (const p of problems) io.err(`ouro-actions: ${p}\n`);
   if (problems.length) return 1;
-  io.out(`ouro-actions: ${set.actions.length} actions, ${cmd === "check" ? "every projection matches its declaration" : "the live tools match their declarations"}.\n`);
+  io.out(`ouro-actions: ${count(set.actions.length, "action")}, ${cmd === "check" ? "every projection matches its declaration" : "the live tools match their declarations"}.\n`);
   return 0;
 }
 

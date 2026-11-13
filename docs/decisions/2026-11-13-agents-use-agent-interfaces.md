@@ -52,3 +52,7 @@ Read on 2026-11-13.
 | [A2UI](https://a2ui.org/specification/v1.0-a2ui/) | **Watch** | v1.0 is current; apps "define their own catalog to reflect their specific design system", with official SwiftUI and React renderers. It is the agent rendering UI for a person, a separate decision; a catalog should list these actions, so it follows the action model. |
 | [MCP Apps](https://github.com/modelcontextprotocol/ext-apps) (SEP-1865) | **Watch** | Stable since 2026-01-26; hosts render an MCP server's own UI. Same direction as A2UI, same later decision. |
 | [AppFunctions](https://developer.android.com/jetpack/androidx/releases/appfunctions) | **Watch** | Android's declared agent door, 1.0.0-rc01 on 2026-11-04. It is the Android projection once Ouro has an Android platform; the agent description becomes its functions' KDoc and the input's descriptions their parameters' docs, which is what Android shows the model. |
+
+## Amendments
+
+- 2026-11-13: the action model shipped in core 0.5.0. The design is [the spec](../superpowers/specs/2026-11-13-one-action-model-design.md), the code is [`src/actions.mts`](../../src/actions.mts), the promises are [the action claims](../../standard/ax/actions.md), and an app adopts it with [the guide](../guides/actions.md). Two calls made in building it: the person-only refusal is web's refused outcome byte for byte, and `mcp.json` is an app's one MCP door, so web's `mcpTools()` over the CLI commands isn't a second one.
