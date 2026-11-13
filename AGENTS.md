@@ -33,6 +33,13 @@ Core is the platform-neutral part of Ouro UI: what is true on every platform, fo
 - The person-only refusal is web's refused outcome byte for byte (web's `cli.ts`); change it only together with web. `mcp.json` is the one MCP door.
 - `standard/ax/actions.claims.json` is the claim set and `actions.md` its page (`pnpm actions:page`); the adopter guide is `docs/guides/actions.md`.
 
+## Agent-composed UI (A2UI)
+
+- `src/a2ui.mts` is Ouro HX's A2UI v1.0 catalog definition, validator, resolver and MCP Apps helpers. It imports nothing, because web vendors it byte for byte and Apple ports it; keep it that way. `src/a2ui-catalog.mts` generates catalogs (HX's, and an app's from its action set) and is released as `ouro-a2ui-catalog.mts`.
+- `standard/hx/a2ui/` holds the catalogs and the conformance cases every renderer must pass. After changing either module, run `pnpm a2ui:generate` and review the diff; `pnpm a2ui:check` fails CI on drift. A case named `invalid-*` must fail validation.
+- `test/fixtures/a2ui/spec/` is A2UI's own v1.0 JSON Schemas at a pinned commit (`SOURCE.md`); the tests validate both catalogs and every case against them.
+- A component joins the catalog only when web's `a2ui-surface` and Apple's `OuroA2UI` both render it. The adopter guide is `docs/guides/a2ui.md`; the decision is `docs/decisions/2026-11-13-a2ui-catalog.md`.
+
 ## Claims
 
 A factual sentence is a claim on every surface: Markdown, code comments, a pull request's title and body. Give each claim its primary source (a file, a test, a command's output or a link) and, where one exists, the check that proves it, so the next agent can trust it without rebuilding the proof. Don't reword a claim to get past review: source it, correct it, or remove it. This is web's Claims rule; its `pnpm claims:lint` tooling moves here with the standard.
