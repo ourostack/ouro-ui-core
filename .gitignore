@@ -3,3 +3,6 @@ dist/
 *.tsbuildinfo
 .DS_Store
 apple/check/.build/
+apple/actions-check/.build/
+apple/actions-check/Package.resolved
+apple/actions-check/Sources/ActionsCheck/Generated/
