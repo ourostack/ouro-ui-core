@@ -1,0 +1,100 @@
+{
+  "generator": "ouro-actions 0.5.0",
+  "set": "shopping",
+  "tools": [
+    {
+      "name": "get_shopping_list",
+      "description": "Read the person's shopping list: each item's id, name, quantity, unit and whether it is checked.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "show": {
+            "type": "string",
+            "description": "Which items to list; all of them when left out.",
+            "enum": [
+              "all",
+              "unchecked"
+            ]
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "consequentialHint": false
+      }
+    },
+    {
+      "name": "add_shopping_list_item",
+      "description": "Add one item to the person's shopping list. Give the name as the person said it; leave quantity and unit out when they gave none.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "What to buy, as the person said it, such as \"oat milk\"."
+          },
+          "quantity": {
+            "type": "number",
+            "description": "How many or how much.",
+            "minimum": 0
+          },
+          "unit": {
+            "type": "string",
+            "description": "The unit of the quantity, such as g, cups or cans."
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "consequentialHint": false
+      }
+    },
+    {
+      "name": "share_shopping_list",
+      "description": "Share the person's shopping list with another person, who can then see and change it.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "with": {
+            "type": "string",
+            "description": "The email address of the person to share with."
+          },
+          "canEdit": {
+            "type": "boolean",
+            "description": "Whether they may change the list, not only see it."
+          }
+        },
+        "required": [
+          "with"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "consequentialHint": true
+      }
+    }
+  ],
+  "refusals": {
+    "place_grocery_order": {
+      "ax": 1,
+      "action": "place-grocery-order",
+      "state": "refused",
+      "error": {
+        "code": "person-only",
+        "exit": 2,
+        "thing": "list order",
+        "problem": "You can't place an order or pay for the person; only they can.",
+        "fix": null,
+        "message": "list order: You can't place an order or pay for the person; only they can."
+      },
+      "how": "with Place order on the shopping list"
+    }
+  }
+}
