@@ -16,7 +16,7 @@ import { join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 /** The generator's version, written into every generated file; it is core's version. */
-export const ACTIONS_VERSION = "0.6.0";
+export const ACTIONS_VERSION = "0.6.1";
 const GENERATOR = `ouro-actions ${ACTIONS_VERSION}`;
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -50,8 +50,22 @@ interface FieldBase {
    * input passes nil.
    */
   protocolOnly?: boolean;
+  /**
+   * Output only: the App Intent hands this field to Shortcuts as its result (`ReturnsValue`). One per action, required,
+   * a string, number, integer or boolean.
+   */
+  returned?: boolean;
 }
-export interface StringField extends FieldBase { kind: "string"; arg?: boolean }
+export interface StringField extends FieldBase {
+  kind: "string";
+  arg?: boolean;
+  /**
+   * Input only: the app's own App Entity type, such as `"MarkdownDocumentEntity"`. The App Intent's parameter takes it, so
+   * Shortcuts shows its picker; Input, MCP and the CLI keep a string, its `id`. The type must be `public`, with
+   * `init(id: String)` and `id: String`.
+   */
+  entity?: string;
+}
 export interface NumberField extends FieldBase { kind: "number" | "integer"; min?: number; max?: number }
 export interface BooleanField extends FieldBase { kind: "boolean" }
 export interface EnumField<V extends string = string> extends FieldBase { kind: "enum"; values: readonly V[] }
@@ -106,6 +120,8 @@ export interface ActionDef<I extends Fields = Fields, O extends Fields = Fields>
   reaches?: "private" | "others";
   /** The CLI words, such as `list add`; defaults to the id in kebab case. */
   cli?: string;
+  /** The App Intent opens the app when it runs (`openAppWhenRun`), for an action whose point is to show a window. */
+  opensApp?: boolean;
 }
 
 export interface Action<I extends Fields = Fields, O extends Fields = Fields> extends Readonly<ActionDef<I, O>> {
@@ -162,10 +178,24 @@ function checkFields(where: string, fields: unknown, input: boolean): void {
     if (input && RESERVED_INPUTS.includes(name)) throw new Error(`${at}: the name is taken by a surface (web's kit's own flags, or the App Intent's members: ${RESERVED_INPUTS.join(", ")}). Fix: rename it, such as "${name}Value".`);
     if (f.ask !== undefined && (!input || !oneLine(f.ask))) throw new Error(`${at}: ask is the one-line question Siri asks for a missing input value. Fix: drop it from an output field, or write it in one line.`);
     if (f.protocolOnly !== undefined && (!input || !f.optional || ("arg" in f && f.arg))) throw new Error(`${at}: protocolOnly is for an optional input field that only programs send. Fix: make it optional, drop arg, or drop protocolOnly.`);
+    if ("returned" in f && f.returned !== undefined) {
+      if (input) throw new Error(`${at}: returned is only for an output field. Fix: drop returned.`);
+      if (!["string", "number", "integer", "boolean"].includes(f.kind)) throw new Error(`${at}: returned must be a string, number, integer or boolean field, which Shortcuts can take. Fix: return a text field.`);
+      if (f.optional) throw new Error(`${at}: returned must be required, so the intent always has a value to hand on. Fix: drop optional.`);
+    }
+    if ("entity" in f && f.entity !== undefined) {
+      if (f.kind !== "string" || !input) throw new Error(`${at}: entity is only for an input string field, whose value is the entity's id. Fix: drop entity.`);
+      if (!/^[A-Z][A-Za-z0-9]*$/.test(f.entity)) throw new Error(`${at}: entity is not a Swift type name. Fix: the app's App Entity, such as "MarkdownDocumentEntity".`);
+      if (f.protocolOnly) throw new Error(`${at}: entity is for the person's doors, and a protocol-only field isn't on them. Fix: drop entity or protocolOnly.`);
+    }
     if ("arg" in f && f.arg && (f.kind !== "string" || f.optional || !input)) throw new Error(`${at}: arg is only for a required string input field, since web's CLI arguments are strings. Fix: drop arg, or make it a required string.`);
     if (f.kind === "enum" && (!Array.isArray(f.values) || f.values.length === 0 || !f.values.every((v) => /^[a-z][a-z0-9-]*$/.test(v)))) {
       throw new Error(`${at}: values is empty or not lowercase words. Fix: values: ["all", "unchecked"].`);
     }
+  }
+  if (!input) {
+    const returned = Object.entries(fields as Record<string, Field>).filter(([, f]) => f.returned);
+    if (returned.length > 1) throw new Error(`${where}: ${returned.map(([n]) => `"${n}"`).join(" and ")} are both returned, and only one output field can be returned. Fix: keep returned on the one Shortcuts should get.`);
   }
 }
 
@@ -189,6 +219,7 @@ export function defineAction<const I extends Fields, const O extends Fields>(def
   if (def.consent !== "person-only" && WEB_RESERVED_IDS.includes(id)) throw new Error(`${at}: web reserves "${names(id).kebab}" for the person, so only a person-only action may use it. Fix: consent "person-only" with personOnly, or another id.`);
   if (def.reaches !== undefined && def.reaches !== "private" && def.reaches !== "others") throw new Error(`${at}: reaches is ${JSON.stringify(def.reaches)}. Fix: "private" or "others".`);
   if (def.cli !== undefined && !/^[a-z][a-z0-9-]*( [a-z][a-z0-9-]*)*$/.test(def.cli)) throw new Error(`${at}: cli is not lowercase words. Fix: such as "list add".`);
+  if (def.opensApp !== undefined && typeof def.opensApp !== "boolean") throw new Error(`${at}: opensApp is ${JSON.stringify(def.opensApp)}. Fix: true or false.`);
   checkFields(`${at} input`, def.input, true);
   checkFields(`${at} output`, def.output, false);
   const n = names(id);
@@ -548,23 +579,40 @@ function renderSwift(set: ActionSet): string {
       L.push(`public struct ${P}Intent: AppIntent {`);
       L.push(`    public static let title: LocalizedStringResource = ${swiftLit(a.label)}`);
       L.push(`    public static let description = IntentDescription(${swiftLit(a.agent)})`, "");
+      if (a.opensApp) L.push("    public static let openAppWhenRun = true", "");
+      const entityOf = (f: Field) => (f.kind === "string" ? f.entity : undefined);
       for (const [n, f] of fields) {
+        const entity = entityOf(f);
         const ask = f.ask !== undefined ? `, requestValueDialog: ${swiftLit(f.ask)}` : "";
         L.push(`    @Parameter(title: ${swiftLit(f.label)}, description: ${swiftLit(f.description)}${ask})`);
-        L.push(`    public var ${swiftId(n)}: ${swiftType(a, n, f)}`);
+        L.push(`    public var ${swiftId(n)}: ${entity ? `${entity}${f.optional ? "?" : ""}` : swiftType(a, n, f)}`);
       }
       if (fields.length) L.push("");
       L.push("    public init() {}", "");
       L.push(`    public init(_ input: ${P}Input) {`, "        self.init()");
-      for (const [n] of fields) L.push(`        self.${n} = input.${swiftId(n)}`);
+      for (const [n, f] of fields) {
+        const entity = entityOf(f);
+        L.push(entity
+          ? `        self.${n} = ${f.optional ? `input.${swiftId(n)}.map { ${entity}(id: $0) }` : `${entity}(id: input.${swiftId(n)})`}`
+          : `        self.${n} = input.${swiftId(n)}`);
+      }
       L.push("    }", "");
-      L.push(`    public var input: ${P}Input {`, `        ${P}Input(${fields.map(([n]) => `${swiftId(n)}: ${swiftId(n)}`).join(", ")})`, "    }", "");
-      L.push("    @MainActor", "    public func perform() async throws -> some IntentResult & ProvidesDialog {");
+      L.push(`    public var input: ${P}Input {`, `        ${P}Input(${fields.map(([n, f]) => `${swiftId(n)}: ${swiftId(n)}${entityOf(f) ? `${f.optional ? "?" : ""}.id` : ""}`).join(", ")})`, "    }", "");
+      const returned = Object.entries(a.output).find(([, f]) => f.returned);
+      const returns = ["IntentResult", ...(returned ? [`ReturnsValue<${swiftType(a, returned[0], returned[1])}>`] : []), "ProvidesDialog"].join(" & ");
+      L.push("    @MainActor", `    public func perform() async throws -> some ${returns} {`);
       if (a.consent === "consequential") L.push("        // Consequential: the person says yes before it acts.", "        try await requestConfirmation()");
       L.push("        let input = self.input", `        let result: Result<${P}Output, any Error>`);
       L.push(`        do { result = .success(try await ${P}Action.run(input)) } catch { result = .failure(error) }`);
-      L.push(`        if let dialog = ${P}Action.dialog { return .result(dialog: try await dialog(input, result)) }`);
-      L.push("        _ = try result.get()", '        return .result(dialog: "Done.")', "    }", "}", "");
+      if (returned) {
+        // A failure still throws: there is no value to hand on, and the dialog may rethrow a better error first.
+        L.push(`        let said: IntentDialog = try await ${P}Action.dialog?(input, result) ?? "Done."`);
+        L.push(`        return .result(value: try result.get().${swiftId(returned[0])}, dialog: said)`);
+      } else {
+        L.push(`        if let dialog = ${P}Action.dialog { return .result(dialog: try await dialog(input, result)) }`);
+        L.push("        _ = try result.get()", '        return .result(dialog: "Done.")');
+      }
+      L.push("    }", "}", "");
     }
     L.push(`/// The control for ${a.id}: ${agentDoor ? "Button(_:intent:), the same intent Siri and Shortcuts run" : "a plain Button, since no agent may start it"}.`);
     L.push("@available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, *)");
