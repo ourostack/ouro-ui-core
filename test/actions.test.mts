@@ -79,6 +79,12 @@ test("defineActions refuses two actions that collide on any surface, naming both
   assert.throws(() => defineActions("Bad Name", [a]), /set name/);
   // Two ids whose camelCase names agree would generate one Swift type and one Reins node.
   assert.throws(() => defineActions("x", [defineAction({ ...base, id: "add_item2" }), defineAction({ ...base, id: "add_item_2" })]), /add_item2.*add_item_2/);
+  // get_list.itemsKind and get_list_items.kind would both be the Swift enum GetListItemsKindValue.
+  const kind = (name: string) => ({ [name]: field.enum({ label: "Kind", description: "x", values: ["a"], optional: true }) });
+  assert.throws(
+    () => defineActions("x", [defineAction({ ...base, id: "get_list", input: kind("itemsKind") }), defineAction({ ...base, id: "get_list_items", input: kind("kind") })]),
+    /get_list.*get_list_items.*Swift enum type "GetListItemsKindValue"/,
+  );
 });
 
 test("MCP annotations are web's effectAnnotations for each consent class", () => {
@@ -172,6 +178,14 @@ test("the web projection feeds defineComponentAx and bindAx, and gives each cont
   assert.match(web, /\{ id: "share-shopping-list", summary: "Share your shopping list with someone in your household\.", effect: "others", agent: true \}/);
   assert.match(web, /"add-shopping-list-item": "shop list add <name>"/);
   assert.match(web, /refuseAs: \{\s*"place-grocery-order": "shop list order"/);
+});
+
+test("fromCli gives a CLI run() the declaration's field names, so every door calls one handler", async () => {
+  const web = (await import("./fixtures/actions/generated/web.ts")) as {
+    fromCli: (action: string, input: Record<string, unknown>) => Record<string, unknown>;
+  };
+  assert.deepEqual(web.fromCli("share-shopping-list", { with: "sam", "can-edit": true }), { with: "sam", canEdit: true });
+  assert.deepEqual(web.fromCli("add-shopping-list-item", { name: "flour", quantity: 2 }), { name: "flour", quantity: 2 });
 });
 
 test("every generated file names its generator and set, and renders the same twice", () => {

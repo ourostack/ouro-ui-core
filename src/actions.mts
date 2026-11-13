@@ -190,6 +190,7 @@ export function defineActions(name: string, actions: readonly Action[], options:
   const seen = new Map<string, string>();
   for (const a of actions) {
     const keys: [string, string][] = [["id", a.id], ["kebab name", a.names.kebab], ["camel name", a.names.camel], ["Swift name", a.names.pascal], ["CLI words", a.cliWords]];
+    for (const [field, f] of [...Object.entries(a.input), ...Object.entries(a.output)]) if (f.kind === "enum") keys.push(["Swift enum type", enumType(a, field)]);
     for (const [what, value] of keys) {
       const key = `${what}=${value}`;
       const other = seen.get(key);
@@ -364,6 +365,10 @@ function renderWeb(set: ActionSet): string {
   });
   const twins = agentDoors(set).map((a) => `    ${lit(a.names.kebab)}: ${lit(twinOf(set, a))},`);
   const refuse = set.actions.filter((a) => a.consent === "person-only").map((a) => `    ${lit(a.names.kebab)}: ${lit(`${set.tool} ${a.cliWords}`)},`);
+  const cliInput = agentDoors(set).flatMap((a) => {
+    const renames = Object.keys(a.input).filter((f) => flagName(f) !== f).map((f) => `${lit(flagName(f))}: ${lit(f)}`);
+    return renames.length ? [`  ${lit(a.names.kebab)}: { ${renames.join(", ")} },`] : [];
+  });
   const controls = set.actions.map((a) =>
     `  ${lit(a.names.kebab)}: { label: ${lit(a.label)}, description: ${lit(a.description)}, consent: ${lit(a.consent)}, props: { "data-ax-action": ${lit(a.names.kebab)} } },`,
   );
@@ -392,6 +397,17 @@ function renderWeb(set: ActionSet): string {
     "export const controls = {",
     ...controls,
     "} as const;",
+    "",
+    "// Web's CLI hands run() its flags by name, which are kebab-case (--can-edit); every other door uses the field's",
+    "// name (canEdit). fromCli renames them, so a command's run() calls the same handler as MCP, WebMCP and Apple.",
+    "export const cliInput: Readonly<Record<string, Readonly<Record<string, string>>>> = {",
+    ...cliInput,
+    "};",
+    "",
+    "export function fromCli(action: keyof typeof twins.actions, input: Readonly<Record<string, unknown>>): Record<string, unknown> {",
+    "  const rename = cliInput[action] ?? {};",
+    "  return Object.fromEntries(Object.entries(input).map(([key, value]) => [rename[key] ?? key, value]));",
+    "}",
     "",
   ].join("\n");
 }
@@ -649,7 +665,7 @@ export function compareMcp(set: ActionSet, tools: unknown): string[] {
     if (!same(t["inputSchema"], want.inputSchema)) problems.push(`${a.id}: input schema drifted: expected ${JSON.stringify(sortKeys(want.inputSchema))}, found ${JSON.stringify(sortKeys(t["inputSchema"]))}. Fix: serve the declaration's input schema.`);
     const ann = (t["annotations"] ?? {}) as Record<string, unknown>;
     // A missing hint means MCP's default, which a client acts on: readOnlyHint false, destructiveHint and openWorldHint true.
-    for (const [k, v] of Object.entries(want.annotations)) if ((ann[k] ?? MCP_HINT_DEFAULTS[k]) !== v) problems.push(`${a.id}: annotation ${k} is ${JSON.stringify(ann[k] ?? null)}, the consent class "${a.consent}" says ${v}. Fix: serve the declaration's annotations.`);
+    for (const [k, v] of Object.entries(want.annotations)) if ((ann[k] ?? MCP_HINT_DEFAULTS[k]) !== v) problems.push(`${a.id}: annotation ${k} is ${k in ann ? JSON.stringify(ann[k]) : `missing (MCP's default, ${MCP_HINT_DEFAULTS[k]})`}, the consent class "${a.consent}" says ${v}. Fix: serve the declaration's annotations.`);
   }
   for (const name of live.keys()) if (!set.actions.some((a) => a.id === name)) problems.push(`${name}: the server lists a tool no declaration has. Fix: declare it with defineAction.`);
   return problems;

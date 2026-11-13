@@ -30,3 +30,14 @@ export const controls = {
   "share-shopping-list": { label: "Share list", description: "Share your shopping list with someone in your household.", consent: "consequential", props: { "data-ax-action": "share-shopping-list" } },
   "place-grocery-order": { label: "Place order", description: "Order everything on your list and pay for it.", consent: "person-only", props: { "data-ax-action": "place-grocery-order" } },
 } as const;
+
+// Web's CLI hands run() its flags by name, which are kebab-case (--can-edit); every other door uses the field's
+// name (canEdit). fromCli renames them, so a command's run() calls the same handler as MCP, WebMCP and Apple.
+export const cliInput: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  "share-shopping-list": { "can-edit": "canEdit" },
+};
+
+export function fromCli(action: keyof typeof twins.actions, input: Readonly<Record<string, unknown>>): Record<string, unknown> {
+  const rename = cliInput[action] ?? {};
+  return Object.fromEntries(Object.entries(input).map(([key, value]) => [rename[key] ?? key, value]));
+}
