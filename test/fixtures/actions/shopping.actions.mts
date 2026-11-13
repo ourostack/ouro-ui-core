@@ -24,9 +24,10 @@ export const addShoppingListItem = defineAction({
   description: "Add an item to your shopping list.",
   agent: "Add one item to the person's shopping list. Give the name as the person said it; leave quantity and unit out when they gave none.",
   input: {
-    name: field.string({ label: "Item", description: "What to buy, as the person said it, such as \"oat milk\".", arg: true }),
+    name: field.string({ label: "Item", description: "What to buy, as the person said it, such as \"oat milk\".", arg: true, ask: "What should I add to your list?" }),
     quantity: field.number({ label: "Quantity", description: "How many or how much.", optional: true, min: 0 }),
     unit: field.string({ label: "Unit", description: "The unit of the quantity, such as g, cups or cans.", optional: true }),
+    idempotencyKey: field.string({ label: "Idempotency key", description: "Send the same key again when retrying this exact call, and the item is added once.", optional: true, protocolOnly: true }),
   },
   output: {
     id: field.string({ label: "Item id", description: "The new item's id." }),

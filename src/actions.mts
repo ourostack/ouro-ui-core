@@ -16,7 +16,7 @@ import { join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 /** The generator's version, written into every generated file; it is core's version. */
-export const ACTIONS_VERSION = "0.5.0";
+export const ACTIONS_VERSION = "0.6.0";
 const GENERATOR = `ouro-actions ${ACTIONS_VERSION}`;
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -39,6 +39,17 @@ interface FieldBase {
   /** What it is, for an agent: the JSON Schema description, the CLI flag's help. */
   description: string;
   optional?: boolean;
+  /**
+   * Input only: the question Siri asks the person when this required value is missing, such as "What should I add to
+   * your shopping list?" (the App Intent parameter's requestValueDialog).
+   */
+  ask?: string;
+  /**
+   * Input only, and optional: a field only programs send, such as an idempotency key or a server-side owner. MCP,
+   * WebMCP and the CLI carry it; the App Intent and Reins, which stand for the person, leave it out, and the Swift
+   * input passes nil.
+   */
+  protocolOnly?: boolean;
 }
 export interface StringField extends FieldBase { kind: "string"; arg?: boolean }
 export interface NumberField extends FieldBase { kind: "number" | "integer"; min?: number; max?: number }
@@ -149,6 +160,8 @@ function checkFields(where: string, fields: unknown, input: boolean): void {
     if (!oneLine(f.label)) throw new Error(`${at}: label is empty or more than one line. Fix: the person's word for it, such as "Quantity".`);
     if (!oneLine(f.description)) throw new Error(`${at}: description is empty or more than one line. Fix: one sentence for the agent.`);
     if (input && RESERVED_INPUTS.includes(name)) throw new Error(`${at}: the name is taken by a surface (web's kit's own flags, or the App Intent's members: ${RESERVED_INPUTS.join(", ")}). Fix: rename it, such as "${name}Value".`);
+    if (f.ask !== undefined && (!input || !oneLine(f.ask))) throw new Error(`${at}: ask is the one-line question Siri asks for a missing input value. Fix: drop it from an output field, or write it in one line.`);
+    if (f.protocolOnly !== undefined && (!input || !f.optional || ("arg" in f && f.arg))) throw new Error(`${at}: protocolOnly is for an optional input field that only programs send. Fix: make it optional, drop arg, or drop protocolOnly.`);
     if ("arg" in f && f.arg && (f.kind !== "string" || f.optional || !input)) throw new Error(`${at}: arg is only for a required string input field, since web's CLI arguments are strings. Fix: drop arg, or make it a required string.`);
     if (f.kind === "enum" && (!Array.isArray(f.values) || f.values.length === 0 || !f.values.every((v) => /^[a-z][a-z0-9-]*$/.test(v)))) {
       throw new Error(`${at}: values is empty or not lowercase words. Fix: values: ["all", "unchecked"].`);
@@ -427,6 +440,9 @@ function swiftType(a: Action, name: string, f: Field): string {
   return f.optional ? `${base}?` : base;
 }
 
+/** The input fields the person's doors (the App Intent and Reins) carry: every one but the protocol-only fields. */
+const personFields = (a: Action) => Object.entries(a.input).filter(([, f]) => !f.protocolOnly);
+
 function swiftStruct(a: Action, typeName: string, fields: Fields): string[] {
   const entries = Object.entries(fields);
   const lines = [`public struct ${typeName}: Codable, Sendable, Hashable {`];
@@ -518,17 +534,23 @@ function renderSwift(set: ActionSet): string {
     L.push(`    /// The app's handler; every door calls it.`);
     L.push(`    public static var perform: (@MainActor @Sendable (${P}Input) async throws -> ${P}Output)?`);
     if (!agentDoor) L.push("    /// Called with the error when the person's press fails, since a plain button has nowhere to show it.", "    public static var failed: (@MainActor @Sendable (any Error) -> Void)?");
+    else {
+      L.push("    /// What Siri and Shortcuts say when the App Intent finishes or fails: the result in words, or an error turned into");
+      L.push("    /// words (rethrow to let the system show it). Unset, the intent says \"Done.\" and a failure throws.");
+      L.push(`    public static var dialog: (@MainActor @Sendable (${P}Input, Result<${P}Output, any Error>) async throws -> IntentDialog)?`);
+    }
     L.push("");
     L.push(`    public static func run(_ input: ${P}Input) async throws -> ${P}Output {`);
     L.push(`        guard let perform else { throw OuroActionNotBound(action: id) }`);
     L.push("        return try await perform(input)", "    }", "}", "");
-    const fields = Object.entries(a.input);
+    const fields = personFields(a);
     if (agentDoor) {
       L.push(`public struct ${P}Intent: AppIntent {`);
       L.push(`    public static let title: LocalizedStringResource = ${swiftLit(a.label)}`);
       L.push(`    public static let description = IntentDescription(${swiftLit(a.agent)})`, "");
       for (const [n, f] of fields) {
-        L.push(`    @Parameter(title: ${swiftLit(f.label)}, description: ${swiftLit(f.description)})`);
+        const ask = f.ask !== undefined ? `, requestValueDialog: ${swiftLit(f.ask)}` : "";
+        L.push(`    @Parameter(title: ${swiftLit(f.label)}, description: ${swiftLit(f.description)}${ask})`);
         L.push(`    public var ${swiftId(n)}: ${swiftType(a, n, f)}`);
       }
       if (fields.length) L.push("");
@@ -537,9 +559,12 @@ function renderSwift(set: ActionSet): string {
       for (const [n] of fields) L.push(`        self.${n} = input.${swiftId(n)}`);
       L.push("    }", "");
       L.push(`    public var input: ${P}Input {`, `        ${P}Input(${fields.map(([n]) => `${swiftId(n)}: ${swiftId(n)}`).join(", ")})`, "    }", "");
-      L.push("    @MainActor", "    public func perform() async throws -> some IntentResult {");
+      L.push("    @MainActor", "    public func perform() async throws -> some IntentResult & ProvidesDialog {");
       if (a.consent === "consequential") L.push("        // Consequential: the person says yes before it acts.", "        try await requestConfirmation()");
-      L.push(`        _ = try await ${P}Action.run(input)`, "        return .result()", "    }", "}", "");
+      L.push("        let input = self.input", `        let result: Result<${P}Output, any Error>`);
+      L.push(`        do { result = .success(try await ${P}Action.run(input)) } catch { result = .failure(error) }`);
+      L.push(`        if let dialog = ${P}Action.dialog { return .result(dialog: try await dialog(input, result)) }`);
+      L.push("        _ = try result.get()", '        return .result(dialog: "Done.")', "    }", "}", "");
     }
     L.push(`/// The control for ${a.id}: ${agentDoor ? "Button(_:intent:), the same intent Siri and Shortcuts run" : "a plain Button, since no agent may start it"}.`);
     L.push("@available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, *)");
@@ -573,7 +598,7 @@ function renderReins(set: ActionSet): string {
   ];
   for (const a of set.actions) {
     const P = a.names.pascal;
-    const fields = Object.entries(a.input);
+    const fields = personFields(a);
     const props = fields.map(([n, f]) => `${swiftLit(n)}: ${reinsSchema(a, f)}`).join(", ");
     const required = fields.filter(([, f]) => !f.optional).map(([n]) => swiftLit(n)).join(", ");
     L.push(`extension ${P}Input: ReinsInput {`);
@@ -639,7 +664,7 @@ const same = (a: unknown, b: unknown) => JSON.stringify(sortKeys(a)) === JSON.st
  * description, input schema or annotations; a person-only action listed as a tool; a tool nobody declared. `tools` is
  * a `tools/list` result (`{ tools: [...] }`) or its array.
  */
-export function compareMcp(set: ActionSet, tools: unknown): string[] {
+export function compareMcp(set: ActionSet, tools: unknown, options: { undeclared?: readonly string[] } = {}): string[] {
   const list = Array.isArray(tools) ? tools : (tools as { tools?: unknown })?.tools;
   if (!Array.isArray(list)) return ["tools: is not a tools/list result. Fix: pass the server's tools/list result, { tools: [...] }."];
   const live = new Map<string, Record<string, unknown>>();
@@ -667,7 +692,14 @@ export function compareMcp(set: ActionSet, tools: unknown): string[] {
     // A missing hint means MCP's default, which a client acts on: readOnlyHint false, destructiveHint and openWorldHint true.
     for (const [k, v] of Object.entries(want.annotations)) if ((ann[k] ?? MCP_HINT_DEFAULTS[k]) !== v) problems.push(`${a.id}: annotation ${k} is ${k in ann ? JSON.stringify(ann[k]) : `missing (MCP's default, ${MCP_HINT_DEFAULTS[k]})`}, the consent class "${a.consent}" says ${v}. Fix: serve the declaration's annotations.`);
   }
-  for (const name of live.keys()) if (!set.actions.some((a) => a.id === name)) problems.push(`${name}: the server lists a tool no declaration has. Fix: declare it with defineAction.`);
+  // An app moving onto actions one tool at a time names the tools it hasn't declared yet. The list can only shrink: a
+  // name on it that is now declared, or no longer served, is a problem too.
+  const undeclared = new Set(options.undeclared ?? []);
+  for (const name of live.keys()) if (!set.actions.some((a) => a.id === name) && !undeclared.has(name)) problems.push(`${name}: the server lists a tool no declaration has. Fix: declare it with defineAction.`);
+  for (const name of undeclared) {
+    if (set.actions.some((a) => a.id === name)) problems.push(`${name}: is declared, so it isn't undeclared any more. Fix: take it off the undeclared list.`);
+    else if (!live.has(name)) problems.push(`${name}: is on the undeclared list but the server doesn't list it. Fix: take it off the undeclared list.`);
+  }
   return problems;
 }
 
@@ -700,12 +732,13 @@ async function readDir(dir: string): Promise<Map<string, string>> {
   return found;
 }
 
-const USAGE = "usage: node ouro-actions.mts generate|check <actions.mts> <dir> | compare-mcp <actions.mts> <tools.json>";
+const USAGE = "usage: node ouro-actions.mts generate|check <actions.mts> <dir> | compare-mcp <actions.mts> <tools.json> [--undeclared <names.json>]";
 
 /** Runs the CLI; returns the exit code: 0 clean, 1 drift, 2 usage. */
 export async function main(argv: readonly string[], io: { out(s: string): void; err(s: string): void }): Promise<number> {
-  const [cmd, declarations, target] = argv;
-  if (!cmd || !declarations || !target || !["generate", "check", "compare-mcp"].includes(cmd)) {
+  const [cmd, declarations, target, flag, flagValue, ...rest] = argv;
+  const flagOk = flag === undefined || (cmd === "compare-mcp" && flag === "--undeclared" && flagValue !== undefined && rest.length === 0);
+  if (!cmd || !declarations || !target || !["generate", "check", "compare-mcp"].includes(cmd) || !flagOk) {
     io.err(`${USAGE}\n`);
     return 2;
   }
@@ -717,7 +750,16 @@ export async function main(argv: readonly string[], io: { out(s: string): void; 
     io.out(`ouro-actions: wrote ${files.size} files for ${count(set.actions.length, "action")} into ${target}.\n`);
     return 0;
   }
-  const problems = cmd === "check" ? checkGenerated(set, await readDir(target)) : compareMcp(set, JSON.parse(await readFile(target, "utf8")));
+  let undeclared: string[] | undefined;
+  if (flagValue !== undefined) {
+    const names: unknown = JSON.parse(await readFile(flagValue, "utf8"));
+    if (!Array.isArray(names) || !names.every((n) => typeof n === "string")) {
+      io.err(`ouro-actions: ${flagValue}: is not a JSON array of tool names. Fix: ["get_recipe", "create_recipe"].\n`);
+      return 2;
+    }
+    undeclared = names;
+  }
+  const problems = cmd === "check" ? checkGenerated(set, await readDir(target)) : compareMcp(set, JSON.parse(await readFile(target, "utf8")), { undeclared });
   for (const p of problems) io.err(`ouro-actions: ${p}\n`);
   if (problems.length) return 1;
   io.out(`ouro-actions: ${count(set.actions.length, "action")}, ${cmd === "check" ? "every projection matches its declaration" : "the live tools match their declarations"}.\n`);

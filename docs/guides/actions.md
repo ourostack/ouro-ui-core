@@ -6,10 +6,10 @@ You declare each action once in TypeScript. `ouro-actions.mts generate` writes i
 
 ## 1. Vendor the generator
 
-Take `ouro-actions.mts` and `actions.claims.json` from a [core release](https://github.com/ourostack/ouro-ui-core/releases) (0.5.0 or later), the way platforms take the Apple claims: copy them into your repository and record the release tag and each file's SHA-256 from the release's `dist-manifest.json` (`dist/actions/ouro-actions.mts`, `dist/ax/actions.claims.json`). Never edit the copies. It needs Node 22.18 or later and nothing else.
+Take `ouro-actions.mts` and `actions.claims.json` from a [core release](https://github.com/ourostack/ouro-ui-core/releases) (0.6.0 or later), the way platforms take the Apple claims: copy them into your repository and record the release tag and each file's SHA-256 from the release's `dist-manifest.json` (`dist/actions/ouro-actions.mts`, `dist/ax/actions.claims.json`). Never edit the copies. It needs Node 22.18 or later and nothing else.
 
 ```sh
-gh release download v0.5.0 --repo ourostack/ouro-ui-core --pattern ouro-actions.mts --pattern actions.claims.json --pattern dist-manifest.json --dir tools/ouro-actions
+gh release download v0.6.0 --repo ourostack/ouro-ui-core --pattern ouro-actions.mts --pattern actions.claims.json --pattern dist-manifest.json --dir tools/ouro-actions
 ```
 
 ## 2. Declare
@@ -43,6 +43,11 @@ Choosing the consent class:
 - **write** changes only the person's own things (their list, their recipes).
 - **consequential** reaches other people or can't be undone (sharing, publishing, deleting someone's access). Agents prepare it; the person says yes: the CLI needs `--why` and previews with `--dry-run`, MCP marks it destructive, WebMCP consequential, and the App Intent asks `requestConfirmation()`.
 - **person-only** is what only the person may start (paying, ordering, turning on their microphone). Add `personOnly: { reason, how }`, one line each, said to the agent. No agent door offers it; each answers with the typed refusal, which is exactly web's refused outcome: `state` `refused`, error code `person-only`, exit 2, and a message that gives the reason and how the person does it.
+
+Two field options shape the doors a field reaches:
+
+- `ask` (input only): the one-line question Siri asks when a required value is missing, such as `"What should I add to your shopping list?"`. It becomes the App Intent parameter's `requestValueDialog`.
+- `protocolOnly: true` (an optional input): a field only programs send, such as an idempotency key or a server-side owner. MCP, WebMCP and the CLI carry it; the App Intent and Reins, which stand for the person, leave it out, and the Swift input passes `nil`. Use it to keep an existing MCP tool's inputs while the person's doors stay clean.
 
 `defineAction` throws, with the fix, on a declaration a surface can't carry: an input named like one of web's kit flags (`json`, `help`, `why`, `whyFile`, `dryRun`, `agent`, `quiet`) or the App Intent's members (`input`, `perform`); `arg: true` on anything but a required string; or an id web reserves for the person (`share`, `unmute`, `camera`, `camera_on`, `answer`, `decline`, `admit`, `record`) without `consent: "person-only"`.
 
@@ -96,6 +101,15 @@ AddShoppingListItemButton(AddShoppingListItemInput(name: "oat milk"))
 ReinsNode("list", encoding: state, actions: [.addShoppingListItem(), .placeGroceryOrder()])
 ```
 
+Each agent door's App Intent provides a dialog, which is what Siri and Shortcuts say. Set `<Action>Action.dialog` to say the result in your words, or turn an error into words (rethrow it to let the system show it); unset, the intent says "Done." and a failure throws:
+
+```swift
+AddShoppingListItemAction.dialog = { input, result in
+    _ = try result.get()
+    return IntentDialog(stringLiteral: "Added \(input.name) to your shopping list.")
+}
+```
+
 An action that runs before its handler is set throws `OuroActionNotBound`. Reins includes person-only actions, because Reins stands in for the person's finger in tests; no production agent door does.
 
 ## 5. Check in CI
@@ -105,7 +119,7 @@ node tools/ouro-actions/ouro-actions.mts check actions/shopping.actions.mts acti
 node tools/ouro-actions/ouro-actions.mts compare-mcp actions/shopping.actions.mts tools-list.json
 ```
 
-`check` fails, exit 1, naming each file that differs, is missing or wasn't generated, at its first differing line. `compare-mcp` takes your running server's `tools/list` result and fails on a declared tool that is missing or has another description, input schema or annotations, a person-only action listed as a tool, or a tool nobody declared. Run it while your MCP server is still hand-written, so drift shows before you move it onto `mcp.json`. Exit 2 is a usage error.
+`check` fails, exit 1, naming each file that differs, is missing or wasn't generated, at its first differing line. `compare-mcp` takes your running server's `tools/list` result (add `--undeclared <names.json>`, a JSON array of tool names, while you move a server tool by tool) and fails on a declared tool that is missing or has another description, input schema or annotations, a person-only action listed as a tool, or a tool nobody declared and the undeclared list doesn't name. The list can only shrink: a name on it that is now declared, or no longer served, fails too. Run it while your MCP server is still hand-written, so drift shows before you move it onto `mcp.json`. Exit 2 is a usage error.
 
 ## What Spoonjoy changes to adopt it
 

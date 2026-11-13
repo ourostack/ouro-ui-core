@@ -68,6 +68,12 @@ test("defineAction refuses a declaration that isn't one, with the fix", () => {
   assert.doesNotThrow(() => defineAction({ ...base, output: { id: field.string({ label: "Id", description: "x" }) } }));
   // Web reserves some ids for the person; only a person-only action may take one.
   assert.throws(() => defineAction({ ...base, id: "share" }), /web reserves "share" for the person.*Fix:/);
+  // ask is Siri's one-line question for a missing input; protocolOnly is only for an optional input.
+  assert.throws(() => defineAction({ ...base, input: { x: field.string({ label: "X", description: "x", ask: "Which\none?" }) } }), /x.*ask.*one line/);
+  assert.throws(() => defineAction({ ...base, output: { x: field.string({ label: "X", description: "x", ask: "Which?" }) } }), /x.*ask/);
+  assert.throws(() => defineAction({ ...base, input: { x: field.string({ label: "X", description: "x", protocolOnly: true }) } }), /x.*protocolOnly.*optional/);
+  assert.throws(() => defineAction({ ...base, output: { x: field.string({ label: "X", description: "x", optional: true, protocolOnly: true }) } }), /x.*protocolOnly/);
+  assert.doesNotThrow(() => defineAction({ ...base, input: { ...base.input, key: field.string({ label: "Key", description: "k", optional: true, protocolOnly: true }) } }));
   assert.doesNotThrow(() => defineAction({ ...base, id: "share", consent: "person-only", personOnly: { reason: "Only they share.", how: "with Share" } }));
 });
 
@@ -120,6 +126,7 @@ test("the input schema: types, descriptions, minimum, required only what is requ
       name: { type: "string", description: 'What to buy, as the person said it, such as "oat milk".' },
       quantity: { type: "number", description: "How many or how much.", minimum: 0 },
       unit: { type: "string", description: "The unit of the quantity, such as g, cups or cans." },
+      idempotencyKey: { type: "string", description: "Send the same key again when retrying this exact call, and the item is added once." },
     },
     required: ["name"],
     additionalProperties: false,
@@ -136,6 +143,7 @@ test("the CLI projection is a defineCommand definition: args, optional flags, ef
     flags: {
       quantity: { type: "number", description: "How many or how much.", min: 0 },
       unit: { type: "string", description: "The unit of the quantity, such as g, cups or cans." },
+      "idempotency-key": { type: "string", description: "Send the same key again when retrying this exact call, and the item is added once." },
     },
     output: "{ id, name }",
   });
@@ -316,6 +324,73 @@ test("Swift: one App Intent per agent door, Button(intent:), confirmation only w
   const reins = renderActions(shopping).get("OuroActionsReins.swift")!;
   assert.match(reins, /public static func addShoppingListItem\(\) -> ReinsAction/);
   assert.match(reins, /public static func placeGroceryOrder\(\) -> ReinsAction/);
+});
+
+test("Swift: a protocol-only field stays off the App Intent and Reins, ask becomes Siri's question, and the intent speaks", () => {
+  const swift = renderActions(shopping).get("OuroActions.swift")!;
+  const intent = swift.match(/public struct AddShoppingListItemIntent: AppIntent \{[\s\S]*?\n\}/)![0];
+  // The input keeps it, so every door hands the handler one type; the person's doors never set it.
+  assert.match(swift, /public struct AddShoppingListItemInput[\s\S]*?public var idempotencyKey: String\?/);
+  assert.doesNotMatch(intent, /idempotencyKey/);
+  assert.match(intent, /AddShoppingListItemInput\(name: name, quantity: quantity, unit: unit\)/);
+  assert.match(intent, /@Parameter\(title: "Item", description: "[^"]*\\"oat milk\\"\.", requestValueDialog: "What should I add to your list\?"\)/);
+  assert.equal(swift.match(/requestValueDialog/g)?.length, 1);
+  // The intent always provides a dialog: the app's words for the result or the error, else "Done." and a throw.
+  assert.match(intent, /some IntentResult & ProvidesDialog/);
+  assert.match(intent, /if let dialog = AddShoppingListItemAction\.dialog \{ return \.result\(dialog: try await dialog\(input, result\)\) \}/);
+  assert.match(intent, /_ = try result\.get\(\)\n\s+return \.result\(dialog: "Done\."\)/);
+  assert.match(swift, /public static var dialog: \(@MainActor @Sendable \(AddShoppingListItemInput, Result<AddShoppingListItemOutput, any Error>\) async throws -> IntentDialog\)\?/);
+  // A person-only action has no intent, so nothing to speak.
+  assert.doesNotMatch(swift, /PlaceGroceryOrderInput, Result</);
+  const reins = renderActions(shopping).get("OuroActionsReins.swift")!;
+  assert.match(reins, /extension AddShoppingListItemInput: ReinsInput \{\n.*\["name": \.string, "quantity": \.number, "unit": \.string\], required: \["name"\]/);
+});
+
+test("compareMcp's undeclared list lets an app move tool by tool, and it can only shrink", () => {
+  const generated = JSON.parse(renderActions(shopping).get("mcp.json")!);
+  const legacy = { name: "get_recipe", description: "Read a recipe.", inputSchema: { type: "object" } };
+  const tools = [...generated.tools, legacy];
+  assert.deepEqual(compareMcp(shopping, { tools }), ["get_recipe: the server lists a tool no declaration has. Fix: declare it with defineAction."]);
+  assert.deepEqual(compareMcp(shopping, { tools }, { undeclared: ["get_recipe"] }), []);
+  // A declared tool still drifts as before, undeclared list or not.
+  const drifted = structuredClone(tools);
+  drifted[1].description = "Adds.";
+  assert.ok(compareMcp(shopping, { tools: drifted }, { undeclared: ["get_recipe"] })[0]!.startsWith("add_shopping_list_item: description drifted"));
+  assert.deepEqual(compareMcp(shopping, { tools }, { undeclared: ["get_recipe", "add_shopping_list_item", "gone_tool"] }), [
+    "add_shopping_list_item: is declared, so it isn't undeclared any more. Fix: take it off the undeclared list.",
+    "gone_tool: is on the undeclared list but the server doesn't list it. Fix: take it off the undeclared list.",
+  ]);
+});
+
+test("the CLI: compare-mcp takes --undeclared <names.json>; anything else after it is a usage error", async () => {
+  const { mkdtemp, writeFile, rm } = await import("node:fs/promises");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const decl = new URL("./fixtures/actions/shopping.actions.mts", import.meta.url).pathname;
+  const run = async (argv: string[]) => {
+    let out = "";
+    let err = "";
+    const code = await main(argv, { out: (s) => void (out += s), err: (s) => void (err += s) });
+    return { code, out, err };
+  };
+  const tmp = await mkdtemp(join(tmpdir(), "ouro-actions-"));
+  try {
+    const generated = JSON.parse(renderActions(shopping).get("mcp.json")!);
+    await writeFile(join(tmp, "tools.json"), JSON.stringify({ tools: [...generated.tools, { name: "get_recipe", description: "", inputSchema: {} }] }));
+    await writeFile(join(tmp, "undeclared.json"), JSON.stringify(["get_recipe"]));
+    await writeFile(join(tmp, "bad.json"), JSON.stringify({ get_recipe: true }));
+    assert.equal((await run(["compare-mcp", decl, join(tmp, "tools.json")])).code, 1);
+    const ok = await run(["compare-mcp", decl, join(tmp, "tools.json"), "--undeclared", join(tmp, "undeclared.json")]);
+    assert.equal(ok.code, 0, ok.err);
+    assert.match(ok.out, /the live tools match their declarations/);
+    const bad = await run(["compare-mcp", decl, join(tmp, "tools.json"), "--undeclared", join(tmp, "bad.json")]);
+    assert.equal(bad.code, 2);
+    assert.match(bad.err, /not a JSON array of tool names/);
+    assert.equal((await run(["compare-mcp", decl, join(tmp, "tools.json"), "--undeclared"])).code, 2);
+    assert.equal((await run(["check", decl, tmp, "--undeclared", join(tmp, "undeclared.json")])).code, 2);
+  } finally {
+    await rm(tmp, { recursive: true, force: true });
+  }
 });
 
 test("felt number: one declaration, seven projections", () => {
