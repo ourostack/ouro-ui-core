@@ -1,0 +1,72 @@
+{
+  "generator": "ouro-actions 0.5.0",
+  "set": "shopping",
+  "tool": "shop",
+  "commands": [
+    {
+      "name": "list show",
+      "summary": "Read the person's shopping list: each item's id, name, quantity, unit and whether it is checked.",
+      "effect": "private",
+      "readOnly": true,
+      "flags": {
+        "show": {
+          "type": "enum",
+          "description": "Which items to list; all of them when left out.",
+          "values": [
+            "all",
+            "unchecked"
+          ]
+        }
+      },
+      "output": "{ items }"
+    },
+    {
+      "name": "list add",
+      "summary": "Add one item to the person's shopping list. Give the name as the person said it; leave quantity and unit out when they gave none.",
+      "effect": "private",
+      "args": [
+        {
+          "name": "name",
+          "description": "What to buy, as the person said it, such as \"oat milk\".",
+          "required": true
+        }
+      ],
+      "flags": {
+        "quantity": {
+          "type": "number",
+          "description": "How many or how much.",
+          "min": 0
+        },
+        "unit": {
+          "type": "string",
+          "description": "The unit of the quantity, such as g, cups or cans."
+        }
+      },
+      "output": "{ id, name }"
+    },
+    {
+      "name": "list share",
+      "summary": "Share the person's shopping list with another person, who can then see and change it.",
+      "effect": "others",
+      "args": [
+        {
+          "name": "with",
+          "description": "The email address of the person to share with.",
+          "required": true
+        }
+      ],
+      "flags": {
+        "can-edit": {
+          "type": "boolean",
+          "description": "Whether they may change the list, not only see it."
+        }
+      }
+    }
+  ],
+  "personOnly": {
+    "list order": {
+      "reason": "You can't place an order or pay for the person; only they can.",
+      "how": "with Place order on the shopping list"
+    }
+  }
+}
