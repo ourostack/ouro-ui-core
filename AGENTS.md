@@ -26,6 +26,13 @@ Core is the platform-neutral part of Ouro UI: what is true on every platform, fo
 - A claim starts as `should`. It becomes `must` only with a SiriEvaluations run that shows the failure, or a stated hazard with a check (web's admission rule). `checkAppleClaimSet` in `src/ax-claims.mts` enforces the shape, and `test/fixtures/canonical-json-vector.json` is the hash test vector every platform's copy asserts.
 - Platforms vendor `dist/ax/apple.claims.json` from a release, by hash; never edit their copies.
 
+## The one action model
+
+- `src/actions.mts` declares an action once (`defineAction`) and generates its seven projections: CLI (`commands.json`), MCP (`mcp.json`), WebMCP (`webmcp.json`), web (`web.ts`), App Intent and SwiftUI button (`OuroActions.swift`), and Reins (`OuroActionsReins.swift`). It imports only `node:` modules, because apps vendor the file itself from a release as `ouro-actions.mts`; keep it that way.
+- The fixture `test/fixtures/actions/shopping.actions.mts` and its committed `generated/` folder are the proof: `pnpm actions:check` fails CI when a generated file drifts, and the apple job builds and runs the generated Swift (`apple/actions-check`). After changing the generator, run `pnpm actions:generate` and commit the folder.
+- The person-only refusal is web's refused outcome byte for byte (web's `cli.ts`); change it only together with web. `mcp.json` is the one MCP door.
+- `standard/ax/actions.claims.json` is the claim set and `actions.md` its page (`pnpm actions:page`); the adopter guide is `docs/guides/actions.md`.
+
 ## Claims
 
 A factual sentence is a claim on every surface: Markdown, code comments, a pull request's title and body. Give each claim its primary source (a file, a test, a command's output or a link) and, where one exists, the check that proves it, so the next agent can trust it without rebuilding the proof. Don't reword a claim to get past review: source it, correct it, or remove it. This is web's Claims rule; its `pnpm claims:lint` tooling moves here with the standard.
