@@ -331,3 +331,28 @@ test("felt number: one declaration, seven projections", () => {
   ];
   assert.deepEqual(surfaces, Array(7).fill(true));
 });
+
+test("the generator runs alone, as an app vendors it: copied into an empty folder, it generates and checks", async () => {
+  const { mkdtemp, copyFile, writeFile, rm } = await import("node:fs/promises");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const { execFileSync } = await import("node:child_process");
+  const dir = await mkdtemp(join(tmpdir(), "ouro-actions-vendored-"));
+  try {
+    await copyFile(new URL("../src/actions.mts", import.meta.url), join(dir, "ouro-actions.mts"));
+    await writeFile(
+      join(dir, "pins.actions.mts"),
+      [
+        'import { defineAction, defineActions, field } from "./ouro-actions.mts";',
+        "export default defineActions(\"pins\", [defineAction({ id: \"pin_recipe\", consent: \"write\", label: \"Pin\", description: \"Pin this recipe.\",",
+        "  agent: \"Pin a recipe to the top of the person's kitchen.\", input: { recipe: field.string({ label: \"Recipe\", description: \"The recipe's id.\", arg: true }) }, output: {} })]);",
+        "",
+      ].join("\n"),
+    );
+    const node = (...args: string[]) => execFileSync(process.execPath, ["ouro-actions.mts", ...args], { cwd: dir, encoding: "utf8" });
+    assert.match(node("generate", "pins.actions.mts", "generated"), /wrote 7 files for 1 action into generated/);
+    assert.match(node("check", "pins.actions.mts", "generated"), /1 action, every projection matches/);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});

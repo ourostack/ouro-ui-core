@@ -34,7 +34,8 @@ standard/hx/components.claims.json  the same claims as data, published as dist/h
 standard/ax/surfaces/apple.md     Ouro AX for Apple: the App Intents surfaces and their claims
 standard/ax/surfaces/apple.claims.json  the same claims as data, published as dist/ax/apple.claims.json
 src/actions.mts                   the one action model: declare an action once, generate its CLI, MCP, WebMCP, web, App Intent, button and Reins
-standard/ax/actions.md            Ouro AX: what an action promises, published as dist/ax/actions.claims.json
+standard/ax/actions.md            Ouro AX: what an action promises
+standard/ax/actions.claims.json   the same claims as data, published as dist/ax/actions.claims.json
 standard/feel/feel.md             Ouro Feel's spec: the scenarios, launch stages, measures, seed and report every driver shares
 standard/feel/feel.spec.json      the same spec as data, published as dist/feel/feel.spec.json
 docs/ci-resources.md              the free CI and build resources Ouro can use, and how to switch each on
