@@ -267,10 +267,12 @@
   "expect": {
     "surfaces": {
       "recipe-card": {
+        "id": "root",
         "component": "Card",
         "props": {},
         "children": [
           {
+            "id": "main_stack",
             "component": "Stack",
             "props": {
               "direction": "vertical",
@@ -278,6 +280,7 @@
             },
             "children": [
               {
+                "id": "recipe_image",
                 "component": "Image",
                 "props": {
                   "url": "https://ui.ouroboros.bot/a2ui/v1/examples/charred-lemon-orzo.png",
@@ -287,6 +290,7 @@
                 "children": []
               },
               {
+                "id": "recipe_name",
                 "component": "Heading",
                 "props": {
                   "text": "Charred Lemon Orzo",
@@ -295,6 +299,7 @@
                 "children": []
               },
               {
+                "id": "recipe_description",
                 "component": "Text",
                 "props": {
                   "text": "Orzo toasted in brown butter, finished with charred lemon, peas and a lot of parmesan. A weeknight pan dinner.",
@@ -303,6 +308,7 @@
                 "children": []
               },
               {
+                "id": "tags_stack",
                 "component": "Stack",
                 "props": {
                   "direction": "horizontal",
@@ -310,6 +316,7 @@
                 },
                 "children": [
                   {
+                    "id": "tag_badge",
                     "component": "Badge",
                     "props": {
                       "text": "Vegetarian",
@@ -318,6 +325,7 @@
                     "children": []
                   },
                   {
+                    "id": "tag_badge",
                     "component": "Badge",
                     "props": {
                       "text": "One pan",
@@ -328,11 +336,13 @@
                 ]
               },
               {
+                "id": "facts_separator",
                 "component": "Separator",
                 "props": {},
                 "children": []
               },
               {
+                "id": "recipe_facts",
                 "component": "DescriptionList",
                 "props": {
                   "items": [
@@ -353,11 +363,13 @@
                 "children": []
               },
               {
+                "id": "ingredients_separator",
                 "component": "Separator",
                 "props": {},
                 "children": []
               },
               {
+                "id": "ingredients_heading",
                 "component": "Heading",
                 "props": {
                   "text": "Ingredients",
@@ -366,6 +378,7 @@
                 "children": []
               },
               {
+                "id": "ingredients_stack",
                 "component": "Stack",
                 "props": {
                   "direction": "vertical",
@@ -373,6 +386,7 @@
                 },
                 "children": [
                   {
+                    "id": "ingredient_item",
                     "component": "Stack",
                     "props": {
                       "direction": "horizontal",
@@ -380,6 +394,7 @@
                     },
                     "children": [
                       {
+                        "id": "ingredient_quantity",
                         "component": "Text",
                         "props": {
                           "text": "1½ cups",
@@ -388,6 +403,7 @@
                         "children": []
                       },
                       {
+                        "id": "ingredient_name",
                         "component": "Text",
                         "props": {
                           "text": "orzo",
@@ -398,6 +414,7 @@
                     ]
                   },
                   {
+                    "id": "ingredient_item",
                     "component": "Stack",
                     "props": {
                       "direction": "horizontal",
@@ -405,6 +422,7 @@
                     },
                     "children": [
                       {
+                        "id": "ingredient_quantity",
                         "component": "Text",
                         "props": {
                           "text": "3 tbsp",
@@ -413,6 +431,7 @@
                         "children": []
                       },
                       {
+                        "id": "ingredient_name",
                         "component": "Text",
                         "props": {
                           "text": "butter",
@@ -423,6 +442,7 @@
                     ]
                   },
                   {
+                    "id": "ingredient_item",
                     "component": "Stack",
                     "props": {
                       "direction": "horizontal",
@@ -430,6 +450,7 @@
                     },
                     "children": [
                       {
+                        "id": "ingredient_quantity",
                         "component": "Text",
                         "props": {
                           "text": "2",
@@ -438,6 +459,7 @@
                         "children": []
                       },
                       {
+                        "id": "ingredient_name",
                         "component": "Text",
                         "props": {
                           "text": "lemons, halved",
@@ -448,6 +470,7 @@
                     ]
                   },
                   {
+                    "id": "ingredient_item",
                     "component": "Stack",
                     "props": {
                       "direction": "horizontal",
@@ -455,6 +478,7 @@
                     },
                     "children": [
                       {
+                        "id": "ingredient_quantity",
                         "component": "Text",
                         "props": {
                           "text": "1 cup",
@@ -463,6 +487,7 @@
                         "children": []
                       },
                       {
+                        "id": "ingredient_name",
                         "component": "Text",
                         "props": {
                           "text": "frozen peas",
@@ -473,6 +498,7 @@
                     ]
                   },
                   {
+                    "id": "ingredient_item",
                     "component": "Stack",
                     "props": {
                       "direction": "horizontal",
@@ -480,6 +506,7 @@
                     },
                     "children": [
                       {
+                        "id": "ingredient_quantity",
                         "component": "Text",
                         "props": {
                           "text": "¾ cup",
@@ -488,6 +515,7 @@
                         "children": []
                       },
                       {
+                        "id": "ingredient_name",
                         "component": "Text",
                         "props": {
                           "text": "grated parmesan",
@@ -498,6 +526,7 @@
                     ]
                   },
                   {
+                    "id": "ingredient_item",
                     "component": "Stack",
                     "props": {
                       "direction": "horizontal",
@@ -505,6 +534,7 @@
                     },
                     "children": [
                       {
+                        "id": "ingredient_quantity",
                         "component": "Text",
                         "props": {
                           "text": "3 cups",
@@ -513,6 +543,7 @@
                         "children": []
                       },
                       {
+                        "id": "ingredient_name",
                         "component": "Text",
                         "props": {
                           "text": "vegetable stock",
@@ -525,11 +556,13 @@
                 ]
               },
               {
+                "id": "actions_separator",
                 "component": "Separator",
                 "props": {},
                 "children": []
               },
               {
+                "id": "actions_stack",
                 "component": "Stack",
                 "props": {
                   "direction": "vertical",
@@ -537,6 +570,7 @@
                 },
                 "children": [
                   {
+                    "id": "btn_open",
                     "component": "ActionButton",
                     "props": {
                       "emphasis": "primary",
@@ -551,6 +585,7 @@
                     "children": []
                   },
                   {
+                    "id": "btn_shopping",
                     "component": "ActionButton",
                     "props": {
                       "emphasis": "secondary",
@@ -566,6 +601,7 @@
                     "children": []
                   },
                   {
+                    "id": "btn_share",
                     "component": "ActionButton",
                     "props": {
                       "emphasis": "secondary",
@@ -595,6 +631,7 @@
                     "children": []
                   },
                   {
+                    "id": "btn_order",
                     "component": "ActionButton",
                     "props": {
                       "emphasis": "secondary",

@@ -67,10 +67,12 @@
   "expect": {
     "surfaces": {
       "note": {
+        "id": "root",
         "component": "Card",
         "props": {},
         "children": [
           {
+            "id": "title",
             "component": "Heading",
             "props": {
               "text": "Pantry check",
@@ -79,6 +81,7 @@
             "children": []
           },
           {
+            "id": "body",
             "component": "Text",
             "props": {
               "text": "3",
@@ -87,6 +90,7 @@
             "children": []
           },
           {
+            "id": "status",
             "component": "Badge",
             "props": {
               "text": "Stocked",
@@ -96,11 +100,13 @@
             "children": []
           },
           {
+            "id": "rule",
             "component": "Separator",
             "props": {},
             "children": []
           },
           {
+            "id": "note",
             "component": "Text",
             "props": {
               "text": "",
