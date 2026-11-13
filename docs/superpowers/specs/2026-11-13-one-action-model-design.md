@@ -53,15 +53,19 @@ The MCP annotations are exactly web's `effectAnnotations(effect, readOnly)`, so 
 
 ## The typed refusal
 
-One shape on every door, web's `Outcome` with state `refused` and its `AxErrorShape`:
+One shape on every door: byte for byte what web's CLI answers a person-only word under `--json` (`cli.ts`: `outcome({ action, state: "refused", summary, error })` over its person-only error), so an agent that has learned web's refusal reads ours unchanged:
 
 ```json
-{ "ax": 1, "action": "place-grocery-order", "state": "refused",
-  "error": { "code": "person-only", "exit": 2, "thing": "place-grocery-order", "problem": "<reason>", "fix": null, "message": "..." },
-  "how": "<how the person does it>" }
+{ "ax": "outcome/1", "action": "list order", "effect": "private",
+  "audience": { "only": true, "who": "only you" }, "target": null, "state": "refused",
+  "summary": "<message>", "postcondition": { "checked": false, "holds": null, "how": "not checked" },
+  "receipt": null, "next": [],
+  "error": { "code": "person-only", "exit": 2, "thing": "list order",
+             "problem": "<reason>. Ask the person, who does it <how>", "fix": null,
+             "message": "list order: <problem>." } }
 ```
 
-Exit 2 is web's `usage` exit, which `refused` maps to (`DEFAULT_OUTCOME_EXITS`). Swift gets `OuroActionRefusal` (an `Error` with the same fields) and `OuroActions.refusal(for:)`, for bridges (SwiftMCP, Reins) that are asked for a person-only id.
+`action` and `thing` are the CLI words; the reason and how are each trimmed of a trailing full stop before they are joined. Exit 2 is web's `usage` exit, which `refused` maps to (`DEFAULT_OUTCOME_EXITS`). Swift gets `OuroActionRefusal` (an `Error` with `code`, `exit`, `thing`, `problem`, `message`, plus the declaration's `reason` and `how`) and `OuroActions.refusal(for:)`, for bridges (SwiftMCP, Reins) that are asked for a person-only id.
 
 Builder's call on Reins: Reins is the test door that stands in for the person's finger (the decision record's point 3), so a Reins node includes person-only actions. Production agent doors (CLI, MCP, WebMCP, App Intents) refuse them.
 
@@ -71,10 +75,13 @@ Builder's call on Reins: Reins is the test door that stands in for the person's 
 
 1. `commands.json`: each action's `defineCommand` definition without `run` (name, summary, effect, readOnly, args, flags, output), and the CLI's `personOnly` words.
 2. `mcp.json`: MCP `tools` (name, title, description, `inputSchema`, `outputSchema`, annotations) and `refusals`.
+   **`mcp.json` is the MCP door; `commands.json` is the CLI door only.** Web's `mcpTools()` over `defineCommand` commands would also make MCP tools, but with other names (`list_add`, from the CLI words), the command's summary as description, and web's `why` and `dryRun` arguments. Two MCP doors for one action is the drift this model exists to stop, so an app serves its MCP tools from `mcp.json` (tool name = action id, which keeps an existing server's tool names) and `compare-mcp` checks its live `tools/list` against it.
 3. `webmcp.json`: WebMCP tool descriptors (name, description, `inputSchema`, annotations) and `refusals`.
 4. `web.ts`: for `defineComponentAx`, the actions array; for `bindAx`, the twins and `refuseAs`; and each control's props (`data-ax-action`, `title`, `aria-label`) to spread on a React button. Web's `expectAxRendered` already checks `data-ax-action`.
 5. and 6. `OuroActions.swift`: per action, an `Input` and `Output` struct, an App Intent whose `perform()` calls a handler the app sets at launch, and a SwiftUI view that wraps `Button(_:intent:)` (iOS 17, macOS 14). Person-only actions get a `Button(action:)` view and no intent.
 7. `OuroActionsReins.swift`: `ReinsInput` conformances with explicit schemas, and a `ReinsAction` factory per action, so a Reins node's actions come from the same declarations. Separate file, since it imports `OuroReins`.
+
+CLI flags are web's kebab-case (`canEdit` is `--can-edit`). An input field may not take a name a surface already uses: web's kit's own flags (`json`, `help`, `why`, `whyFile`, `dryRun`, `agent`, `quiet`) or the App Intent's members (`input`, `perform`). `arg: true` is for required string fields only, since web's CLI arguments are strings. An id web reserves for the person (`unmute`, `camera`, `camera_on`, `share`, `answer`, `decline`, `admit`, `record`) must be person-only; web's `defineComponentAx` and X-ray still read an id's meaning beyond that list. An enum's Swift type is `<Action><Field>Value`.
 
 Plus `actions.json`, the declarations themselves, so a reviewer sees the source of truth next to its projections. Every file starts with a header naming the generator's version and the declaration set.
 

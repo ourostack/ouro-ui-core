@@ -15,7 +15,7 @@
 - `src/actions.mts` imports only `node:` modules; it is published byte for byte as `dist/actions/ouro-actions.mts`.
 - Ids are snake_case `^[a-z][a-z0-9]*(_[a-z0-9]+)*$`; kebab, camel and Pascal derive from them.
 - MCP annotations equal web's `effectAnnotations`: read `{readOnlyHint:true,destructiveHint:false,openWorldHint:false}`, write all false, consequential `{false,true,true}`.
-- Refusal: `{ ax: 1, action: <kebab>, state: "refused", error: { code: "person-only", exit: 2, thing: <cli words>, problem: reason, fix: null, message }, how }`.
+- Refusal: web's refused outcome byte for byte, `{ ax: "outcome/1", action: <cli words>, effect: "private", audience: { only: true, who: "only you" }, target: null, state: "refused", summary: message, postcondition: { checked: false, holds: null, how: "not checked" }, receipt: null, next: [], error: { code: "person-only", exit: 2, thing: <cli words>, problem: "<reason>. Ask the person, who does it <how>", fix: null, message: "<thing>: <problem>." } }` (spec, The typed refusal).
 - Generated files start with a header line naming `ouro-actions <version>` and the set name; output is deterministic (sorted keys where order is not the declaration's).
 - Swift: Swift 6 language mode, iOS 17 / macOS 14 for `Button(_:intent:)`.
 - No AI attribution in commits.
