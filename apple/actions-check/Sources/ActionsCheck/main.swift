@@ -4,6 +4,19 @@ import AppIntents
 import Foundation
 import OuroReins
 
+public struct HouseholdMemberEntity: AppEntity {
+    public static let typeDisplayRepresentation: TypeDisplayRepresentation = "Household member"
+    public static let defaultQuery = HouseholdMemberQuery()
+    public let id: String
+    public init(id: String) { self.id = id }
+    public var displayRepresentation: DisplayRepresentation { DisplayRepresentation(title: "\(id)") }
+}
+
+public struct HouseholdMemberQuery: EntityQuery {
+    public init() {}
+    public func entities(for identifiers: [String]) async throws -> [HouseholdMemberEntity] { identifiers.map(HouseholdMemberEntity.init(id:)) }
+}
+
 @MainActor
 func check() async throws {
     var failures: [String] = []
@@ -64,6 +77,15 @@ func check() async throws {
     expect(OuroActions.refusal(for: "add_shopping_list_item") == nil, "an agent action has no refusal")
     expect(OuroActions.consent["share_shopping_list"] == .consequential, "the consent class is carried")
     expect(ReinsAction.placeGroceryOrder().name == "placeGroceryOrder", "Reins keeps the person-only action")
+
+    // The intent options: an entity parameter (the string id in Input), a returned value, openAppWhenRun.
+    let share = ShareShoppingListIntent(ShareShoppingListInput(with: "sam@example.com", canEdit: true))
+    expect(share.with.id == "sam@example.com", "the intent's entity parameter is built from the Input's string")
+    expect(share.input == ShareShoppingListInput(with: "sam@example.com", canEdit: true), "the entity goes back to its id in Input")
+    GetShoppingListAction.perform = { _ in GetShoppingListOutput(items: "[]") }
+    _ = try await GetShoppingListIntent().perform()
+    expect(GetShoppingListIntent.openAppWhenRun, "opensApp is openAppWhenRun")
+    expect(!AddShoppingListItemIntent.openAppWhenRun, "an action that doesn't ask doesn't open the app")
 
     if failures.isEmpty {
         print("ok    generated Swift: one handler behind the intent, the button and Reins; person-only refuses")

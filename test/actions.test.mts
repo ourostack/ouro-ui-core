@@ -393,6 +393,42 @@ test("the CLI: compare-mcp takes --undeclared <names.json>; anything else after 
   }
 });
 
+test("Swift: an intent can take an App Entity, return a value to Shortcuts and open the app", () => {
+  const swift = renderActions(shopping).get("OuroActions.swift")!;
+  // get_shopping_list: opensApp, and one `returned` output handed to Shortcuts along with the dialog.
+  assert.match(swift, /public struct GetShoppingListIntent: AppIntent \{[\s\S]*?public static let openAppWhenRun = true/);
+  assert.match(swift, /public func perform\(\) async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog \{[\s\S]*?let said: IntentDialog = try await GetShoppingListAction\.dialog\?\(input, result\) \?\? "Done\."\n        return \.result\(value: try result\.get\(\)\.items, dialog: said\)/);
+  // An intent that declares neither returns a dialog only and does not open the app.
+  assert.match(swift, /public func perform\(\) async throws -> some IntentResult & ProvidesDialog \{/);
+  assert.equal(swift.match(/openAppWhenRun/g)?.length, 1);
+  assert.equal(swift.match(/ReturnsValue</g)?.length, 1);
+  // share_shopping_list: `with` is a HouseholdMemberEntity in the intent and a plain string in Input, MCP and the CLI.
+  assert.match(swift, /@Parameter\(title: "With", description: [^\n]*\)\n    public var with: HouseholdMemberEntity\n/);
+  assert.match(swift, /self\.with = HouseholdMemberEntity\(id: input\.with\)/);
+  assert.match(swift, /ShareShoppingListInput\(with: with\.id, canEdit: canEdit\)/);
+  assert.match(swift, /public struct ShareShoppingListInput: Codable, Sendable, Hashable \{\n    public var with: String\n/);
+  assert.equal((inputSchema(shareShoppingList).properties["with"] as { type: string }).type, "string");
+  // An optional entity is optional on both sides.
+  const optional = defineActions("optional", [defineAction({ ...base, input: { recipe: field.string({ label: "Recipe", description: "The recipe's id.", optional: true, entity: "RecipeEntity" }) } })]);
+  const optionalSwift = renderActions(optional).get("OuroActions.swift")!;
+  assert.match(optionalSwift, /public var recipe: RecipeEntity\?/);
+  assert.match(optionalSwift, /self\.recipe = input\.recipe\.map \{ RecipeEntity\(id: \$0\) \}/);
+  assert.match(optionalSwift, /PinRecipeInput\(recipe: recipe\?\.id\)/);
+});
+
+test("defineAction refuses what the intent options can't carry, with the fix", () => {
+  const throwsWith = (def: object, pattern: RegExp) => assert.throws(() => defineAction({ ...base, ...def } as never), pattern);
+  throwsWith({ output: { a: field.string({ label: "A", description: "One.", returned: true }), b: field.string({ label: "B", description: "Two.", returned: true }) } }, /only one output field can be returned/);
+  throwsWith({ output: { a: field.string({ label: "A", description: "One.", returned: true, optional: true }) } }, /returned must be required/);
+  throwsWith({ output: { a: field.enum({ label: "A", description: "One.", values: ["x"], returned: true }) } }, /returned must be a string, number, integer or boolean/);
+  throwsWith({ input: { recipe: field.string({ label: "Recipe", description: "The recipe's id.", returned: true }) } }, /returned is only for an output field/);
+  throwsWith({ output: { a: { ...field.string({ label: "A", description: "One." }), entity: "RecipeEntity" } } }, /entity is only for an input string field/);
+  throwsWith({ input: { n: field.number({ label: "N", description: "A number.", entity: "RecipeEntity" } as never) } }, /entity is only for an input string field/);
+  throwsWith({ input: { recipe: field.string({ label: "Recipe", description: "The recipe's id.", entity: "recipe" }) } }, /entity is not a Swift type name/);
+  throwsWith({ input: { recipe: field.string({ label: "Recipe", description: "The recipe's id.", optional: true, protocolOnly: true, entity: "RecipeEntity" }) } }, /entity is for the person's doors/);
+  throwsWith({ opensApp: "yes" }, /opensApp is "yes". Fix: true or false/);
+});
+
 test("felt number: one declaration, seven projections", () => {
   const files = renderActions(shopping);
   const surfaces = [
