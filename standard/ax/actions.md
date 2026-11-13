@@ -32,15 +32,15 @@ The claims section below is generated from the data with `pnpm actions:page`; ed
 
 - Why: An agent that can start what only the person may start, such as paying or turning on their microphone, acts in their name without their say.
 - Source: <https://developer.apple.com/documentation/appintents/toolintent>. Apple's ToolIntent guidance (iOS 27.3 beta) lists intents with side effects a person needs to start explicitly, such as placing an order and paying for it, as poor tools.
-- Checked by: test/actions.test.mts ("the generated JSON lists person-only actions only as refusals, on every agent door") and apple/actions-check (no App Intent, OuroActions.refusal(for:)).
+- Checked by: test/actions.test.mts ("the generated JSON lists person-only actions only as refusals, on every agent door") and ("Swift: one App Intent per agent door, ...": no App Intent for a person-only action), and apple/actions-check (OuroActions.refusal(for:) answers with web's code, exit and message).
 - Fix: Declare the action consent "person-only" with personOnly { reason, how }, and run generate.
 
 ### `action.consequential-confirms`
 
-**must**, for cli, mcp, webmcp, web-control, app-intent. A consequential action is prepared by the agent and committed by the person: web's effect is "others" (the CLI needs --why and previews with --dry-run), MCP marks it destructive and open-world, WebMCP marks it consequential, and its App Intent asks requestConfirmation() before it acts.
+**must**, for cli, mcp, webmcp, web-control, app-intent. A consequential action is prepared by the agent and committed by the person: web's effect is "others" (web's kit then requires --why and previews with --dry-run), MCP marks it destructive and open-world, WebMCP marks it consequential, and its App Intent asks requestConfirmation() before it acts.
 
 - Why: An effect other people see, or one that can't be taken back, must not happen on an agent's say alone.
-- Source: <https://developer.apple.com/documentation/appintents/appintent/requestconfirmation()>. Apple's requestConfirmation() is the guard before performing any work that might be destructive or unsafe; WebMCP's consequentialHint and UCP's requires_escalation serve the same purpose on the web.
+- Source: <https://developer.apple.com/documentation/appintents/appintent/requestconfirmation()>. Apple's requestConfirmation() is the guard before performing any work that might be destructive or unsafe; WebMCP's consequentialHint and UCP's requires_escalation (https://ucp.dev/latest/specification/shopping/checkout/) serve the same purpose on the web.
 - Checked by: test/actions.test.mts (consent classes onto annotations, the CLI's effect, and requestConfirmation only in the consequential intent).
 - Fix: Declare the action consent "consequential" and run generate.
 

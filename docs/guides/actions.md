@@ -17,7 +17,7 @@ gh release download v0.5.0 --repo ourostack/ouro-ui-core --pattern ouro-actions.
 One file exports the set as its default export. Import from your vendored copy.
 
 ```ts
-import { defineAction, defineActions, field } from "./tools/ouro-actions/ouro-actions.mts";
+import { defineAction, defineActions, field } from "../tools/ouro-actions/ouro-actions.mts";   // from actions/shopping.actions.mts
 
 export const addShoppingListItem = defineAction({
   id: "add_shopping_list_item",   // snake_case; it is the MCP tool name, so keep your existing tool names
@@ -83,7 +83,7 @@ const ui = bindAx(shoppingListAx, twins);   // into the X-ray inventory's `ui`
 
 **MCP.** Serve your tools from `mcp.json`, and answer a call to a name in its `refusals` with that refusal. `mcp.json` is the one MCP door: don't also run web's `mcpTools()` over the commands, which would publish the same actions under other names (`list_add`) and descriptions, a second door that drifts.
 
-**Apple.** Add both Swift files to the app target (iOS 17 and macOS 14 for `Button(intent:)`; the Reins file needs ouro-ui-apple's `OuroReins`). Set each handler once at launch; the intent, the button and Reins all call it:
+**Apple.** Add both Swift files to the app target. `OuroActions.swift` needs iOS 17 and macOS 14 (for `Button(intent:)`); `OuroActionsReins.swift` needs ouro-ui-apple's `OuroReins`, which needs iOS 18 and macOS 15, so put it in the target that already links Reins. Set each handler once at launch; the intent, the button and Reins all call it:
 
 ```swift
 AddShoppingListItemAction.perform = { input in
@@ -110,7 +110,7 @@ node tools/ouro-actions/ouro-actions.mts compare-mcp actions/shopping.actions.mt
 ## What Spoonjoy changes to adopt it
 
 1. Vendor `ouro-actions.mts` from the release, by hash.
-2. Declare its MCP tools as actions, keeping their names as ids (`add_shopping_list_item` and the other 40), and pick each one's consent class. Ordering and paying, if Spoonjoy grows them, are person-only.
+2. Declare its MCP tools as actions, keeping their names as ids, and pick each one's consent class. Start with the tools whose inputs are flat strings, numbers, booleans and lowercase enums, such as `add_shopping_list_item`. Fields today are flat: a tool with nested input (`create_recipe`'s steps and their ingredients) or enum values outside lowercase words (`upload_recipe_image`'s `image/jpeg`) waits for array, object and free enum fields in core, which Spoonjoy asks for through ouro-ui#999's give-back. Ordering and paying, if Spoonjoy grows them, are person-only.
 3. Generate into a committed folder; add `check`, and `compare-mcp` against the server's `tools/list`, to CI.
 4. Fix what `compare-mcp` finds, then serve the MCP tools from `mcp.json`.
 5. Web: put the generated props and `componentAx` on the shopping list's controls.
