@@ -33,6 +33,8 @@ standard/hx/components.md         Ouro HX: what Button, Empty, Alert, Sheet and 
 standard/hx/components.claims.json  the same claims as data, published as dist/hx/components.claims.json
 standard/ax/surfaces/apple.md     Ouro AX for Apple: the App Intents surfaces and their claims
 standard/ax/surfaces/apple.claims.json  the same claims as data, published as dist/ax/apple.claims.json
+src/actions.mts                   the one action model: declare an action once, generate its CLI, MCP, WebMCP, web, App Intent, button and Reins
+standard/ax/actions.md            Ouro AX: what an action promises, published as dist/ax/actions.claims.json
 standard/feel/feel.md             Ouro Feel's spec: the scenarios, launch stages, measures, seed and report every driver shares
 standard/feel/feel.spec.json      the same spec as data, published as dist/feel/feel.spec.json
 docs/ci-resources.md              the free CI and build resources Ouro can use, and how to switch each on
@@ -46,6 +48,8 @@ docs/decisions/                   decision records, with their history from ouro
 - `dist/apple/OuroTokens.swift`: SwiftUI with no dependencies. `OuroTokens.theme(.pearl).colors(scheme).primary` is a `Color`, `OuroTokens.Duration.fast` is a `Double` in seconds, and `OuroTokens.Spring.animation` is the spring. A theme's own tokens, the ones no other theme defines (Cookbook's `sj-*` colours, fonts, lengths, shadows and text roles), are in `OuroTokens.theme(.cookbook).extras`: `extras.color(.sjBrass, scheme)`, `extras.type[.sjTypeEyebrow]`. A token marked `"web": false` reaches Apple only, so web's files stay byte-identical.
 - `dist/ax/apple.claims.json`: Ouro AX for Apple's claim set, byte for byte, for `ouro-ax-xray` in ouro-ui-apple.
 - `dist/hx/components.claims.json`: Ouro HX's component claims, byte for byte, which each platform's tests prove.
+- `dist/actions/ouro-actions.mts`: the one action model's generator, byte for byte from `src/actions.mts`, which apps vendor and run with Node; [the adopter guide](docs/guides/actions.md) says how.
+- `dist/ax/actions.claims.json`: Ouro AX's action claims, byte for byte.
 - `dist/feel/feel.spec.json`: Ouro Feel's spec, byte for byte, which every Feel driver (web now, Apple and Windows later) reports under.
 - `dist/swatches.html`: every theme's colours in light and dark, to look at.
 

@@ -5,9 +5,13 @@
 //   dist/ax/apple.claims.json     Ouro AX for Apple's claim set, byte for byte from standard/ax/surfaces/
 //   dist/hx/components.claims.json  Ouro HX's component claims, byte for byte from standard/hx/
 //   dist/feel/feel.spec.json      Ouro Feel's spec, byte for byte from standard/feel/
+//   dist/actions/ouro-actions.mts the one action model's generator, byte for byte from src/actions.mts, for apps to vendor
+//   dist/ax/actions.claims.json   Ouro AX's action claims, byte for byte from standard/ax/
 //   dist/dist-manifest.json       { coreTag, files: { "dist/<path>": sha256 } }, for core-provenance.json
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { ACTIONS_VERSION } from "../src/actions.mts";
+import { loadActionClaimSet } from "../src/action-claims.mts";
 import { loadAppleClaimSet } from "../src/ax-claims.mts";
 import { loadFeelSpec } from "../src/feel-spec.mts";
 import { loadHxClaimSet } from "../src/hx-claims.mts";
@@ -33,6 +37,14 @@ files.set("hx/components.claims.json", hxClaims);
 const feelSpec = await readFile(new URL("standard/feel/feel.spec.json", root), "utf8");
 loadFeelSpec(JSON.parse(feelSpec));
 files.set("feel/feel.spec.json", feelSpec);
+const actionClaims = await readFile(new URL("standard/ax/actions.claims.json", root), "utf8");
+loadActionClaimSet(JSON.parse(actionClaims));
+files.set("ax/actions.claims.json", actionClaims);
+// Apps vendor the generator itself; it imports only node: modules, so the file runs on its own.
+if (ACTIONS_VERSION !== version) throw new Error(`src/actions.mts says ${ACTIONS_VERSION} but package.json says ${version}. Fix: make them agree.`);
+const actions = await readFile(new URL("src/actions.mts", root), "utf8");
+if (/^(?:import|export)\b[^;]*?\bfrom\s+["'](?!node:)/m.test(actions)) throw new Error("src/actions.mts imports something other than node: modules, so a vendored copy can't run alone. Fix: inline it.");
+files.set("actions/ouro-actions.mts", actions);
 
 const manifest = {
   coreTag: tag,
