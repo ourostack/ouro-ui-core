@@ -318,6 +318,42 @@ test("Swift: one App Intent per agent door, Button(intent:), confirmation only w
   assert.match(reins, /public static func placeGroceryOrder\(\) -> ReinsAction/);
 });
 
+test("Swift: an intent can say its summary, return a value, take an entity and open the app", () => {
+  const swift = renderActions(shopping).get("OuroActions.swift")!;
+  // get_shopping_list: opensApp, a `summary` output the intent says, and one `returned` output it hands to Shortcuts.
+  assert.match(swift, /public struct GetShoppingListIntent: AppIntent \{[\s\S]*?public static let openAppWhenRun = true/);
+  assert.match(swift, /public func perform\(\) async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog \{\n        let output = try await GetShoppingListAction\.run\(input\)\n        return \.result\(value: output\.items, dialog: IntentDialog\(stringLiteral: output\.summary\)\)/);
+  // An intent that declares neither keeps returning nothing, and does not open the app.
+  assert.match(swift, /AddShoppingListItemIntent[\s\S]*?public func perform\(\) async throws -> some IntentResult \{\n        _ = try await AddShoppingListItemAction\.run\(input\)\n        return \.result\(\)/);
+  assert.equal(swift.match(/openAppWhenRun/g)?.length, 1);
+  // share_shopping_list: `with` is a HouseholdMemberEntity in the intent and a plain string in Input, MCP and the CLI.
+  assert.match(swift, /@Parameter\(title: "With", description: [^\n]*\)\n    public var with: HouseholdMemberEntity\n/);
+  assert.match(swift, /self\.with = HouseholdMemberEntity\(id: input\.with\)/);
+  assert.match(swift, /ShareShoppingListInput\(with: with\.id, canEdit: canEdit\)/);
+  assert.match(swift, /public struct ShareShoppingListInput: Codable, Sendable, Hashable \{\n    public var with: String\n/);
+  const schema = inputSchema(shareShoppingList);
+  assert.equal((schema.properties["with"] as { type: string }).type, "string");
+  // An optional entity is optional on both sides.
+  const optional = defineActions("optional", [defineAction({ ...base, input: { recipe: field.string({ label: "Recipe", description: "The recipe's id.", optional: true, entity: "RecipeEntity" }) } })]);
+  const optionalSwift = renderActions(optional).get("OuroActions.swift")!;
+  assert.match(optionalSwift, /public var recipe: RecipeEntity\?/);
+  assert.match(optionalSwift, /self\.recipe = input\.recipe\.map \{ RecipeEntity\(id: \$0\) \}/);
+  assert.match(optionalSwift, /PinRecipeInput\(recipe: recipe\?\.id\)/);
+});
+
+test("defineAction refuses what the intent extras can't carry, with the fix", () => {
+  const throwsWith = (def: object, pattern: RegExp) => assert.throws(() => defineAction({ ...base, ...def } as never), pattern);
+  throwsWith({ output: { summary: field.number({ label: "Summary", description: "What happened." }) } }, /summary.*must be a required string/);
+  throwsWith({ output: { summary: field.string({ label: "Summary", description: "What happened.", optional: true }) } }, /summary.*must be a required string/);
+  throwsWith({ output: { a: field.string({ label: "A", description: "One.", returned: true }), b: field.string({ label: "B", description: "Two.", returned: true }) } }, /only one output field can be returned/);
+  throwsWith({ output: { a: field.string({ label: "A", description: "One.", returned: true, optional: true }) } }, /returned.*required/);
+  throwsWith({ output: { a: field.enum({ label: "A", description: "One.", values: ["x"], returned: true }) } }, /returned.*string, number, integer or boolean/);
+  throwsWith({ input: { recipe: field.string({ label: "Recipe", description: "The recipe's id.", returned: true }) } }, /returned is only for an output field/);
+  throwsWith({ output: { a: { ...field.string({ label: "A", description: "One." }), entity: "RecipeEntity" } } }, /entity is only for an input string field/);
+  throwsWith({ input: { recipe: field.string({ label: "Recipe", description: "The recipe's id.", entity: "recipe" }) } }, /entity is not a Swift type name/);
+  throwsWith({ opensApp: "yes" }, /opensApp.*true or false/);
+});
+
 test("felt number: one declaration, seven projections", () => {
   const files = renderActions(shopping);
   const surfaces = [

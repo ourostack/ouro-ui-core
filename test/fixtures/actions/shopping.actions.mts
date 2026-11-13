@@ -12,8 +12,10 @@ export const getShoppingList = defineAction({
     show: field.enum({ label: "Show", description: "Which items to list; all of them when left out.", values: ["all", "unchecked"], optional: true }),
   },
   output: {
-    items: field.string({ label: "Items", description: "The list's items, as JSON." }),
+    items: field.string({ label: "Items", description: "The list's items, as JSON.", returned: true }),
+    summary: field.string({ label: "Summary", description: "What the list holds, in a sentence the person hears." }),
   },
+  opensApp: true,
   cli: "list show",
 });
 
@@ -42,7 +44,7 @@ export const shareShoppingList = defineAction({
   description: "Share your shopping list with someone in your household.",
   agent: "Share the person's shopping list with another person, who can then see and change it.",
   input: {
-    with: field.string({ label: "With", description: "The email address of the person to share with.", arg: true }),
+    with: field.string({ label: "With", description: "The email address of the person to share with.", arg: true, entity: "HouseholdMemberEntity" }),
     canEdit: field.boolean({ label: "Can edit", description: "Whether they may change the list, not only see it.", optional: true }),
   },
   output: {},

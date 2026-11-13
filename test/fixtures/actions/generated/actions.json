@@ -1,5 +1,5 @@
 {
-  "generator": "ouro-actions 0.5.0",
+  "generator": "ouro-actions 0.5.1",
   "set": "shopping",
   "tool": "shop",
   "actions": [
@@ -25,9 +25,16 @@
         "items": {
           "label": "Items",
           "description": "The list's items, as JSON.",
+          "returned": true,
+          "kind": "string"
+        },
+        "summary": {
+          "label": "Summary",
+          "description": "What the list holds, in a sentence the person hears.",
           "kind": "string"
         }
       },
+      "opensApp": true,
       "cli": "list show"
     },
     {
@@ -82,6 +89,7 @@
           "label": "With",
           "description": "The email address of the person to share with.",
           "arg": true,
+          "entity": "HouseholdMemberEntity",
           "kind": "string"
         },
         "canEdit": {

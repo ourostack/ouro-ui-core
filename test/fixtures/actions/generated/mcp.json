@@ -1,5 +1,5 @@
 {
-  "generator": "ouro-actions 0.5.0",
+  "generator": "ouro-actions 0.5.1",
   "set": "shopping",
   "tools": [
     {
@@ -32,10 +32,15 @@
           "items": {
             "type": "string",
             "description": "The list's items, as JSON."
+          },
+          "summary": {
+            "type": "string",
+            "description": "What the list holds, in a sentence the person hears."
           }
         },
         "required": [
-          "items"
+          "items",
+          "summary"
         ],
         "additionalProperties": false
       }

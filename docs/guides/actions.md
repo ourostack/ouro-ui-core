@@ -6,10 +6,10 @@ You declare each action once in TypeScript. `ouro-actions.mts generate` writes i
 
 ## 1. Vendor the generator
 
-Take `ouro-actions.mts` and `actions.claims.json` from a [core release](https://github.com/ourostack/ouro-ui-core/releases) (0.5.0 or later), the way platforms take the Apple claims: copy them into your repository and record the release tag and each file's SHA-256 from the release's `dist-manifest.json` (`dist/actions/ouro-actions.mts`, `dist/ax/actions.claims.json`). Never edit the copies. It needs Node 22.18 or later and nothing else.
+Take `ouro-actions.mts` and `actions.claims.json` from a [core release](https://github.com/ourostack/ouro-ui-core/releases) (0.5.1 or later; 0.5.0 lacks the intent options below), the way platforms take the Apple claims: copy them into your repository and record the release tag and each file's SHA-256 from the release's `dist-manifest.json` (`dist/actions/ouro-actions.mts`, `dist/ax/actions.claims.json`). Never edit the copies. It needs Node 22.18 or later and nothing else.
 
 ```sh
-gh release download v0.5.0 --repo ourostack/ouro-ui-core --pattern ouro-actions.mts --pattern actions.claims.json --pattern dist-manifest.json --dir tools/ouro-actions
+gh release download v0.5.1 --repo ourostack/ouro-ui-core --pattern ouro-actions.mts --pattern actions.claims.json --pattern dist-manifest.json --dir tools/ouro-actions
 ```
 
 ## 2. Declare
@@ -43,6 +43,13 @@ Choosing the consent class:
 - **write** changes only the person's own things (their list, their recipes).
 - **consequential** reaches other people or can't be undone (sharing, publishing, deleting someone's access). Agents prepare it; the person says yes: the CLI needs `--why` and previews with `--dry-run`, MCP marks it destructive, WebMCP consequential, and the App Intent asks `requestConfirmation()`.
 - **person-only** is what only the person may start (paying, ordering, turning on their microphone). Add `personOnly: { reason, how }`, one line each, said to the agent. No agent door offers it; each answers with the typed refusal, which is exactly web's refused outcome: `state` `refused`, error code `person-only`, exit 2, and a message that gives the reason and how the person does it.
+
+Four options carry what a real App Intent needs (core 0.5.1; none of them changes MCP, the CLI or web):
+
+- **`entity: "MarkdownDocumentEntity"`** on an input string field: the App Intent's parameter is your App Entity, so Shortcuts shows its picker and phrases can name it. `Input`, MCP and the CLI keep a string, the entity's `id`. The type must be `public` (the generated intent is) and have `init(id: String)` and `id: String`.
+- **`returned: true`** on one required output field (string, number, integer or boolean): the intent hands it to Shortcuts (`ReturnsValue`).
+- **An output named `summary`** (a required string): the intent says it (`ProvidesDialog`).
+- **`opensApp: true`** on the action: the intent opens the app when it runs (`openAppWhenRun`).
 
 `defineAction` throws, with the fix, on a declaration a surface can't carry: an input named like one of web's kit flags (`json`, `help`, `why`, `whyFile`, `dryRun`, `agent`, `quiet`) or the App Intent's members (`input`, `perform`); `arg: true` on anything but a required string; or an id web reserves for the person (`share`, `unmute`, `camera`, `camera_on`, `answer`, `decline`, `admit`, `record`) without `consent: "person-only"`.
 
