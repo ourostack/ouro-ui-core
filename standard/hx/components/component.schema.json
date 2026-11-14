@@ -8,7 +8,7 @@
   "additionalProperties": false,
   "properties": {
     "$schema": { "type": "string" },
-    "name": { "description": "Web's name, as in components.claims.json's appliesTo.", "type": "string", "pattern": "^[a-z]+$" },
+    "name": { "description": "Web's name, as in components.claims.json's appliesTo.", "type": "string", "pattern": "^[a-z]+(-[a-z]+)*$" },
     "version": { "description": "Semver. A removed or renamed property, value or slot is a major bump; an added one is minor.", "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
     "summary": { "description": "What it is for, in one sentence a person would understand.", "type": "string", "minLength": 1 },
     "role": { "description": "What it is to assistive technology: a control someone presses, words, or a group of things.", "enum": ["control", "label", "group"] },
@@ -100,10 +100,10 @@
             "required": ["role", "name"],
             "additionalProperties": false,
             "properties": {
-              "role": { "enum": ["button", "text", "heading", "group", "listitem"] },
+              "role": { "enum": ["button", "text", "heading", "group", "listitem", "textbox", "image", "progressbar", "status"] },
               "name": { "type": "string" },
               "focusable": { "type": "boolean" },
-              "children": { "type": "array", "items": { "type": "object", "required": ["role", "name"], "additionalProperties": false, "properties": { "role": { "enum": ["button", "text", "heading", "group", "listitem"] }, "name": { "type": "string" } } } }
+              "children": { "type": "array", "items": { "type": "object", "required": ["role", "name"], "additionalProperties": false, "properties": { "role": { "enum": ["button", "text", "heading", "group", "listitem", "textbox", "image", "progressbar", "status"] }, "name": { "type": "string" } } } }
             }
           }
         }

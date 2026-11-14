@@ -9,7 +9,7 @@ const page = await readFile(new URL("../standard/hx/components.md", import.meta.
 
 test("the HX component claim set checks clean", () => {
   assert.deepEqual(checkHxClaimSet(set), []);
-  assert.equal(loadHxClaimSet(set).version, "0.2.0");
+  assert.equal(loadHxClaimSet(set).version, "0.3.0");
 });
 
 test("every claim says how Apple proves it, and every component is covered", () => {
