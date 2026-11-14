@@ -316,6 +316,10 @@ test("Swift: one App Intent per agent door, Button(intent:), confirmation only w
   assert.match(swift, /Button\(intent: AddShoppingListItemIntent\(input\)\)/);
   assert.equal(swift.match(/requestConfirmation\(\)/g)?.length, 1);
   assert.match(swift, /public struct ShareShoppingListIntent: AppIntent \{[\s\S]*?requestConfirmation\(\)[\s\S]*?\n\}/);
+  // The confirmation goes through a hook a test sets, only for a consequential action, and the system's prompt is its default.
+  assert.match(swift, /public enum ShareShoppingListAction \{[\s\S]*?public static var confirm: \(@MainActor @Sendable \(ShareShoppingListInput\) async throws -> Void\)\?/);
+  assert.match(swift, /if let confirm = ShareShoppingListAction\.confirm \{ try await confirm\(self\.input\) \} else \{ try await requestConfirmation\(\) \}/);
+  assert.equal(swift.match(/static var confirm/g)?.length, 1);
   assert.doesNotMatch(swift, /PlaceGroceryOrderIntent/);
   assert.match(swift, /IntentDescription\("Add one item to the person's shopping list\./);
   assert.match(swift, /description: "What to buy, as the person said it, such as \\"oat milk\\"\."/);

@@ -580,6 +580,11 @@ function renderSwift(set: ActionSet): string {
     L.push(`    public static let id = ${swiftLit(a.id)}`);
     L.push(`    /// The app's handler; every door calls it.`);
     L.push(`    public static var perform: (@MainActor @Sendable (${P}Input) async throws -> ${P}Output)?`);
+    if (agentDoor && a.consent === "consequential") {
+      L.push("    /// How the intent asks the person before it acts. Unset, the system asks (`requestConfirmation()`). A test sets it: return to");
+      L.push("    /// confirm, or throw to cancel, and the handler never runs. The app can also set it to ask in its own way.");
+      L.push(`    public static var confirm: (@MainActor @Sendable (${P}Input) async throws -> Void)?`);
+    }
     if (!agentDoor) L.push("    /// Called with the error when the person's press fails, since a plain button has nowhere to show it.", "    public static var failed: (@MainActor @Sendable (any Error) -> Void)?");
     else {
       L.push("    /// What Siri and Shortcuts say when the App Intent finishes or fails: the result in words, or an error turned into");
@@ -618,7 +623,7 @@ function renderSwift(set: ActionSet): string {
       const returned = Object.entries(a.output).find(([, f]) => f.returned);
       const returns = ["IntentResult", ...(returned ? [`ReturnsValue<${swiftType(a, returned[0], returned[1])}>`] : []), "ProvidesDialog"].join(" & ");
       L.push("    @MainActor", `    public func perform() async throws -> some ${returns} {`);
-      if (a.consent === "consequential") L.push("        // Consequential: the person says yes before it acts.", "        try await requestConfirmation()");
+      if (a.consent === "consequential") L.push("        // Consequential: the person says yes before it acts.", `        if let confirm = ${P}Action.confirm { try await confirm(self.input) } else { try await requestConfirmation() }`);
       L.push("        let input = self.input", `        let result: Result<${P}Output, any Error>`);
       L.push(`        do { result = .success(try await ${P}Action.run(input)) } catch { result = .failure(error) }`);
       if (returned) {

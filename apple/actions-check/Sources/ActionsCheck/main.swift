@@ -87,6 +87,24 @@ func check() async throws {
     expect(GetShoppingListIntent.openAppWhenRun, "opensApp is openAppWhenRun")
     expect(!AddShoppingListItemIntent.openAppWhenRun, "an action that doesn't ask doesn't open the app")
 
+    // A consequential intent asks through a hook, so a test can confirm or cancel it; unset, the system asks.
+    var shared: [ShareShoppingListInput] = []
+    ShareShoppingListAction.perform = { input in shared.append(input); return ShareShoppingListOutput() }
+    struct Declined: Error {}
+    var asked: [ShareShoppingListInput] = []
+    ShareShoppingListAction.confirm = { input in asked.append(input) }
+    _ = try await share.perform()
+    expect(asked == [share.input] && shared == [share.input], "a confirmed consequential intent asks with its input, then runs the handler")
+    ShareShoppingListAction.confirm = { input in asked.append(input); throw Declined() }
+    do {
+        _ = try await share.perform()
+        expect(false, "a cancelled consequential intent ran")
+    } catch is Declined {
+        expect(asked.count == 2 && shared.count == 1, "a cancelled consequential intent asks, then never runs the handler")
+    }
+    ShareShoppingListAction.confirm = nil
+    expect(ShareShoppingListAction.confirm == nil, "the hook is unset by default, so the system's own confirmation asks")
+
     if failures.isEmpty {
         print("ok    generated Swift: one handler behind the intent, the button and Reins; person-only refuses")
     } else {

@@ -267,6 +267,9 @@ public enum ShareShoppingListAction {
     public static let id = "share_shopping_list"
     /// The app's handler; every door calls it.
     public static var perform: (@MainActor @Sendable (ShareShoppingListInput) async throws -> ShareShoppingListOutput)?
+    /// How the intent asks the person before it acts. Unset, the system asks (`requestConfirmation()`). A test sets it: return to
+    /// confirm, or throw to cancel, and the handler never runs. The app can also set it to ask in its own way.
+    public static var confirm: (@MainActor @Sendable (ShareShoppingListInput) async throws -> Void)?
     /// What Siri and Shortcuts say when the App Intent finishes or fails: the result in words, or an error turned into
     /// words (rethrow to let the system show it). Unset, the intent says "Done." and a failure throws.
     public static var dialog: (@MainActor @Sendable (ShareShoppingListInput, Result<ShareShoppingListOutput, any Error>) async throws -> IntentDialog)?
@@ -304,7 +307,7 @@ public struct ShareShoppingListIntent: AppIntent {
     @MainActor
     public func perform() async throws -> some IntentResult & ProvidesDialog {
         // Consequential: the person says yes before it acts.
-        try await requestConfirmation()
+        if let confirm = ShareShoppingListAction.confirm { try await confirm(self.input) } else { try await requestConfirmation() }
         let input = self.input
         let result: Result<ShareShoppingListOutput, any Error>
         do { result = .success(try await ShareShoppingListAction.run(input)) } catch { result = .failure(error) }
