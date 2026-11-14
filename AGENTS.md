@@ -11,7 +11,7 @@ Core is the platform-neutral part of Ouro UI: what is true on every platform, fo
 
 ## Ouro HX's component claims
 
-- `standard/hx/components.claims.json` is the claim set for the components every platform shares (web's names: `button`, `empty`, `alert`, `sheet`, `toast`); `components.md` beside it is its page, whose claims section `pnpm hx:page` renders from the JSON (a test fails when they differ). Edit the JSON, run `pnpm hx:page`, and bump the set's `version` once a release has shipped it.
+- `standard/hx/components.claims.json` is the claim set for the components every platform shares (web's names: `button`, `empty`, `alert`, `sheet`, `toast`, `badge`); `components.md` beside it is its page, whose claims section `pnpm hx:page` renders from the JSON (a test fails when they differ). Edit the JSON, run `pnpm hx:page`, and bump the set's `version` once a release has shipped it.
 - Same admission rule as AX: `must` needs a stated hazard with a check, or an evaluation. `checkHxClaimSet` in `src/hx-claims.mts` enforces the shape. Each claim's `checks` names the test that proves it on each platform; a platform adds its entry when its tests prove it.
 
 ## Ouro Feel's spec

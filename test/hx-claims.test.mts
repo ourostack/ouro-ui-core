@@ -9,12 +9,18 @@ const page = await readFile(new URL("../standard/hx/components.md", import.meta.
 
 test("the HX component claim set checks clean", () => {
   assert.deepEqual(checkHxClaimSet(set), []);
-  assert.equal(loadHxClaimSet(set).version, "0.1.0");
+  assert.equal(loadHxClaimSet(set).version, "0.2.0");
 });
 
 test("every claim says how Apple proves it, and every component is covered", () => {
   for (const c of set.claims) assert.ok((c["checks"] as Record<string, string>)["apple"], `${c["id"]} has no Apple check`);
   for (const name of HX_COMPONENTS) assert.ok(set.claims.some((c) => (c["appliesTo"] as string[]).includes(name)), `no claim covers ${name}`);
+});
+
+test("the Badge is one of HX's components, and the claims that fit a label cover it", () => {
+  assert.ok((HX_COMPONENTS as readonly string[]).includes("badge"));
+  const covering = set.claims.filter((c) => (c["appliesTo"] as string[]).includes("badge")).map((c) => c["id"]).sort();
+  assert.deepEqual(covering, ["contrast.text", "name.spoken", "text.reflows"]);
 });
 
 test("the page lists exactly the claims in the data", () => {
