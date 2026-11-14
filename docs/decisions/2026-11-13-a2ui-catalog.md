@@ -1,6 +1,6 @@
 # Decision: Ouro HX is an A2UI catalog, and agent-composed UI carries the action model's consent
 
-Status: accepted, 2026-11-13. It follows [agents use agent interfaces](2026-11-13-agents-use-agent-interfaces.md), whose Prior art marked A2UI and MCP Apps "watch" until the action model existed. The action model shipped in core 0.5.0, so this record makes that later decision.
+Status: accepted, 2026-11-13; superseded in part on 2026-11-14 by [Ouro's composed-UI tree is the source of truth](2026-11-14-composed-ui-own-tree.md), which keeps every consent rule below and makes A2UI one adapter among others. It follows [agents use agent interfaces](2026-11-13-agents-use-agent-interfaces.md), whose Prior art marked A2UI and MCP Apps "watch" until the action model existed. The action model shipped in core 0.5.0, so this record makes that later decision.
 
 ## Why
 
