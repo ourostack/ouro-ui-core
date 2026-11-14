@@ -3,16 +3,52 @@ export const A2UI_VERSION = "1.0";
 // A2UI_VERSION above is A2UI's protocol version these catalogs target. (No comment goes before the first statement:
 // shadcn's CLI drops it when web's registry installs this file.)
 //
-// Ouro HX as an A2UI v1.0 catalog, the part every renderer and server runs: the components, the validator, the
-// reference resolver every renderer is checked against, the action message a composed button sends, and the MCP Apps
-// helpers. Decision: docs/decisions/2026-11-13-a2ui-catalog.md. Guide: docs/guides/a2ui.md.
+// The A2UI v1.0 adapter for Ouro's composed UI (src/composed.mts): it reads an A2UI catalog into Ouro's, validates an A2UI
+// message stream, resolves it into Ouro's composed tree, and wraps a press in A2UI's action message. Everything that is
+// not A2UI's (the components, the consent rules, the tree) is composed.mts's, so dropping A2UI drops this file and
+// nothing else. Decisions: docs/decisions/2026-11-14-composed-ui-own-tree.md, 2026-11-13-a2ui-catalog.md. Guide:
+// docs/guides/a2ui.md.
 //
-// An agent composes UI for a person in A2UI messages that name only the catalog's components. Every button is an
-// `ActionButton` naming one of the app's declared actions (src/actions.mts), so its label and its consent class come
-// from the declaration, never from the agent, and pressing it follows the consent class.
-//
-// It imports nothing, so it runs in a browser, a server or a test as it is. Apps vendor it from a release as
-// `ouro-a2ui.mts` (web's renderer vendors it byte for byte); `a2ui-catalog.mts` writes the catalogs.
+// It imports only composed.mts and mcp-app.mts, so it runs in a browser, a server or a test beside them. Apps vendor it
+// from a release as `ouro-a2ui.mts`, beside `ouro-composed.mts` and `ouro-mcp-app.mts`; `a2ui-catalog.mts` writes the
+// catalogs.
+
+import {
+  ACTION_BUTTON,
+  actionButtonProps,
+  agentPressProblem,
+  asText,
+  COMPONENTS,
+  personPress,
+  type Catalog,
+  type CatalogAction,
+  type ComponentSpec,
+  type ComposedNode,
+  type Json,
+  type Obj,
+  type Refusal,
+  type ResolveOptions,
+} from "./composed.mts";
+
+export {
+  ACTION_BUTTON,
+  actionButtonProps,
+  asText,
+  COMPONENTS,
+  pressOf,
+  type CatalogAction,
+  type ComponentSpec,
+  type Consent,
+  type Json,
+  type LabelContext,
+  type Obj,
+  type Press,
+  type Prop,
+  type PropKind,
+  type Refusal,
+  type ResolveOptions,
+} from "./composed.mts";
+export { MCP_APP_MIME, mcpAppResource, mcpAppToolMeta } from "./mcp-app.mts";
 
 /** Ouro HX's catalog id; an app's catalog, with its actions, takes its own. */
 export const HX_CATALOG_ID = "https://ui.ouroboros.bot/a2ui/v1/catalog.json";
@@ -21,160 +57,12 @@ export const EXTENSION = "bot_ouroboros_hx";
 /** The action-egress extension key on every A2UI `action` a composed button sends. */
 export const ACTION_EXTENSION = "bot_ouroboros_action";
 
-export type Json = null | boolean | number | string | Json[] | { [k: string]: Json };
-export type Obj = { [k: string]: Json };
-
-// ---------------------------------------------------------------------------------------------------------------
-// The components
-// ---------------------------------------------------------------------------------------------------------------
-
-/** A prop's kind: what the validator checks and what the resolver produces. */
-export type PropKind =
-  | { kind: "string" } // DynamicString
-  | { kind: "strings" } // DynamicStringList
-  | { kind: "children" } // ChildList
-  | { kind: "enum"; values: readonly string[]; default: string }
-  | { kind: "boolean"; default: boolean } // DynamicBoolean
-  | { kind: "level"; default: number } // integer 1 to 3
-  | { kind: "terms" } // [{ term, detail }] or a binding to one
-  | { kind: "action" } // ActionButton.action
-  | { kind: "input" }; // ActionButton.input
-
-export interface Prop {
-  description: string;
-  required?: boolean;
-  type: PropKind;
-}
-
-export interface ComponentSpec {
-  /** For an agent: what it is and when to use it. One line. */
-  description: string;
-  props: Readonly<Record<string, Prop>>;
-}
-
-const TONES = ["neutral", "info", "success", "warning", "danger"] as const;
-
-/**
- * Ouro HX's catalog components, named as on web. A component joins only when web and Apple both render it and a
- * conformance case covers it. `ActionButton` joins an app's catalog, with the app's actions.
- */
-export const COMPONENTS: Readonly<Record<string, ComponentSpec>> = Object.freeze({
-  Card: {
-    description: "A raised surface that groups one thing's content; its children stack vertically.",
-    props: { children: { description: "What the card holds, top to bottom.", required: true, type: { kind: "children" } } },
-  },
-  Stack: {
-    description: "Lays children out in a column or a row with HX spacing.",
-    props: {
-      children: { description: "What the stack holds, in order.", required: true, type: { kind: "children" } },
-      direction: { description: "vertical stacks top to bottom; horizontal lays out a row that wraps.", type: { kind: "enum", values: ["vertical", "horizontal"], default: "vertical" } },
-      gap: { description: "Space between children, from HX's spacing scale.", type: { kind: "enum", values: ["none", "small", "medium", "large"], default: "medium" } },
-    },
-  },
-  Heading: {
-    description: "A title. Level 1 is a card's or page's title, 2 a section, 3 a subsection.",
-    props: {
-      text: { description: "The heading's words.", required: true, type: { kind: "string" } },
-      level: { description: "1, 2 or 3.", type: { kind: "level", default: 2 } },
-    },
-  },
-  Text: {
-    description: "A paragraph of plain text.",
-    props: {
-      text: { description: "The words, plain text without Markdown.", required: true, type: { kind: "string" } },
-      tone: { description: "muted for secondary text such as a byline or a note.", type: { kind: "enum", values: ["default", "muted"], default: "default" } },
-    },
-  },
-  Image: {
-    description: "A picture with a description for people who can't see it.",
-    props: {
-      url: { description: "The image's https URL.", required: true, type: { kind: "string" } },
-      description: { description: "What the picture shows, for a screen reader; never \"image of\".", required: true, type: { kind: "string" } },
-      aspect: { description: "The frame's shape; the picture fills it.", type: { kind: "enum", values: ["landscape", "square", "portrait", "wide"], default: "landscape" } },
-    },
-  },
-  Badge: {
-    description: "A short label for a status or a category, such as \"Vegetarian\".",
-    props: {
-      text: { description: "One to three words.", required: true, type: { kind: "string" } },
-      tone: { description: "neutral unless the label is a status.", type: { kind: "enum", values: TONES, default: "neutral" } },
-    },
-  },
-  List: {
-    description: "A list of short plain-text items, such as ingredients or steps.",
-    props: {
-      items: { description: "The items, in order.", required: true, type: { kind: "strings" } },
-      ordered: { description: "true numbers the items, for steps that happen in order.", type: { kind: "boolean", default: false } },
-    },
-  },
-  DescriptionList: {
-    description: "Pairs of a term and its detail, such as \"Time\" and \"25 min\".",
-    props: { items: { description: "The pairs, each { term, detail }.", required: true, type: { kind: "terms" } } },
-  },
-  Separator: {
-    description: "A hairline between groups of content.",
-    props: {},
-  },
-  Alert: {
-    description: "A message the person should notice: a warning, an error, a success or information.",
-    props: {
-      title: { description: "One line saying what happened.", required: true, type: { kind: "string" } },
-      text: { description: "What to do about it, if anything.", type: { kind: "string" } },
-      tone: { description: "How serious it is.", type: { kind: "enum", values: ["info", "success", "warning", "danger"], default: "info" } },
-    },
-  },
-});
-
-export const ACTION_BUTTON: ComponentSpec = {
-  description: "A button for one of the app's declared actions. Its label and what pressing it does come from the action, so you choose only the action, the input you prepared and its emphasis.",
-  props: {
-    action: { description: "The action's id.", required: true, type: { kind: "action" } },
-    input: { description: "The input you prepared, by field name; values may bind to the data model. Never give input to a person-only action.", type: { kind: "input" } },
-    emphasis: { description: "primary for the one main action on a surface; secondary for the rest.", type: { kind: "enum", values: ["primary", "secondary"], default: "secondary" } },
-  },
-};
-
-// ---------------------------------------------------------------------------------------------------------------
-// What each action's button does
-// ---------------------------------------------------------------------------------------------------------------
-
-/** An action's consent class (src/actions.mts). */
-export type Consent = "read" | "write" | "consequential" | "person-only";
-/** What pressing an action's button does: run it, confirm then run it, or hand the person to the app's own screen. */
-export type Press = "run" | "confirm" | "handoff";
-
-export const pressOf = (consent: Consent): Press => (consent === "person-only" ? "handoff" : consent === "consequential" ? "confirm" : "run");
-
-/** The typed refusal every agent door answers a person-only action with (src/actions.mts `refusal`), as JSON. */
-export interface Refusal {
-  ax: "outcome/1";
-  action: string;
-  state: "refused";
-  summary: string;
-  error: { code: "person-only"; exit: number; thing: string; problem: string; fix: null; message: string };
-  [k: string]: unknown;
-}
-
-/** An action as the catalog carries it, for renderers that have only the catalog. */
-export interface CatalogAction {
-  consent: Consent;
-  press: Press;
-  label: string;
-  description: string;
-  input: Record<string, { label: string; kind: "string" | "number" | "integer" | "boolean" | "enum"; optional: boolean; values?: string[]; shownAs?: string }>;
-  /** For a person-only action: where the person does it, and the refusal every agent door answers. */
-  personOnly?: { how: string; refusal: Refusal };
-}
-
 // ---------------------------------------------------------------------------------------------------------------
 // Reading a catalog back (renderers and the validator take the JSON, not the action set)
 // ---------------------------------------------------------------------------------------------------------------
 
-export interface LoadedCatalog {
-  catalogId: string;
-  components: Record<string, ComponentSpec>;
-  actions: Record<string, CatalogAction>;
-}
+/** An A2UI catalog read back: Ouro's own catalog (composed.mts). */
+export type LoadedCatalog = Catalog;
 
 /** Reads a catalog this file wrote. Its component specs are HX's, so a hand-edited catalog can't widen them. */
 export function loadCatalog(cat: unknown): LoadedCatalog {
@@ -212,12 +100,7 @@ const isCall = (v: unknown) => isObj(v) && "@call" in v;
 const MESSAGE_KEYS = ["createSurface", "updateComponents", "updateDataModel", "deleteSurface", "callRendererFunction", "agentFunctionResponse"];
 
 /** Why an agent can't press a button through the screen: the message for a `callRendererFunction`. */
-export function functionCallProblem(cat: LoadedCatalog, name: unknown): { message: string; refusal?: Refusal } {
-  const a = typeof name === "string" ? cat.actions[name] : undefined;
-  if (a?.personOnly) return { message: a.personOnly.refusal.summary, refusal: a.personOnly.refusal };
-  if (a) return { message: `${name} is an action, and agents run actions through their own tool (MCP ${name}), not through the person's screen.` };
-  return { message: `This catalog has no functions an agent may call${typeof name === "string" ? `, so ${name} is not one` : ""}.` };
-}
+export const functionCallProblem = (cat: LoadedCatalog, name: unknown): { message: string; refusal?: Refusal } => agentPressProblem(cat, name);
 
 interface Walk {
   cat: LoadedCatalog;
@@ -452,14 +335,8 @@ function childRefs(comp: Record<string, unknown>, path: string): [string, string
 // The reference resolver: what every renderer must show
 // ---------------------------------------------------------------------------------------------------------------
 
-/** A resolved node: the component, its props with every binding resolved and defaults filled, and its children. */
-export interface Resolved {
-  /** The component's id, which a pressed button's action message names as its sourceComponentId. A template's instances share it. */
-  id: string;
-  component: string;
-  props: Obj;
-  children: Resolved[];
-}
+/** A resolved node is a node of Ouro's composed tree (composed.mts); A2UI's sourceComponentId is its id. */
+export type Resolved = ComposedNode;
 
 interface Surface {
   catalogId: string;
@@ -505,14 +382,6 @@ export function setPointer(data: Json, pointer: string, value: Json): Json {
   return root;
 }
 
-/** A2UI's type conversion to a string: numbers and booleans as written, null and missing as "", others as JSON. */
-export function asText(v: Json | undefined): string {
-  if (v === undefined || v === null) return "";
-  if (typeof v === "string") return v;
-  if (typeof v === "number" || typeof v === "boolean") return String(v);
-  return JSON.stringify(v);
-}
-
 /** Applies a stream to surfaces. Throws on a stream the validator would reject; validate first. */
 export function applyMessages(messages: readonly unknown[], surfaces = new Map<string, Surface>()): Map<string, Surface> {
   for (const m of messages as Record<string, Record<string, unknown>>[]) {
@@ -538,43 +407,6 @@ const scoped = (scope: string, p: string) => (p.startsWith("/") ? p : p === "" ?
 function resolveValue(data: Json, scope: string, v: unknown): Json | undefined {
   if (isBinding(v)) return getPointer(data, scoped(scope, v["@path"]));
   return v as Json;
-}
-
-/**
- * The rows of a confirm sheet: each prepared input with the person's label. An id shows its name (the app's resolver,
- * else the sibling `shownAs` names, else the value itself), with the id as `raw` when the name replaced it; a name
- * field that stands in for an id has no row of its own.
- */
-function confirmFields(action: string, a: CatalogAction, input: Obj, options: ResolveOptions): { label: string; value: string; raw?: string }[] {
-  const names = new Set(Object.entries(a.input).filter(([k, f]) => k in input && f.shownAs !== undefined && f.shownAs in a.input).map(([, f]) => f.shownAs!));
-  return Object.entries(a.input)
-    .filter(([k]) => k in input && !names.has(k))
-    .map(([k, f]) => {
-      const raw = asText(input[k]);
-      const sibling = f.shownAs !== undefined ? input[f.shownAs] : undefined;
-      const prepared = typeof sibling === "string" && sibling.trim() !== "" ? sibling.trim() : undefined;
-      const value = options.label?.({ action, field: k, value: raw, input }) ?? prepared ?? raw;
-      return value === raw ? { label: f.label, value } : { label: f.label, value, raw };
-    });
-}
-
-/** What a resolver is asked to name: one prepared input of a button that confirms. */
-export interface LabelContext {
-  action: string;
-  field: string;
-  /** The prepared value, as text: the id. */
-  value: string;
-  /** Every prepared input of the button. */
-  input: Obj;
-}
-
-export interface ResolveOptions {
-  /**
-   * The app's own word for an id, from its own data, such as a recipe's title for `rcp_lemon_orzo`; undefined to leave it
-   * to the field's `shownAs`, then to the value itself. It is asked for each field a confirm sheet shows, and wins over
-   * what the agent prepared, since the agent's text is the one thing the person can't check.
-   */
-  label?: (context: LabelContext) => string | undefined;
 }
 
 /** One surface as every renderer must show it. */
@@ -642,22 +474,9 @@ export function resolveSurface(catalogJson: unknown, surface: Surface, options: 
     }
     if (name === "ActionButton") {
       const id = String(comp.action);
-      const a = cat.actions[id]!;
       const input: Obj = {};
-      if (!a.personOnly && isObj(comp.input)) for (const [k, v] of Object.entries(comp.input)) input[k] = resolveValue(surface.data, scope, v) ?? null;
-      props.action = id;
-      props.label = a.label;
-      props.consent = a.consent;
-      props.press = a.press;
-      props.input = input;
-      if (a.press === "confirm") {
-        props.confirm = {
-          title: a.label,
-          description: a.description,
-          fields: confirmFields(id, a, input, options),
-        };
-      }
-      if (a.personOnly) props.handoff = a.personOnly.how;
+      if (!cat.actions[id]!.personOnly && isObj(comp.input)) for (const [k, v] of Object.entries(comp.input)) input[k] = resolveValue(surface.data, scope, v) ?? null;
+      Object.assign(props, actionButtonProps(cat, id, input, options));
     }
     if (isObj(comp["@accessibility"]) && comp["@accessibility"].label !== undefined) props["@label"] = asText(resolveValue(surface.data, scope, comp["@accessibility"].label));
     return { id: String(comp.id), component: name, props, children };
@@ -679,41 +498,24 @@ export function resolveMessages(catalogJson: unknown, messages: readonly unknown
  * consequential one). A person-only button never sends one: it hands the person to the app's own screen.
  */
 export function actionMessage(args: { surfaceId: string; sourceComponentId: string; button: Resolved; timestamp: string; confirmed?: boolean }): Obj {
-  const p = args.button.props;
-  if (p.press === "handoff") throw new Error(`${String(p.action)} is person-only; its button hands the person to the app, so it sends no action.`);
-  if (p.press === "confirm" && args.confirmed !== true) throw new Error(`${String(p.action)} is consequential; send its action only after the person confirms.`);
+  const press = personPress(args.button, args.confirmed);
   return {
     version: A2UI_VERSION,
     action: {
-      name: p.action as string,
+      name: press.action,
       surfaceId: args.surfaceId,
       sourceComponentId: args.sourceComponentId,
       timestamp: args.timestamp,
-      userMessage: p.label as string,
-      context: p.input as Obj,
-      metadata: { extensions: { [ACTION_EXTENSION]: { consent: p.consent as string, by: "person", ...(p.press === "confirm" ? { confirmed: true } : {}) } } },
+      userMessage: press.label,
+      context: press.input,
+      metadata: { extensions: { [ACTION_EXTENSION]: { consent: press.consent, by: press.by, ...(press.confirmed ? { confirmed: true } : {}) } } },
     },
   };
 }
 
 // ---------------------------------------------------------------------------------------------------------------
-// MCP Apps: a server returns HX UI
+// MCP Apps: a tool result that carries an A2UI stream (src/mcp-app.mts carries Ouro's tree itself)
 // ---------------------------------------------------------------------------------------------------------------
-
-/** MCP Apps' content type for an HTML view (SEP-1865). */
-export const MCP_APP_MIME = "text/html;profile=mcp-app";
-
-/** The `ui://` resource a server lists and serves for its HX view (the HTML web's `mcp-app` kit builds). */
-export function mcpAppResource(args: { uri: string; name: string; description?: string; html: string }) {
-  if (!args.uri.startsWith("ui://")) throw new Error(`MCP Apps resources use ui://, got ${args.uri}. Fix: such as ui://spoonjoy/hx.`);
-  return {
-    listing: { uri: args.uri, name: args.name, ...(args.description ? { description: args.description } : {}), mimeType: MCP_APP_MIME },
-    contents: { uri: args.uri, mimeType: MCP_APP_MIME, text: args.html },
-  };
-}
-
-/** The `_meta` that links a tool to the view, so hosts render its results with HX. */
-export const mcpAppToolMeta = (uri: string) => ({ ui: { resourceUri: uri } });
 
 /**
  * A tool result carrying A2UI messages: `content` is the text an agent and a text-only host read, and

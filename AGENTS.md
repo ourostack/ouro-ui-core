@@ -33,12 +33,13 @@ Core is the platform-neutral part of Ouro UI: what is true on every platform, fo
 - The person-only refusal is web's refused outcome byte for byte (web's `cli.ts`); change it only together with web. `mcp.json` is the one MCP door.
 - `standard/ax/actions.claims.json` is the claim set and `actions.md` its page (`pnpm actions:page`); the adopter guide is `docs/guides/actions.md`.
 
-## Agent-composed UI (A2UI)
+## Agent-composed UI
 
-- `src/a2ui.mts` is Ouro HX's A2UI v1.0 catalog definition, validator, resolver and MCP Apps helpers. It imports nothing, because web vendors it byte for byte and Apple ports it; keep it that way. `src/a2ui-catalog.mts` generates catalogs (HX's, and an app's from its action set) and is released as `ouro-a2ui-catalog.mts`.
-- `standard/hx/a2ui/` holds the catalogs and the conformance cases every renderer must pass. After changing either module, run `pnpm a2ui:generate` and review the diff; `pnpm a2ui:check` fails CI on drift. A case named `invalid-*` must fail validation.
+- `src/composed.mts` is the source of truth: Ouro HX's components for composed UI, the consent rules for a composed button, the tree every renderer draws (`ComposedNode`) and its validator (`validateTree`). It imports nothing, because web vendors it byte for byte and Apple ports it; keep it that way. Decision: `docs/decisions/2026-11-14-composed-ui-own-tree.md`.
+- Formats are adapters that import only `composed.mts` (and each other): `src/a2ui.mts` for A2UI v1.0 and `src/mcp-app.mts` for MCP Apps. An adapter turns its format into the tree and wraps a press in its format's message; it never defines a component or a consent rule. A new format is one new adapter file, shipped by `scripts/build.mts` with its imports renamed. `src/a2ui-catalog.mts` generates A2UI catalogs (HX's, and an app's from its action set) and is released as `ouro-a2ui-catalog.mts`.
+- `standard/hx/a2ui/` holds the catalogs and the conformance cases every renderer must pass; each valid case ends in the composed tree, and `test/composed.test.mts` checks every one against `validateTree`. After changing a module, run `pnpm a2ui:generate` and review the diff; `pnpm a2ui:check` fails CI on drift. A case named `invalid-*` must fail validation.
 - `test/fixtures/a2ui/spec/` is A2UI's own v1.0 JSON Schemas at a pinned commit (`SOURCE.md`); the tests validate both catalogs and every case against them.
-- A component joins the catalog only when web's `a2ui-surface` and Apple's `OuroA2UI` both render it. The adopter guide is `docs/guides/a2ui.md`; the decision is `docs/decisions/2026-11-13-a2ui-catalog.md`.
+- A component joins only when web's and Apple's tree views both render it. The adopter guide is `docs/guides/a2ui.md`.
 
 ## Claims
 

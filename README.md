@@ -38,7 +38,9 @@ standard/ax/surfaces/apple.claims.json  the same claims as data, published as di
 src/actions.mts                   the one action model: declare an action once, generate its CLI, MCP, WebMCP, web, App Intent, button and Reins
 standard/ax/actions.md            Ouro AX: what an action promises
 standard/ax/actions.claims.json   the same claims as data, published as dist/ax/actions.claims.json
-src/a2ui.mts                      Ouro HX for agent-composed UI: the A2UI catalog, validator, resolver and MCP Apps helpers
+src/composed.mts                  Ouro's composed UI: the components, the consent rules, the tree every renderer draws and its validator
+src/a2ui.mts                      the A2UI adapter: the A2UI catalog, validator and resolver into the composed tree
+src/mcp-app.mts                   the MCP Apps adapter: the ui:// resource, the tool link and a result carrying the tree
 standard/hx/a2ui/                 Ouro HX's A2UI catalog and the conformance cases web and Apple both pass
 standard/feel/feel.md             Ouro Feel's spec: the scenarios, launch stages, measures, seed and report every driver shares
 standard/feel/feel.spec.json      the same spec as data, published as dist/feel/feel.spec.json
@@ -57,7 +59,7 @@ docs/decisions/                   decision records, with their history from ouro
 - `dist/hx/components.claims.json`: Ouro HX's component claims, byte for byte, which each platform's tests prove.
 - `dist/actions/ouro-actions.mts`: the one action model's generator, byte for byte from `src/actions.mts`, which apps vendor and run with Node; [the adopter guide](docs/guides/actions.md) says how.
 - `dist/ax/actions.claims.json`: Ouro AX's action claims, byte for byte.
-- `dist/a2ui/ouro-a2ui.mts` and `dist/a2ui/ouro-a2ui-catalog.mts`: the A2UI validator, resolver and MCP Apps helpers, and the catalog generator, which apps vendor beside `ouro-actions.mts`; `dist/hx/a2ui/catalog.json` is HX's A2UI catalog. [The adopter guide](docs/guides/a2ui.md) says how.
+- `dist/composed/ouro-composed.mts`, `dist/composed/ouro-mcp-app.mts`, `dist/a2ui/ouro-a2ui.mts` and `dist/a2ui/ouro-a2ui-catalog.mts`: Ouro's composed UI, its MCP Apps and A2UI adapters, and the catalog generator, which apps vendor beside `ouro-actions.mts`; `dist/hx/a2ui/catalog.json` is HX's A2UI catalog. [The adopter guide](docs/guides/a2ui.md) says how.
 - `dist/feel/feel.spec.json`: Ouro Feel's spec, byte for byte, which every Feel driver (web now, Apple and Windows later) reports under.
 - `dist/swatches.html`: every theme's colours in light and dark, to look at.
 

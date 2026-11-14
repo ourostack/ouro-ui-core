@@ -13,6 +13,7 @@ New decision records go here. Each has a "Prior art" section linking every find 
 | 2026-11-04 | [Responsiveness, native](2026-11-04-responsiveness.md) |
 | 2026-11-09 | [Design checks agents can run instead of looking](2026-11-09-design-checks.md) |
 | 2026-11-13 | [Agents use agent interfaces, and one action declaration feeds every surface](2026-11-13-agents-use-agent-interfaces.md) |
-| 2026-11-13 | [Ouro HX is an A2UI catalog, and agent-composed UI carries the action model's consent](2026-11-13-a2ui-catalog.md) |
+| 2026-11-13 | [Ouro HX is an A2UI catalog, and agent-composed UI carries the action model's consent](2026-11-13-a2ui-catalog.md) (superseded in part by 2026-11-14's composed tree) |
 | 2026-11-13 | [A tool with one thing to do has no command word](2026-11-13-single-command-tools.md) |
 | 2026-11-14 | [Rounder people, and presence as a dot on the curve](2026-11-14-rounder-people-presence-dot.md) |
+| 2026-11-14 | [Ouro's composed-UI tree is the source of truth, and A2UI and MCP Apps are adapters at the edge](2026-11-14-composed-ui-own-tree.md) |
