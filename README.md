@@ -29,7 +29,7 @@ tokens/themes/<name>.tokens.json  each theme's changes: pearl, abyss, brass, cha
 templates/web/                    web's stylesheets with a placeholder where each value goes
 scripts/build.mts                 pnpm tokens: writes dist/
 scripts/parity.mts                pnpm tokens:parity: dist/web/ against web's files, byte for byte
-standard/hx/components.md         Ouro HX: what Button, Empty, Alert, Sheet and Toast promise, on every platform
+standard/hx/components.md         Ouro HX: what Button, Badge, Empty, Alert, Sheet and Toast promise, on every platform
 standard/hx/components.claims.json  the same claims as data, published as dist/hx/components.claims.json
 standard/ax/surfaces/apple.md     Ouro AX for Apple: the App Intents surfaces and their claims
 standard/ax/surfaces/apple.claims.json  the same claims as data, published as dist/ax/apple.claims.json
@@ -59,7 +59,7 @@ docs/decisions/                   decision records, with their history from ouro
 
 ## What the components promise
 
-[`standard/hx/components.md`](standard/hx/components.md) holds eight claims for Button, Empty, Alert, Sheet and Toast on every platform: 44-point targets, no animated movement under Reduce Motion, names a screen reader speaks, text that wraps at the largest sizes, 4.5:1 contrast (7:1 with increased contrast), announcements by urgency, toasts with an action that wait, and a close control a screen reader can reach. Each names how web and Apple prove it.
+[`standard/hx/components.md`](standard/hx/components.md) holds eight claims for Button, Badge, Empty, Alert, Sheet and Toast on every platform: 44-point targets, no animated movement under Reduce Motion, names a screen reader speaks, text that wraps at the largest sizes, 4.5:1 contrast (7:1 with increased contrast), announcements by urgency, toasts with an action that wait, and a close control a screen reader can reach. Each names how web and Apple prove it.
 
 ## Ouro AX for Apple
 
