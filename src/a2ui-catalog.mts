@@ -18,7 +18,7 @@ function catalogAction(a: Action): CatalogAction {
   const input: CatalogAction["input"] = {};
   // A composed button is one of the person's doors, so a protocol-only field (an idempotency key, a server-side owner)
   // is the app's to add when it calls the tool, never the agent's to prepare.
-  for (const [name, f] of Object.entries(a.input)) if (!f.protocolOnly) input[name] = { label: f.label, kind: f.kind, optional: f.optional === true, ...(f.kind === "enum" ? { values: [...f.values] } : {}) };
+  for (const [name, f] of Object.entries(a.input)) if (!f.protocolOnly) input[name] = { label: f.label, kind: f.kind, optional: f.optional === true, ...(f.kind === "enum" ? { values: [...f.values] } : {}), ...(f.kind === "string" && f.shownAs !== undefined ? { shownAs: f.shownAs } : {}) };
   return {
     consent: a.consent,
     press: pressOf(a.consent),
@@ -40,7 +40,7 @@ const INSTRUCTIONS = [
   "- Component ids are identifiers: letters, digits and _, starting with a letter (recipe_name, not recipe-name). The root's id is root.",
   "- Put content in the data model and bind to it with {\"@path\": \"/...\"}; repeat a template over a list with children: {\"componentId\", \"path\"}.",
   "- Every Image needs a description of what it shows.",
-  "- ActionButton is the only button. Name one of the app's actions; its label is the action's. Prepare its input from what the person said. For a consequential action the person sees and confirms what you prepared; a person-only action takes the person to the app's own screen, so give it no input.",
+  "- ActionButton is the only button. Name one of the app's actions; its label is the action's. Prepare its input from what the person said; when an id field has a name field (shownAs in the catalog), prepare the name too, since the person confirms by the name, not the id. For a consequential action the person sees and confirms what you prepared; a person-only action takes the person to the app's own screen, so give it no input.",
   "- This catalog has no functions. To act for the person, call the action's own tool (MCP, CLI); never try to press a button.",
 ].join("\n");
 

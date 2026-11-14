@@ -495,3 +495,20 @@ test("multiline is only for an optional-or-required input string that is not a p
   assert.throws(() => defineAction({ ...base, input: { x: field.integer({ label: "X", description: "x", multiline: true } as never) } }), /x.*multiline.*string/);
   assert.throws(() => defineAction(field1({ multiline: true, protocolOnly: true, optional: true })), /x.*multiline.*protocolOnly/);
 });
+
+test("shownAs names the sibling input that holds the person's word for an id", () => {
+  const f = (fields: object) => ({ ...base, input: fields as never });
+  const title = field.string({ label: "Title", description: "The title.", optional: true });
+  const ok = { recipe: field.string({ label: "Recipe", description: "The id.", arg: true, shownAs: "title" }), title };
+  assert.doesNotThrow(() => defineAction(f(ok)));
+  assert.throws(() => defineAction(f({ recipe: field.string({ label: "Recipe", description: "The id.", shownAs: "nope" }) })), /recipe.*shownAs.*"nope".*another input/);
+  assert.throws(() => defineAction(f({ recipe: field.string({ label: "R", description: "r", shownAs: "recipe" }) })), /recipe.*shownAs.*itself/);
+  assert.throws(() => defineAction(f({ recipe: field.string({ label: "R", description: "r", shownAs: "n" }), n: field.integer({ label: "N", description: "n", optional: true }) })), /recipe.*shownAs.*optional string/);
+  assert.throws(() => defineAction(f({ recipe: field.string({ label: "R", description: "r", shownAs: "title" }), title: field.string({ label: "T", description: "t" }) })), /recipe.*shownAs.*optional string/);
+  assert.throws(() => defineAction(f({ recipe: field.string({ label: "R", description: "r", shownAs: "title" }), title: field.string({ label: "T", description: "t", optional: true, protocolOnly: true }) })), /recipe.*shownAs.*protocolOnly/);
+  assert.throws(() => defineAction(f({ recipe: field.string({ label: "R", description: "r", shownAs: "title" }), title: field.string({ label: "T", description: "t", optional: true, shownAs: "recipe" }) })), /title.*shownAs.*chain|recipe.*shownAs.*is itself shown/);
+  assert.throws(() => defineAction({ ...base, output: { x: field.string({ label: "X", description: "x", shownAs: "y" } as never), y: field.string({ label: "Y", description: "y" }) } }), /x.*shownAs.*input/);
+  assert.throws(() => defineAction(f({ n: field.integer({ label: "N", description: "n", shownAs: "t" } as never), t: field.string({ label: "T", description: "t", optional: true }) })), /n.*shownAs.*string/);
+  // It is a catalog and docs matter, not a door's: MCP's schema is unchanged.
+  assert.deepEqual(Object.keys(inputSchema(defineAction(f(ok))).properties), ["recipe", "title"]);
+});
