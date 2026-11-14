@@ -3,7 +3,7 @@
 // One declaration per action (id, typed input and output, consent class, the person's label and description, the
 // agent's description) projects to: a defineCommand definition (CLI, --json, MCP, in web's AX kit), an MCP tool, a
 // WebMCP tool, web's defineComponentAx and bindAx entries with each control's props, an App Intent, a SwiftUI
-// Button(intent:) and a Reins action. A person-only action refuses on every agent door with one typed refusal.
+// Button(intent:) and a Reins action, and, for a set that names an Android package, an AppFunction and a Compose button. A person-only action refuses on every agent door with one typed refusal.
 // Design: docs/superpowers/specs/2026-11-13-one-action-model-design.md. Adopter guide: docs/guides/actions.md.
 //
 // This file imports only node: modules, so an app vendors it as it is (dist/actions/ouro-actions.mts in a core
@@ -16,7 +16,7 @@ import { join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 /** The generator's version, written into every generated file; it is core's version. */
-export const ACTIONS_VERSION = "0.10.0";
+export const ACTIONS_VERSION = "0.11.0";
 const GENERATOR = `ouro-actions ${ACTIONS_VERSION}`;
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -194,6 +194,8 @@ export interface ActionSet {
   /** The CLI tool's name, which twins start with, such as `shop`. */
   readonly tool: string;
   readonly actions: readonly Action[];
+  /** Android: the Kotlin package of OuroActions.kt and OuroActionsCompose.kt. Without it, generate writes no Kotlin. */
+  readonly android?: { readonly package: string };
 }
 
 export interface Names {
@@ -377,7 +379,7 @@ export function defineAction<const I extends Fields, const O extends Fields>(def
 }
 
 /** The set an app generates from. Ids, CLI words and derived names must be unique, so no two surfaces collide. */
-export function defineActions(name: string, actions: readonly Action[], options: { tool?: string } = {}): ActionSet {
+export function defineActions(name: string, actions: readonly Action[], options: { tool?: string; android?: { package: string } } = {}): ActionSet {
   if (!/^[a-z][a-z0-9-]*$/.test(name)) throw new Error(`action set ${JSON.stringify(name)}: the set name is lowercase words joined by -. Fix: such as "shopping".`);
   const tool = options.tool ?? name;
   if (!/^[a-z][a-z0-9-]*$/.test(tool)) throw new Error(`action set "${name}": tool is ${JSON.stringify(tool)}. Fix: the CLI's name, such as "shop".`);
@@ -392,6 +394,13 @@ export function defineActions(name: string, actions: readonly Action[], options:
       if (other !== undefined) throw new Error(`action set "${name}": actions "${other}" and "${a.id}" share the ${what} "${value}". Fix: rename one, or give it its own cli words.`);
     }
     for (const [what, value] of keys) seen.set(`${what}=${value}`, a.id);
+  }
+  const android = options.android;
+  if (android !== undefined) {
+    if (!/^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(android.package ?? "") || android.package.split(".").some((p) => KOTLIN_KEYWORDS.has(p))) {
+      throw new Error(`action set "${name}": android.package is ${JSON.stringify(android.package)}. Fix: a Kotlin package of lowercase words joined by dots, such as "com.example.shop.actions".`);
+    }
+    return Object.freeze({ name, tool, actions: Object.freeze([...actions]), android: Object.freeze({ package: android.package }) });
   }
   return Object.freeze({ name, tool, actions: Object.freeze([...actions]) });
 }
@@ -866,6 +875,222 @@ function renderReins(set: ActionSet): string {
 }
 
 // ---------------------------------------------------------------------------------------------------------------
+// Android: AppFunctions and Compose buttons
+// ---------------------------------------------------------------------------------------------------------------
+
+const KOTLIN_KEYWORDS = new Set(["as", "break", "class", "continue", "do", "else", "false", "for", "fun", "if", "in", "interface", "is", "null", "object", "package", "return", "super", "this", "throw", "true", "try", "typealias", "typeof", "val", "var", "when", "while"]);
+const kotlinLit = (s: string) => `"${s.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\$/g, "\\$")}"`;
+const kotlinId = (name: string) => (KOTLIN_KEYWORDS.has(name) ? `\`${name}\`` : name);
+const constCase = (v: string) => v.replace(/[-/.]/g, "_").replace(/_+/g, "_").toUpperCase();
+const consentCase = (c: Consent) => (c === "person-only" ? "PERSON_ONLY" : c.toUpperCase());
+
+/** Kotlin's type for a flat field: an enum is its generated enum class in the Input, a String on the AppFunction. */
+function kotlinType(a: Action, name: string, f: Field, onAppFunction = false): string {
+  const base = f.kind === "string" ? "String" : f.kind === "number" ? "Double" : f.kind === "integer" ? "Int" : f.kind === "boolean" ? "Boolean" : onAppFunction ? "String" : enumType(a, name);
+  return swiftOptional(f) ? `${base}?` : base;
+}
+
+/** The flat fields of a Kotlin type: a list, group or one-of field is protocol-only, and the person's doors leave it out. */
+const flatFields = (fields: Fields) => Object.entries(fields).filter(([, f]) => !isStructured(f));
+
+function kotlinEnums(a: Action): string[] {
+  const out: string[] = [];
+  for (const [n, f] of Object.entries(a.input)) {
+    if (f.kind !== "enum") continue;
+    out.push(`/** ${f.label}: ${f.description} */`, `enum class ${enumType(a, n)}(val wire: String) {`);
+    for (const v of f.values) out.push(`    ${constCase(v)}(${kotlinLit(v)}),`);
+    out.push("    ;", "", "    companion object {", "        /** The value an agent sent, or null when it is not one of these. */");
+    out.push(`        fun of(wire: String): ${enumType(a, n)}? = entries.firstOrNull { it.wire == wire }`, "    }", "}", "");
+  }
+  return out;
+}
+
+function kotlinInput(a: Action): string[] {
+  const P = a.names.pascal;
+  const fields = flatFields(a.input);
+  if (!fields.length) return [`/** ${a.id} takes no input. */`, `data object ${P}Input`, ""];
+  const lines = [`/** What ${a.id} takes. */`, `data class ${P}Input(`];
+  for (const [n, f] of fields) lines.push(`    val ${kotlinId(n)}: ${kotlinType(a, n, f)}${swiftOptional(f) ? " = null" : ""},`);
+  lines.push(")", "");
+  return lines;
+}
+
+function kotlinOutput(a: Action): string[] {
+  const P = a.names.pascal;
+  const fields = flatFields(a.output);
+  if (!fields.length) return [`/** ${a.id} returns nothing but success. */`, `data object ${P}Output`, ""];
+  // The AppFunction returns it, so an agent reads each field with its description.
+  const lines = [`/** What ${a.id} returns. */`, "@AppFunctionSerializable(isDescribedByKDoc = false)", `data class ${P}Output(`];
+  for (const [n, f] of fields) lines.push(`    @AppFunctionInstruction(${kotlinLit(describe(f))})`, `    val ${kotlinId(n)}: ${kotlinType(a, n, f)}${swiftOptional(f) ? " = null" : ""},`);
+  lines.push(")", "");
+  return lines;
+}
+
+function renderKotlin(set: ActionSet, pkg: string): string {
+  const service = `${names(set.name.replace(/-/g, "_")).pascal}AppFunctionService`;
+  const doors = agentDoors(set);
+  const L: string[] = [
+    `// Generated by ${GENERATOR} from the "${set.name}" action set. Don't edit; run generate.`,
+    "//",
+    "// Each action has an Input and an Output, and a handler the app sets once at launch (`<Action>Action.perform`). An",
+    `// agent door gets an AppFunction in Base${service} whose body calls the same handler, so a press (the button in`,
+    "// OuroActionsCompose.kt), an agent and a test take one path. A person-only action gets no AppFunction, so no agent can",
+    "// reach it, and OuroActions.refusal(action) answers a bridge that asks for it. A consequential action's AppFunction",
+    "// asks the person through `<Action>Action.confirm`, and refuses until the app sets it: Android has no system prompt.",
+    `package ${pkg}`,
+    "",
+    "import android.os.Build",
+    "import androidx.annotation.RequiresApi",
+    "import androidx.appfunctions.AppFunctionDeclaration",
+    "import androidx.appfunctions.AppFunctionDeniedException",
+    "import androidx.appfunctions.AppFunctionInstruction",
+    "import androidx.appfunctions.AppFunctionInvalidArgumentException",
+    "import androidx.appfunctions.AppFunctionSerializable",
+    "import androidx.appfunctions.AppFunctionService",
+    "import androidx.appfunctions.AppFunctionServiceEntryPoint",
+    "import androidx.appfunctions.AppFunctionStringValueConstraint",
+    "",
+    "/** What an action needs before it runs: web's consent classes. */",
+    "enum class OuroActionConsent(val wire: String) {",
+    '    READ("read"),',
+    '    WRITE("write"),',
+    '    CONSEQUENTIAL("consequential"),',
+    '    PERSON_ONLY("person-only"),',
+    "}",
+    "",
+    "/**",
+    " * The typed refusal of a person-only action: the error fields of web's refused outcome (code, exit, thing, problem,",
+    " * message), plus the declaration's reason and how the person does it.",
+    " */",
+    "class OuroActionRefusal(",
+    "    val thing: String,",
+    "    val problem: String,",
+    "    message: String,",
+    "    val reason: String,",
+    "    val how: String,",
+    ") : Exception(message) {",
+    '    val code: String = "person-only"',
+    "    val exit: Int = 2",
+    "}",
+    "",
+    "/** An action ran before the app set its handler. */",
+    'class OuroActionNotBound(val action: String) : IllegalStateException("$action ran before the app set its handler. Fix: set its perform at launch.")',
+    "",
+    `/** The "${set.name}" action set. */`,
+    "object OuroActions {",
+    "    /** Every action's consent class, by id. */",
+    "    val consent: Map<String, OuroActionConsent> = mapOf(",
+    ...set.actions.map((a) => `        ${kotlinLit(a.id)} to OuroActionConsent.${consentCase(a.consent)},`),
+    "    )",
+    "",
+    "    /** The ids of the actions an agent can call, each an AppFunction named by its camel name. */",
+    "    val appFunctions: Map<String, String> = mapOf(",
+    ...doors.map((a) => `        ${kotlinLit(a.id)} to ${kotlinLit(a.names.camel)},`),
+    "    )",
+    "",
+    "    /** The refusal for a person-only action, by its id, kebab or camel name; null for any other action. */",
+    "    fun refusal(action: String): OuroActionRefusal? = when (action) {",
+  ];
+  for (const a of set.actions.filter((x) => x.consent === "person-only")) {
+    const r = refusal(a).error;
+    L.push(`        ${kotlinLit(a.id)}, ${kotlinLit(a.names.kebab)}, ${kotlinLit(a.names.camel)} -> OuroActionRefusal(`);
+    L.push(`            thing = ${kotlinLit(r.thing)},`, `            problem = ${kotlinLit(r.problem)},`, `            message = ${kotlinLit(r.message)},`);
+    L.push(`            reason = ${kotlinLit(a.personOnly!.reason)},`, `            how = ${kotlinLit(a.personOnly!.how)},`, "        )");
+  }
+  L.push("        else -> null", "    }", "}", "");
+
+  for (const a of set.actions) {
+    const P = a.names.pascal;
+    const outputType = `${P}Output`;
+    L.push(`// ${a.id} (${a.consent})`, "");
+    L.push(...kotlinEnums(a), ...kotlinInput(a), ...kotlinOutput(a));
+    L.push(`/** ${a.label}: ${a.description} */`, `object ${P}Action {`);
+    L.push(`    const val ID: String = ${kotlinLit(a.id)}`, `    const val LABEL: String = ${kotlinLit(a.label)}`, `    const val DESCRIPTION: String = ${kotlinLit(a.description)}`);
+    L.push(`    val consent: OuroActionConsent = OuroActionConsent.${consentCase(a.consent)}`, "");
+    L.push("    /** The app's handler; every door calls it. */", "    @Volatile", `    var perform: (suspend (${P}Input) -> ${outputType})? = null`);
+    if (a.consent === "consequential") {
+      L.push("", "    /**", "     * How the AppFunction asks the person before it acts: return to go ahead, throw to stop, and the handler never");
+      L.push("     * runs. Unset, the AppFunction refuses, since Android has no system prompt to ask for the app.", "     */");
+      L.push("    @Volatile", `    var confirm: (suspend (${P}Input) -> Unit)? = null`);
+    }
+    L.push("", `    suspend fun run(input: ${P}Input): ${outputType} {`, "        val handler = perform ?: throw OuroActionNotBound(ID)", "        return handler(input)", "    }", "}", "");
+  }
+
+  L.push(
+    "/**",
+    ` * The "${set.name}" set's AppFunctions: one per agent door, each calling its action's handler. Subclassed by the`,
+    ` * generated ${service}, which the app declares in its manifest (ourostack/ouro-ui-android's README says how).`,
+    " */",
+    "@RequiresApi(Build.VERSION_CODES.BAKLAVA)",
+    `@AppFunctionServiceEntryPoint(serviceName = ${kotlinLit(service)}, appFunctionXmlFileName = ${kotlinLit(`${set.name.replace(/-/g, "_")}_app_functions`)})`,
+    `abstract class Base${service} : AppFunctionService() {`,
+  );
+  for (const a of doors) {
+    const P = a.names.pascal;
+    const fields = personFields(a).filter(([, f]) => !isStructured(f));
+    const hasOutput = flatFields(a.output).length > 0;
+    L.push("", "    @AppFunctionDeclaration(isDescribedByKDoc = false)", `    @AppFunctionInstruction(${kotlinLit(a.agent)})`);
+    L.push(`    suspend fun ${a.names.camel}(`);
+    for (const [n, f] of fields) {
+      L.push(`        @AppFunctionInstruction(${kotlinLit(describe(f))})`);
+      if (f.kind === "enum") L.push(`        @AppFunctionStringValueConstraint(enumValues = [${f.values.map(kotlinLit).join(", ")}])`);
+      L.push(`        ${kotlinId(n)}: ${kotlinType(a, n, f, true)}${f.optional ? " = null" : ""},`);
+    }
+    L.push(`    )${hasOutput ? `: ${P}Output` : ""} {`);
+    for (const [n, f] of fields) {
+      if (f.kind !== "enum") continue;
+      const v = kotlinId(n);
+      const parse = `${enumType(a, n)}.of(it) ?: throw AppFunctionInvalidArgumentException(${kotlinLit(`${n} is not one of ${f.values.join(", ")}.`)})`;
+      L.push(f.optional ? `        val ${n}Value = ${v}?.let { ${parse} }` : `        val ${n}Value = ${v}.let { ${parse} }`);
+    }
+    const args = fields.map(([n, f]) => `${kotlinId(n)} = ${f.kind === "enum" ? `${n}Value` : kotlinId(n)}`).join(", ");
+    L.push(`        val input = ${fields.length ? `${P}Input(${args})` : `${P}Input`}`);
+    if (a.consent === "consequential") {
+      L.push("        // Consequential: the person says yes before it acts.");
+      L.push(`        val confirm = ${P}Action.confirm ?: throw AppFunctionDeniedException(${kotlinLit(`${a.label} needs the person's yes, and this app hasn't said how to ask. Ask the person to do it in the app.`)})`);
+      L.push("        confirm(input)");
+    }
+    L.push(hasOutput ? `        return ${P}Action.run(input)` : `        ${P}Action.run(input)`, "    }");
+  }
+  L.push("}");
+  return `${L.join("\n")}\n`;
+}
+
+function renderCompose(set: ActionSet, pkg: string): string {
+  const L: string[] = [
+    `// Generated by ${GENERATOR} from the "${set.name}" action set. Don't edit; run generate.`,
+    "//",
+    "// Compose controls from the same declarations: each is an OuroButton that calls the handler its AppFunction calls,",
+    "// and carries its action in its semantics (Modifier.ouroAction), so the X-ray can check that what a person sees and",
+    "// what an agent can call agree. A person-only action's button runs the handler too: the person's press is the door",
+    "// no agent has. Needs ourostack/ouro-ui-android's ouro-hx.",
+    `package ${pkg}`,
+    "",
+    "import androidx.compose.runtime.Composable",
+    "import androidx.compose.runtime.rememberCoroutineScope",
+    "import androidx.compose.ui.Modifier",
+    "import bot.ouro.ui.hx.OuroButton",
+    "import bot.ouro.ui.hx.OuroButtonSize",
+    "import bot.ouro.ui.hx.OuroButtonVariant",
+    "import bot.ouro.ui.hx.OuroTone",
+    "import bot.ouro.ui.hx.ouroAction",
+    "import kotlinx.coroutines.launch",
+  ];
+  for (const a of set.actions) {
+    const P = a.names.pascal;
+    L.push("", `/** The control for ${a.id}: ${a.description} */`, "@Composable", `fun ${P}Button(`);
+    L.push(`    input: ${P}Input,`, "    modifier: Modifier = Modifier,", `    text: String = ${P}Action.LABEL,`);
+    L.push("    tone: OuroTone = OuroTone.Primary,");
+    L.push("    variant: OuroButtonVariant = OuroButtonVariant.Solid,", "    size: OuroButtonSize = OuroButtonSize.Md,", "    enabled: Boolean = true,");
+    L.push(`    onResult: (Result<${P}Output>) -> Unit = {},`, ") {", "    val scope = rememberCoroutineScope()", "    OuroButton(", "        text = text,");
+    L.push(`        onClick = { scope.launch { onResult(runCatching { ${P}Action.run(input) }) } },`);
+    L.push(`        modifier = modifier.ouroAction(${P}Action.ID, ${P}Action.consent.wire, ${P}Action.DESCRIPTION),`);
+    L.push("        tone = tone,", "        variant = variant,", "        size = size,", "        enabled = enabled,", "    )", "}");
+  }
+  return `${L.join("\n")}\n`;
+}
+
+// ---------------------------------------------------------------------------------------------------------------
 // Every projection, the drift check and the live comparison
 // ---------------------------------------------------------------------------------------------------------------
 
@@ -879,6 +1104,10 @@ export function renderActions(set: ActionSet): Map<string, string> {
   files.set("web.ts", renderWeb(set));
   files.set("OuroActions.swift", renderSwift(set));
   files.set("OuroActionsReins.swift", renderReins(set));
+  if (set.android) {
+    files.set("OuroActions.kt", renderKotlin(set, set.android.package));
+    files.set("OuroActionsCompose.kt", renderCompose(set, set.android.package));
+  }
   return files;
 }
 

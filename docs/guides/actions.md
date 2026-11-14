@@ -2,7 +2,7 @@
 
 For an app team (Spoonjoy first) moving its actions onto one declaration each. The why is [the decision record of 2026-11-13](../decisions/2026-11-13-agents-use-agent-interfaces.md); the design is [the spec](../superpowers/specs/2026-11-13-one-action-model-design.md); the promises are [the action claims](../../standard/ax/actions.md).
 
-You declare each action once in TypeScript. `ouro-actions.mts generate` writes its CLI command, MCP and WebMCP tools, web control props and component AX entry, App Intent, SwiftUI `Button(intent:)` and Reins action into a folder you commit. `check` and `compare-mcp` fail your CI when anything drifts from the declarations.
+You declare each action once in TypeScript. `ouro-actions.mts generate` writes its CLI command, MCP and WebMCP tools, web control props and component AX entry, App Intent, SwiftUI `Button(intent:)` and Reins action into a folder you commit, and, when the set names an Android package (core 0.11.0), an AppFunction and a Compose button. `check` and `compare-mcp` fail your CI when anything drifts from the declarations.
 
 ## 1. Vendor the generator
 
@@ -85,6 +85,8 @@ node tools/ouro-actions/ouro-actions.mts generate actions/shopping.actions.mts a
 | `web.ts` | `componentAx`, `twins`, `controls` | `defineComponentAx`, `bindAx`, and the props on each control |
 | `OuroActions.swift` | Inputs, outputs, handlers, App Intents, buttons, `OuroActions.refusal(for:)` | Your Apple app target |
 | `OuroActionsReins.swift` | `ReinsInput` conformances and a `ReinsAction` per action | Your Reins nodes (needs `OuroReins`) |
+| `OuroActions.kt` | Only with `android: { package }`: inputs, outputs, handlers, the AppFunctions service, `OuroActions.refusal(action)` | Your Android app module (needs `androidx.appfunctions` 1.0.0-rc01 and its KSP compiler) |
+| `OuroActionsCompose.kt` | Only with `android: { package }`: an `OuroButton` per action, marked with `Modifier.ouroAction` | Your Compose screens (needs ouro-ui-android's `ouro-hx`) |
 
 Never edit a generated file: change the declaration and generate again.
 
@@ -117,6 +119,17 @@ AddShoppingListItemButton(AddShoppingListItemInput(name: "oat milk"))
 // In a Reins node:
 ReinsNode("list", encoding: state, actions: [.addShoppingListItem(), .placeGroceryOrder()])
 ```
+
+**Android** (core 0.11.0). Name the Kotlin package in the set, `defineActions("shopping", [...], { tool: "shop", android: { package: "com.example.shop.actions" } })`, and generate writes `OuroActions.kt` and `OuroActionsCompose.kt` into the folder; point your app module's Kotlin sources at it. Each agent door is an AppFunction (androidx.appfunctions 1.0.0-rc01: `@AppFunctionDeclaration`, described by `@AppFunctionInstruction` from the declaration's agent description and field descriptions) in `Base<Set>AppFunctionService`, which the AppFunctions KSP compiler turns into `<Set>AppFunctionService` and `<set>_app_functions.xml`; declare that service in your manifest as [ouro-ui-android's README](https://github.com/ourostack/ouro-ui-android) shows. A person-only action has no AppFunction. Set each handler once at launch; the AppFunction and the button both call it:
+
+```kotlin
+AddShoppingListItemAction.perform = { input -> store.add(input.name, input.quantity, input.unit).let { AddShoppingListItemOutput(id = it.id, name = it.name) } }
+ShareShoppingListAction.confirm = { input -> if (!askInApp(input)) throw CancellationException("declined") }   // consequential: unset, the AppFunction refuses
+// In a screen:
+AddShoppingListItemButton(AddShoppingListItemInput(name = "oat milk"))
+```
+
+Android has no system prompt like Apple's `requestConfirmation()`, so a consequential action's AppFunction refuses with `AppFunctionDeniedException` until the app sets `confirm`. ouro-ui-android's X-ray reads the app's AppFunction metadata on an emulator and checks it against the declarations.
 
 Each agent door's App Intent provides a dialog, which is what Siri and Shortcuts say. Set `<Action>Action.dialog` to say the result in your words, or turn an error into words (rethrow it to let the system show it); unset, the intent says "Done." and a failure throws:
 

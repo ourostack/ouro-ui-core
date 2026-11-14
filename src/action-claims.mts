@@ -3,7 +3,7 @@
 // projections and `check` naming the check that proves the claim (core's test, or the command an app runs).
 
 /** The surfaces one declaration projects to (src/actions.mts). */
-export const ACTION_PROJECTIONS = Object.freeze(["cli", "mcp", "webmcp", "web-control", "app-intent", "swiftui-button", "reins"] as const);
+export const ACTION_PROJECTIONS = Object.freeze(["cli", "mcp", "webmcp", "web-control", "app-intent", "swiftui-button", "reins", "app-function", "compose-button"] as const);
 export type ActionProjection = (typeof ACTION_PROJECTIONS)[number];
 
 export interface ActionClaim {

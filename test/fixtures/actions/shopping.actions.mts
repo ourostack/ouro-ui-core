@@ -91,4 +91,4 @@ export const placeGroceryOrder = defineAction({
   cli: "list order",
 });
 
-export default defineActions("shopping", [getShoppingList, addShoppingListItem, removeShoppingListItem, shareShoppingList, placeGroceryOrder], { tool: "shop" });
+export default defineActions("shopping", [getShoppingList, addShoppingListItem, removeShoppingListItem, shareShoppingList, placeGroceryOrder], { tool: "shop", android: { package: "bot.ouro.ui.fixtures.shopping" } });

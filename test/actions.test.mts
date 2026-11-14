@@ -202,7 +202,7 @@ test("fromCli gives a CLI run() the declaration's field names, so every door cal
 test("every generated file names its generator and set, and renders the same twice", () => {
   const a = renderActions(shopping);
   const b = renderActions(shopping);
-  assert.deepEqual([...a.keys()].sort(), ["OuroActions.swift", "OuroActionsReins.swift", "actions.json", "commands.json", "mcp.json", "web.ts", "webmcp.json"]);
+  assert.deepEqual([...a.keys()].sort(), ["OuroActions.kt", "OuroActions.swift", "OuroActionsCompose.kt", "OuroActionsReins.swift", "actions.json", "commands.json", "mcp.json", "web.ts", "webmcp.json"]);
   for (const [path, text] of a) {
     assert.equal(text, b.get(path));
     assert.match(text, /ouro-actions \d+\.\d+\.\d+/, `${path} has no header`);
@@ -436,7 +436,7 @@ test("defineAction refuses what the intent options can't carry, with the fix", (
   throwsWith({ opensApp: "yes" }, /opensApp is "yes". Fix: true or false/);
 });
 
-test("felt number: one declaration, seven projections", () => {
+test("felt number: one declaration, nine projections", () => {
   const files = renderActions(shopping);
   const surfaces = [
     JSON.parse(files.get("commands.json")!).commands.some((c: { name: string }) => c.name === "list add"),
@@ -446,8 +446,10 @@ test("felt number: one declaration, seven projections", () => {
     files.get("OuroActions.swift")!.includes("struct AddShoppingListItemIntent: AppIntent"),
     files.get("OuroActions.swift")!.includes("Button(intent: AddShoppingListItemIntent(input))"),
     files.get("OuroActionsReins.swift")!.includes("static func addShoppingListItem()"),
+    files.get("OuroActions.kt")!.includes("suspend fun addShoppingListItem("),
+    files.get("OuroActionsCompose.kt")!.includes("fun AddShoppingListItemButton("),
   ];
-  assert.deepEqual(surfaces, Array(7).fill(true));
+  assert.deepEqual(surfaces, Array(9).fill(true));
 });
 
 test("the generator runs alone, as an app vendors it: copied into an empty folder, it generates and checks", async () => {
@@ -720,4 +722,66 @@ test("the reviewer's four: nullable const, overlapping one-of options, nested en
     () => defineAction({ ...consentWrite, consent: "read", input: {}, output: { st: field.enum({ label: "State", description: "State.", values: ["on", "off"] }) } }),
     /an output field can't be an enum/,
   );
+});
+
+test("Kotlin: only a set that names an Android package gets it, and the package must be one", () => {
+  const plain = defineActions("pins", [defineAction(base)]);
+  assert.deepEqual([...renderActions(plain).keys()].filter((k) => k.endsWith(".kt")), []);
+  assert.equal(JSON.stringify(renderActions(plain).get("actions.json")).includes("android"), false);
+  for (const bad of ["Pins", "pins", "com.example.in", "com..example", ""]) {
+    assert.throws(() => defineActions("pins", [defineAction(base)], { android: { package: bad } }), /android\.package .* Fix: a Kotlin package/, bad);
+  }
+  const kt = renderActions(defineActions("pin-set", [defineAction(base)], { android: { package: "com.example.pins" } }));
+  assert.match(kt.get("OuroActions.kt")!, /^package com\.example\.pins$/m);
+  assert.match(kt.get("OuroActions.kt")!, /serviceName = "PinSetAppFunctionService", appFunctionXmlFileName = "pin_set_app_functions"/);
+});
+
+test("Kotlin: one AppFunction per agent door, none for person-only, which refuses with web's words", () => {
+  const kt = renderActions(shopping).get("OuroActions.kt")!;
+  const functions = [...kt.matchAll(/@AppFunctionDeclaration\(isDescribedByKDoc = false\)\n {4}@AppFunctionInstruction\("([^\n]*)"\)\n {4}suspend fun (\w+)\(/g)].map((m) => [m[2], m[1]]);
+  assert.deepEqual(functions.map(([name]) => name), ["getShoppingList", "addShoppingListItem", "removeShoppingListItem", "shareShoppingList"]);
+  for (const [name, instruction] of functions) {
+    const a = shopping.actions.find((x) => x.names.camel === name)!;
+    assert.equal(instruction, a.agent.replace(/"/g, '\\"'), `${name} is described by the agent's description`);
+  }
+  assert.doesNotMatch(kt, /fun placeGroceryOrder\(/);
+  const r = refusal(placeGroceryOrder).error;
+  assert.ok(kt.includes(`message = ${JSON.stringify(r.message)},`), "the refusal's message is web's");
+  assert.match(kt, /"place_grocery_order", "place-grocery-order", "placeGroceryOrder" -> OuroActionRefusal\(/);
+  assert.match(kt, /val code: String = "person-only"\n {4}val exit: Int = 2/);
+});
+
+test("Kotlin: consequential asks through confirm and refuses without it; protocol-only and structured fields stay off the AppFunction", () => {
+  const kt = renderActions(shopping).get("OuroActions.kt")!;
+  assert.equal(kt.match(/throw AppFunctionDeniedException\(/g)?.length, 1);
+  assert.match(kt, /suspend fun shareShoppingList\([\s\S]*?val confirm = ShareShoppingListAction\.confirm \?: throw AppFunctionDeniedException\([\s\S]*?confirm\(input\)\n {8}ShareShoppingListAction\.run\(input\)/);
+  assert.match(kt, /object ShareShoppingListAction \{[\s\S]*?var confirm: \(suspend \(ShareShoppingListInput\) -> Unit\)\? = null/);
+  assert.doesNotMatch(kt, /object AddShoppingListItemAction \{[^}]*confirm/);
+  const add = /suspend fun addShoppingListItem\(([\s\S]*?)\)/.exec(kt)![1]!;
+  assert.doesNotMatch(add, /idempotencyKey/);
+  assert.match(kt, /data class AddShoppingListItemInput\([\s\S]*?val idempotencyKey: String\? = null,/);
+  assert.doesNotMatch(kt, /alsoIds/);
+  assert.match(kt, /@AppFunctionStringValueConstraint\(enumValues = \["all", "unchecked"\]\)\n {8}show: String\? = null,/);
+  assert.match(kt, /GetShoppingListShowValue\.of\(it\) \?: throw AppFunctionInvalidArgumentException\(/);
+  assert.match(kt, /suspend fun removeShoppingListItem\([\s\S]*?\) \{\n/, "an action with no output returns Unit");
+  assert.match(kt, /@AppFunctionSerializable\(isDescribedByKDoc = false\)\ndata class AddShoppingListItemOutput\(/);
+  assert.match(kt, /val `?with`?: String,/);
+});
+
+test("Kotlin: every action, person-only too, gets a Compose button that calls its handler and names its action", () => {
+  const compose = renderActions(shopping).get("OuroActionsCompose.kt")!;
+  for (const a of shopping.actions) {
+    const P = a.names.pascal;
+    assert.match(compose, new RegExp(`fun ${P}Button\\(`), `${a.id} has a button`);
+    assert.ok(compose.includes(`onResult(runCatching { ${P}Action.run(input) })`), `${a.id}'s button runs its handler`);
+    assert.ok(compose.includes(`modifier.ouroAction(${P}Action.ID, ${P}Action.consent.wire, ${P}Action.DESCRIPTION)`), `${a.id}'s button names its action`);
+  }
+});
+
+test("Kotlin strings escape quotes, backslashes and dollars", () => {
+  const tricky = defineAction({ ...base, id: "cost_note", label: "Cost $5", description: 'Say "hi" \\ there.', agent: "Costs $5 \"now\"." });
+  const kt = renderActions(defineActions("tricky", [tricky], { android: { package: "com.example.tricky" } })).get("OuroActions.kt")!;
+  assert.ok(kt.includes('const val LABEL: String = "Cost \\$5"'));
+  assert.ok(kt.includes('const val DESCRIPTION: String = "Say \\"hi\\" \\\\ there."'));
+  assert.ok(kt.includes('@AppFunctionInstruction("Costs \\$5 \\"now\\".")'));
 });

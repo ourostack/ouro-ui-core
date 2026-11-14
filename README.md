@@ -34,7 +34,7 @@ standard/hx/components.md         Ouro HX: what Button, Badge, Card, Item, Empty
 standard/hx/components.claims.json  the same claims as data, published as dist/hx/components.claims.json
 standard/ax/surfaces/apple.md     Ouro AX for Apple: the App Intents surfaces and their claims
 standard/ax/surfaces/apple.claims.json  the same claims as data, published as dist/ax/apple.claims.json
-src/actions.mts                   the one action model: declare an action once, generate its CLI, MCP, WebMCP, web, App Intent, button and Reins
+src/actions.mts                   the one action model: declare an action once, generate its CLI, MCP, WebMCP, web, App Intent, button and Reins, and on Android its AppFunction and Compose button
 standard/ax/actions.md            Ouro AX: what an action promises
 standard/ax/actions.claims.json   the same claims as data, published as dist/ax/actions.claims.json
 src/a2ui.mts                      Ouro HX for agent-composed UI: the A2UI catalog, validator, resolver and MCP Apps helpers

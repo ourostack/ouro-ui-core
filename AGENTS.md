@@ -28,7 +28,7 @@ Core is the platform-neutral part of Ouro UI: what is true on every platform, fo
 
 ## The one action model
 
-- `src/actions.mts` declares an action once (`defineAction`) and generates its seven projections: CLI (`commands.json`), MCP (`mcp.json`), WebMCP (`webmcp.json`), web (`web.ts`), App Intent and SwiftUI button (`OuroActions.swift`), and Reins (`OuroActionsReins.swift`). It imports only `node:` modules, because apps vendor the file itself from a release as `ouro-actions.mts`; keep it that way.
+- `src/actions.mts` declares an action once (`defineAction`) and generates its seven projections: CLI (`commands.json`), MCP (`mcp.json`), WebMCP (`webmcp.json`), web (`web.ts`), App Intent and SwiftUI button (`OuroActions.swift`), and Reins (`OuroActionsReins.swift`); for a set that names an Android package, also an AppFunction (`OuroActions.kt`) and a Compose button (`OuroActionsCompose.kt`), which ourostack/ouro-ui-android compiles and runs on an emulator. It imports only `node:` modules, because apps vendor the file itself from a release as `ouro-actions.mts`; keep it that way.
 - The fixture `test/fixtures/actions/shopping.actions.mts` and its committed `generated/` folder are the proof: `pnpm actions:check` fails CI when a generated file drifts, and the apple job builds and runs the generated Swift (`apple/actions-check`). After changing the generator, run `pnpm actions:generate` and commit the folder.
 - The person-only refusal is web's refused outcome byte for byte (web's `cli.ts`); change it only together with web. `mcp.json` is the one MCP door.
 - `standard/ax/actions.claims.json` is the claim set and `actions.md` its page (`pnpm actions:page`); the adopter guide is `docs/guides/actions.md`.

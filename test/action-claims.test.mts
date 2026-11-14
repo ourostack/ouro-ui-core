@@ -8,7 +8,7 @@ const page = await readFile(new URL("../standard/ax/actions.md", import.meta.url
 
 test("the action claim set checks clean", () => {
   assert.deepEqual(checkActionClaimSet(set), []);
-  assert.equal(loadActionClaimSet(set).version, "0.1.0");
+  assert.equal(loadActionClaimSet(set).version, "0.2.0");
 });
 
 test("the page's claims section is rendered from the data, word for word (pnpm actions:page)", () => {
