@@ -1,6 +1,7 @@
 // pnpm tokens: writes every platform's output from tokens/ into dist/.
 //   dist/web/**.css               Ouro HX for web (byte-identical to web's files; see tokens:parity)
 //   dist/apple/OuroTokens.swift   Ouro HX for Apple
+//   dist/android/OuroTokens.kt    Ouro HX for Android (Jetpack Compose)
 //   dist/swatches.html            every theme's resolved colours, to look at
 //   dist/ax/apple.claims.json     Ouro AX for Apple's claim set, byte for byte from standard/ax/surfaces/
 //   dist/hx/components.claims.json  Ouro HX's component claims, byte for byte from standard/hx/
@@ -18,6 +19,7 @@ import { loadActionClaimSet } from "../src/action-claims.mts";
 import { loadAppleClaimSet } from "../src/ax-claims.mts";
 import { loadFeelSpec } from "../src/feel-spec.mts";
 import { loadHxClaimSet } from "../src/hx-claims.mts";
+import { renderAndroid } from "../src/android.mts";
 import { renderApple } from "../src/apple.mts";
 import { renderSwatches } from "../src/swatches.mts";
 import { renderWeb } from "../src/web.mts";
@@ -28,6 +30,7 @@ const tag = `v${version}`;
 
 const files = new Map<string, string>(await renderWeb());
 files.set("apple/OuroTokens.swift", await renderApple(tag));
+files.set("android/OuroTokens.kt", await renderAndroid(tag));
 files.set("swatches.html", await renderSwatches(tag));
 
 // The claim set is published as written, after checking it, so a platform pins the bytes it was reviewed as.

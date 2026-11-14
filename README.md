@@ -20,6 +20,7 @@ Core holds what is true on every platform. Today that is three things: Ouro HX's
 |---|---|---|
 | Ouro HX for web | [ourostack/ouro-ui](https://github.com/ourostack/ouro-ui) | `dist/web/*.css` |
 | Ouro HX for Apple | [ourostack/ouro-ui-apple](https://github.com/ourostack/ouro-ui-apple) | `dist/apple/OuroTokens.swift` |
+| Ouro HX for Android | [ourostack/ouro-ui-android](https://github.com/ourostack/ouro-ui-android) | `dist/android/OuroTokens.kt` |
 
 ## What's inside
 
@@ -49,6 +50,7 @@ docs/decisions/                   decision records, with their history from ouro
 - `dist/web/ouro-theme.css` and `dist/web/ouro-base.css`: what `shadcn add` installs from web's registry.
 - `dist/web/plain/` and `dist/web/themes/<name>.css`: the plain stylesheets ui.ouroboros.bot serves for pages without Tailwind.
 - `dist/apple/OuroTokens.swift`: SwiftUI with no dependencies. `OuroTokens.theme(.pearl).colors(scheme).primary` is a `Color`, `OuroTokens.Duration.fast` is a `Double` in seconds, and `OuroTokens.Spring.animation` is the spring. A theme's own tokens, the ones no other theme defines (Cookbook's `sj-*` colours, fonts, lengths, shadows and text roles), are in `OuroTokens.theme(.cookbook).extras`: `extras.color(.sjBrass, scheme)`, `extras.type[.sjTypeEyebrow]`. A token marked `"web": false` reaches Apple only, so web's files stay byte-identical.
+- `dist/android/OuroTokens.kt`: Jetpack Compose, needing only `androidx.compose.ui` and `androidx.compose.animation.core`. `OuroTokens.theme(OuroThemeName.Pearl).colors(dark).primary` is a `Color`, `OuroTokens.Duration.fast` is milliseconds, and `OuroTokens.Spring` gives Compose's `dampingRatio` and `stiffness` for the same spring. Every colour equals Apple's to within one 8-bit step (`test/android.test.mts`). Theme extras (Cookbook's `sj-*`) are Apple-only for now.
 - `dist/ax/apple.claims.json`: Ouro AX for Apple's claim set, byte for byte, for `ouro-ax-xray` in ouro-ui-apple.
 - `dist/hx/components.claims.json`: Ouro HX's component claims, byte for byte, which each platform's tests prove.
 - `dist/actions/ouro-actions.mts`: the one action model's generator, byte for byte from `src/actions.mts`, which apps vendor and run with Node; [the adopter guide](docs/guides/actions.md) says how.
