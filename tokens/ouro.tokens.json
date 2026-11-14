@@ -1,9 +1,9 @@
 {
-  "$description": "Ouro UI's tokens: the default colours (Pearl) and what every Ouro component needs. DTCG 2025.10. Derived from ourostack/ouro-ui@v1.3.7.",
+  "$description": "Ouro UI's tokens: the default colours (Pearl) and what every Ouro component needs. DTCG 2025.10. Derived from ourostack/ouro-ui@v1.3.24.",
   "radius": {
     "$type": "dimension",
     "$value": {
-      "value": 0.75,
+      "value": 1.125,
       "unit": "rem"
     }
   },
@@ -639,8 +639,255 @@
     "radius": {
       "$type": "dimension",
       "$value": {
-        "value": 0.625,
+        "value": 0.9375,
         "unit": "rem"
+      }
+    }
+  },
+  "ouro": {
+    "corner-shape": {
+      "$type": "string",
+      "$value": "squircle"
+    },
+    "spring": {
+      "duration": {
+        "$type": "duration",
+        "$value": {
+          "value": 750,
+          "unit": "ms"
+        }
+      },
+      "visual-duration": {
+        "$type": "duration",
+        "$value": {
+          "value": 400,
+          "unit": "ms"
+        },
+        "$description": "The spring's perceived duration: Motion's spring(0.4, 0.15), which --ouro-ease-spring draws as CSS",
+        "$extensions": {
+          "bot.ouro": {
+            "web": false
+          }
+        }
+      },
+      "bounce": {
+        "$type": "number",
+        "$value": 0.15,
+        "$description": "The spring's bounce: Motion's spring(0.4, 0.15), which --ouro-ease-spring draws as CSS",
+        "$extensions": {
+          "bot.ouro": {
+            "web": false
+          }
+        }
+      }
+    },
+    "ease": {
+      "spring": {
+        "$type": "string",
+        "$value": "linear(0, 0.0663, 0.2105, 0.3763, 0.5332, 0.6669, 0.7733, 0.8533, 0.9107, 0.9499, 0.9754, 0.9911, 1, 1.0044, 1.0061, 1.0062, 1.0055, 1.0045, 1.0035, 1.0026, 1.0018, 1.0012, 1.0008, 1, 1)"
+      },
+      "out": {
+        "$type": "cubicBezier",
+        "$value": [0.23, 1, 0.32, 1],
+        "$description": "enter and exit"
+      },
+      "in-out": {
+        "$type": "cubicBezier",
+        "$value": [0.77, 0, 0.175, 1],
+        "$description": "movement on screen"
+      },
+      "drawer": {
+        "$type": "cubicBezier",
+        "$value": [0.32, 0.72, 0, 1],
+        "$description": "sheets"
+      }
+    },
+    "duration": {
+      "press": {
+        "$type": "duration",
+        "$value": {
+          "value": 160,
+          "unit": "ms"
+        },
+        "$description": "press feedback"
+      },
+      "fast": {
+        "$type": "duration",
+        "$value": {
+          "value": 150,
+          "unit": "ms"
+        },
+        "$description": "tooltips, colour, small-popup exits"
+      },
+      "base": {
+        "$type": "duration",
+        "$value": {
+          "value": 200,
+          "unit": "ms"
+        },
+        "$description": "popovers, menus, selects, accordions"
+      },
+      "draw": {
+        "$type": "duration",
+        "$value": {
+          "value": 240,
+          "unit": "ms"
+        },
+        "$description": "a stroke drawn along its path: the checkbox tick, a checklist strike"
+      },
+      "slow": {
+        "$type": "duration",
+        "$value": {
+          "value": 300,
+          "unit": "ms"
+        },
+        "$description": "dialogs, backdrops"
+      },
+      "sheet": {
+        "$type": "duration",
+        "$value": {
+          "value": 500,
+          "unit": "ms"
+        },
+        "$description": "sheets only"
+      }
+    },
+    "press": {
+      "scale": {
+        "$type": "number",
+        "$value": 0.97
+      }
+    },
+    "backdrop": {
+      "color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.0941, 0.0941, 0.1059],
+          "hex": "#18181b"
+        },
+        "$extensions": {
+          "mode": {
+            "dark": {
+              "colorSpace": "srgb",
+              "components": [0, 0, 0],
+              "hex": "#000000"
+            }
+          }
+        }
+      },
+      "max": {
+        "$type": "number",
+        "$value": 0.4
+      }
+    },
+    "shadow": {
+      "sheet-bottom": {
+        "$type": "string",
+        "$value": "0 -1px 0 color-mix(in oklab, var(--border) 60%, transparent), 0 -8px 32px rgb(0 0 0 / 0.12)"
+      },
+      "sheet-top": {
+        "$type": "string",
+        "$value": "0 1px 0 color-mix(in oklab, var(--border) 60%, transparent), 0 8px 32px rgb(0 0 0 / 0.12)"
+      },
+      "sheet-left": {
+        "$type": "string",
+        "$value": "8px 0 32px rgb(0 0 0 / 0.12)"
+      },
+      "sheet-right": {
+        "$type": "string",
+        "$value": "-8px 0 32px rgb(0 0 0 / 0.12)"
+      }
+    },
+    "layer": {
+      "$type": "number",
+      "$value": 50
+    },
+    "glass": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [1, 1, 1],
+        "hex": "#ffffff"
+      }
+    },
+    "glass-tint": {
+      "$type": "string",
+      "$value": "34%",
+      "$extensions": {
+        "mode": {
+          "dark": "12%"
+        }
+      }
+    },
+    "glass-blur": {
+      "$type": "dimension",
+      "$value": {
+        "value": 6,
+        "unit": "px"
+      }
+    },
+    "glass-rim": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [1, 1, 1],
+        "alpha": 0.85,
+        "hex": "#ffffff"
+      },
+      "$extensions": {
+        "mode": {
+          "dark": {
+            "colorSpace": "srgb",
+            "components": [1, 1, 1],
+            "alpha": 0.3,
+            "hex": "#ffffff"
+          }
+        },
+        "bot.ouro": {
+          "css": "rgb(255 255 255 / 0.85)",
+          "cssDark": "rgb(255 255 255 / 0.3)"
+        }
+      }
+    },
+    "glass-edge": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [0.0784, 0.0706, 0.0627],
+        "alpha": 0.1,
+        "hex": "#141210"
+      },
+      "$extensions": {
+        "mode": {
+          "dark": {
+            "colorSpace": "srgb",
+            "components": [0.0314, 0.0235, 0.0157],
+            "alpha": 0.35,
+            "hex": "#080604"
+          }
+        },
+        "bot.ouro": {
+          "css": "rgb(20 18 16 / 0.1)",
+          "cssDark": "rgb(8 6 4 / 0.35)"
+        }
+      }
+    },
+    "glass-solid": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [1, 1, 1],
+        "hex": "#ffffff"
+      },
+      "$extensions": {
+        "mode": {
+          "dark": {
+            "colorSpace": "srgb",
+            "components": [0.9137, 0.902, 0.8824],
+            "hex": "#e9e6e1"
+          }
+        }
       }
     }
   },
@@ -863,162 +1110,6 @@
           "hex": "#ef85e2"
         }
       }
-    }
-  },
-  "ouro": {
-    "spring": {
-      "duration": {
-        "$type": "duration",
-        "$value": {
-          "value": 750,
-          "unit": "ms"
-        }
-      },
-      "visual-duration": {
-        "$type": "duration",
-        "$value": {
-          "value": 400,
-          "unit": "ms"
-        },
-        "$description": "The spring's perceived duration: Motion's spring(0.4, 0.15), which --ouro-ease-spring draws as CSS",
-        "$extensions": {
-          "bot.ouro": {
-            "web": false
-          }
-        }
-      },
-      "bounce": {
-        "$type": "number",
-        "$value": 0.15,
-        "$description": "The spring's bounce: Motion's spring(0.4, 0.15), which --ouro-ease-spring draws as CSS",
-        "$extensions": {
-          "bot.ouro": {
-            "web": false
-          }
-        }
-      }
-    },
-    "ease": {
-      "spring": {
-        "$type": "string",
-        "$value": "linear(0, 0.0663, 0.2105, 0.3763, 0.5332, 0.6669, 0.7733, 0.8533, 0.9107, 0.9499, 0.9754, 0.9911, 1, 1.0044, 1.0061, 1.0062, 1.0055, 1.0045, 1.0035, 1.0026, 1.0018, 1.0012, 1.0008, 1, 1)"
-      },
-      "out": {
-        "$type": "cubicBezier",
-        "$value": [0.23, 1, 0.32, 1],
-        "$description": "enter and exit"
-      },
-      "in-out": {
-        "$type": "cubicBezier",
-        "$value": [0.77, 0, 0.175, 1],
-        "$description": "movement on screen"
-      },
-      "drawer": {
-        "$type": "cubicBezier",
-        "$value": [0.32, 0.72, 0, 1],
-        "$description": "sheets"
-      }
-    },
-    "duration": {
-      "press": {
-        "$type": "duration",
-        "$value": {
-          "value": 160,
-          "unit": "ms"
-        },
-        "$description": "press feedback"
-      },
-      "fast": {
-        "$type": "duration",
-        "$value": {
-          "value": 150,
-          "unit": "ms"
-        },
-        "$description": "tooltips, colour, small-popup exits"
-      },
-      "base": {
-        "$type": "duration",
-        "$value": {
-          "value": 200,
-          "unit": "ms"
-        },
-        "$description": "popovers, menus, selects, accordions"
-      },
-      "draw": {
-        "$type": "duration",
-        "$value": {
-          "value": 240,
-          "unit": "ms"
-        },
-        "$description": "a stroke drawn along its path: the checkbox tick, a checklist strike"
-      },
-      "slow": {
-        "$type": "duration",
-        "$value": {
-          "value": 300,
-          "unit": "ms"
-        },
-        "$description": "dialogs, backdrops"
-      },
-      "sheet": {
-        "$type": "duration",
-        "$value": {
-          "value": 500,
-          "unit": "ms"
-        },
-        "$description": "sheets only"
-      }
-    },
-    "press": {
-      "scale": {
-        "$type": "number",
-        "$value": 0.97
-      }
-    },
-    "backdrop": {
-      "color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "srgb",
-          "components": [0.0941, 0.0941, 0.1059],
-          "hex": "#18181b"
-        },
-        "$extensions": {
-          "mode": {
-            "dark": {
-              "colorSpace": "srgb",
-              "components": [0, 0, 0],
-              "hex": "#000000"
-            }
-          }
-        }
-      },
-      "max": {
-        "$type": "number",
-        "$value": 0.4
-      }
-    },
-    "shadow": {
-      "sheet-bottom": {
-        "$type": "string",
-        "$value": "0 -1px 0 color-mix(in oklab, var(--border) 60%, transparent), 0 -8px 32px rgb(0 0 0 / 0.12)"
-      },
-      "sheet-top": {
-        "$type": "string",
-        "$value": "0 1px 0 color-mix(in oklab, var(--border) 60%, transparent), 0 8px 32px rgb(0 0 0 / 0.12)"
-      },
-      "sheet-left": {
-        "$type": "string",
-        "$value": "8px 0 32px rgb(0 0 0 / 0.12)"
-      },
-      "sheet-right": {
-        "$type": "string",
-        "$value": "-8px 0 32px rgb(0 0 0 / 0.12)"
-      }
-    },
-    "layer": {
-      "$type": "number",
-      "$value": 50
     }
   }
 }

@@ -10,12 +10,16 @@
  * - Motion: a Motion spring(0.4, 0.15) as CSS, quick ease durations, the press scale and
  *   the dimming behind sheets and dialogs. These are not colors, so they keep the
  *   --ouro- prefix.
+ * - --ouro-corner-shape: the shape of every corner, a squircle (CSS corner-shape, n=4), applied to each
+ *   Ouro element; set it to round to go back to circular arcs. Switch, radios, slider thumbs,
+ *   presence dots and spinners stay round.
  * - --ouro-layer: the z-index of sheet and dialog portals.
  * - --input and --radius, with shadcn's stock values, for an app whose theme has neither:
  *   fields draw their border in --input and round their corners on the --radius scale.
  *   shadcn add writes a variable only when the app's stylesheet lacks it, and a theme
  *   loaded after this file wins, so an app that has them keeps its own.
- * - The press transition and the keyframes for spinners, indeterminate progress and skeletons.
+ * - The press transition and the keyframes for spinners, indeterminate progress, skeletons and the
+ *   scroll fade drawn with no script.
  * - The shadow under each side of a sheet, --ouro-shadow-sheet-<side>, which shadcn's
  *   --shadow-* scale has no upward or sideways step for.
  *
@@ -48,6 +52,7 @@
 :root {
   --input: {{shadcn.input}};
   --radius: {{shadcn.radius}};
+  --ouro-corner-shape: {{ouro.corner-shape}};
   --destructive-foreground: {{destructive-foreground}};
   --success: {{success}};
   --success-foreground: {{success-foreground}};
@@ -89,6 +94,13 @@
    * level the portal still wins, because it is the last child of <body>.
    */
   --ouro-layer: {{ouro.layer}};
+  /* Liquid Glass, as the switch's lens wears it: the tint over what is behind, its blur, the inner rim and the outer hairline. */
+  --ouro-glass: {{ouro.glass}};
+  --ouro-glass-tint: {{ouro.glass-tint}};
+  --ouro-glass-blur: {{ouro.glass-blur}};
+  --ouro-glass-rim: {{ouro.glass-rim}};
+  --ouro-glass-edge: {{ouro.glass-edge}};
+  --ouro-glass-solid: {{ouro.glass-solid}};
 }
 
 .dark {
@@ -107,19 +119,29 @@
   --avatar-7: {{avatar-7@dark}};
   --avatar-8: {{avatar-8@dark}};
   --ouro-backdrop-color: {{ouro.backdrop.color@dark}};
+  --ouro-glass-tint: {{ouro.glass-tint@dark}};
+  --ouro-glass-rim: {{ouro.glass-rim@dark}};
+  --ouro-glass-edge: {{ouro.glass-edge@dark}};
+  --ouro-glass-solid: {{ouro.glass-solid@dark}};
+}
+
+/* Every rounded Ouro element takes the corner shape (only those: setting it on every element slowed paint); Switch, radios, slider thumbs, presence dots and spinners say round. */
+@layer base {
+  :where([data-ouro], [data-ouro] *)[class*="rounded"] {
+    --corner-shape: var(--ouro-corner-shape);
+    corner-shape: var(--ouro-corner-shape);
+  }
 }
 
 /*
  * Press feedback for controls: the scale arrives and releases in 160ms on the ease-out
- * token, and colors ease quickly. Each control adds the scale itself with a `motion-safe:` class,
- * so reduced motion never scales.
+ * token. Colors change at once: a pressed, selected or current control is drawn so on the
+ * frame it becomes so, and the one it took over from loses its color on that same frame.
+ * Each control adds the scale itself with a `motion-safe:` class, so reduced motion never scales.
  */
 @utility press {
   transition:
     scale var(--ouro-duration-press) var(--ouro-ease-out),
-    background-color var(--ouro-duration-fast) ease,
-    border-color var(--ouro-duration-fast) ease,
-    color var(--ouro-duration-fast) ease,
     opacity var(--ouro-duration-fast) ease;
 }
 
@@ -145,12 +167,62 @@
   }
 }
 
-/* Skeleton shimmer: a lighter band sweeps across the placeholder. */
-@keyframes ouro-shimmer {
+/* Skeleton shimmer: a lighter band, one placeholder wide, slides across by translate, which the compositor runs. */
+@keyframes ouro-shimmer-band {
   from {
-    background-position: 100% 0;
+    translate: -100% 0;
   }
   to {
-    background-position: -100% 0;
+    translate: 100% 0;
+  }
+}
+
+/*
+ * The scroll fade with no script (scrollFadeStaticClass): a box's scroll timeline draws a ramp at each side, from the
+ * gradients the class sets in --ouro-scroll-fade-ramps, and slides the left one in, by mask-position, and the right one
+ * in, by mask-size, each over the 2rem the box scrolls toward that side. A box with nothing to scroll has no mask.
+ */
+@keyframes ouro-scroll-fade-left {
+  from {
+    animation-timing-function: linear;
+    mask-image: var(--ouro-scroll-fade-ramps);
+    mask-repeat: no-repeat;
+    mask-composite: intersect;
+    mask-position:
+      -2rem 0,
+      0 0;
+  }
+  to {
+    mask-image: var(--ouro-scroll-fade-ramps);
+    mask-repeat: no-repeat;
+    mask-composite: intersect;
+    mask-position:
+      0 0,
+      0 0;
+  }
+}
+@keyframes ouro-scroll-fade-right {
+  from {
+    animation-timing-function: linear;
+    mask-size:
+      calc(100% + 2rem) 100%,
+      calc(100% + 2rem) 100%;
+  }
+  to {
+    mask-size:
+      calc(100% + 2rem) 100%,
+      100% 100%;
+  }
+}
+/* A hero's media rises a little as it arrives; reduced motion only fades it. */
+@keyframes ouro-hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+}
+@keyframes ouro-hero-fade {
+  from {
+    opacity: 0;
   }
 }

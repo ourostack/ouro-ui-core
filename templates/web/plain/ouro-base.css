@@ -25,6 +25,7 @@
   --color-warning-foreground: {{color-warning-foreground}};
   --input: {{shadcn.input}};
   --radius: {{shadcn.radius}};
+  --ouro-corner-shape: {{ouro.corner-shape}};
   --destructive-foreground: {{destructive-foreground}};
   --success: {{success}};
   --success-foreground: {{success-foreground}};
@@ -57,6 +58,12 @@
   --ouro-shadow-sheet-left: {{ouro.shadow.sheet-left}};
   --ouro-shadow-sheet-right: {{ouro.shadow.sheet-right}};
   --ouro-layer: {{ouro.layer}};
+  --ouro-glass: {{ouro.glass}};
+  --ouro-glass-tint: {{ouro.glass-tint}};
+  --ouro-glass-blur: {{ouro.glass-blur}};
+  --ouro-glass-rim: {{ouro.glass-rim}};
+  --ouro-glass-edge: {{ouro.glass-edge}};
+  --ouro-glass-solid: {{ouro.glass-solid}};
 }
 
 .dark {
@@ -75,6 +82,10 @@
   --avatar-7: {{avatar-7@dark}};
   --avatar-8: {{avatar-8@dark}};
   --ouro-backdrop-color: {{ouro.backdrop.color@dark}};
+  --ouro-glass-tint: {{ouro.glass-tint@dark}};
+  --ouro-glass-rim: {{ouro.glass-rim@dark}};
+  --ouro-glass-edge: {{ouro.glass-edge@dark}};
+  --ouro-glass-solid: {{ouro.glass-solid@dark}};
 }
 
 @media (prefers-color-scheme: dark) {
@@ -94,6 +105,10 @@
     --avatar-7: {{avatar-7@dark}};
     --avatar-8: {{avatar-8@dark}};
     --ouro-backdrop-color: {{ouro.backdrop.color@dark}};
+    --ouro-glass-tint: {{ouro.glass-tint@dark}};
+    --ouro-glass-rim: {{ouro.glass-rim@dark}};
+    --ouro-glass-edge: {{ouro.glass-edge@dark}};
+    --ouro-glass-solid: {{ouro.glass-solid@dark}};
   }
 }
 
@@ -118,11 +133,50 @@
   }
 }
 
-@keyframes ouro-shimmer {
+@keyframes ouro-shimmer-band {
   from {
-    background-position: 100% 0;
+    translate: -100% 0;
   }
   to {
-    background-position: -100% 0;
+    translate: 100% 0;
+  }
+}
+
+@keyframes ouro-scroll-fade-left {
+  from {
+    animation-timing-function: linear;
+    mask-image: var(--ouro-scroll-fade-ramps);
+    mask-repeat: no-repeat;
+    mask-composite: intersect;
+    mask-position: -2rem 0, 0 0;
+  }
+  to {
+    mask-image: var(--ouro-scroll-fade-ramps);
+    mask-repeat: no-repeat;
+    mask-composite: intersect;
+    mask-position: 0 0, 0 0;
+  }
+}
+
+@keyframes ouro-scroll-fade-right {
+  from {
+    animation-timing-function: linear;
+    mask-size: calc(100% + 2rem) 100%, calc(100% + 2rem) 100%;
+  }
+  to {
+    mask-size: calc(100% + 2rem) 100%, 100% 100%;
+  }
+}
+
+@keyframes ouro-hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+}
+
+@keyframes ouro-hero-fade {
+  from {
+    opacity: 0;
   }
 }
