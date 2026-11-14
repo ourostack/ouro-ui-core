@@ -6,6 +6,7 @@
 //   dist/windows/OuroTokens.xaml  Ouro HX for Windows: the default theme as a ResourceDictionary, with HighContrast
 //   dist/swatches.html            every theme's resolved colours, to look at
 //   dist/ax/apple.claims.json     Ouro AX for Apple's claim set, byte for byte from standard/ax/surfaces/
+//   dist/hx/components/*.json     Ouro HX's component specs and their schema, byte for byte from standard/hx/components/
 //   dist/hx/components.claims.json  Ouro HX's component claims, byte for byte from standard/hx/
 //   dist/feel/feel.spec.json      Ouro Feel's spec, byte for byte from standard/feel/
 //   dist/actions/ouro-actions.mts the one action model's generator, byte for byte from src/actions.mts, for apps to vendor
@@ -18,12 +19,13 @@
 //   dist/hx/a2ui/catalog.json     Ouro HX's A2UI catalog, byte for byte from standard/hx/a2ui/
 //   dist/dist-manifest.json       { coreTag, files: { "dist/<path>": sha256 } }, for core-provenance.json
 import { createHash } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { ACTIONS_VERSION } from "../src/actions.mts";
 import { loadActionClaimSet } from "../src/action-claims.mts";
 import { loadAppleClaimSet } from "../src/ax-claims.mts";
 import { loadFeelSpec } from "../src/feel-spec.mts";
 import { loadHxClaimSet } from "../src/hx-claims.mts";
+import { checkSpec, type ComponentSpec } from "../src/hx-specs.mts";
 import { renderAndroid } from "../src/android.mts";
 import { renderApple } from "../src/apple.mts";
 import { renderSwatches } from "../src/swatches.mts";
@@ -48,6 +50,12 @@ files.set("ax/apple.claims.json", appleClaims);
 const hxClaims = await readFile(new URL("standard/hx/components.claims.json", root), "utf8");
 loadHxClaimSet(JSON.parse(hxClaims));
 files.set("hx/components.claims.json", hxClaims);
+for (const name of (await readdir(new URL("standard/hx/components/", root))).filter((n) => n.endsWith(".json")).sort()) {
+  const text = await readFile(new URL(`standard/hx/components/${name}`, root), "utf8");
+  const problems = name.endsWith(".spec.json") ? checkSpec(JSON.parse(text) as ComponentSpec, loadHxClaimSet(JSON.parse(hxClaims))) : [];
+  if (problems.length) throw new Error(`standard/hx/components/${name}:\n${problems.join("\n")}`);
+  files.set(`hx/components/${name}`, text);
+}
 const feelSpec = await readFile(new URL("standard/feel/feel.spec.json", root), "utf8");
 loadFeelSpec(JSON.parse(feelSpec));
 files.set("feel/feel.spec.json", feelSpec);

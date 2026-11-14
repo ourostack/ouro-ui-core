@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ourostack/ouro-ui-core/blob/main/standard/hx/components/component.schema.json",
+  "title": "Ouro HX component spec",
+  "description": "One component, specified once: its API, states, the tokens each part uses, the claims that apply, the accessibility contract on each platform, and conformance cases every platform renders and reads back. Each platform vendors the spec by hash and writes only the native rendering (docs/decisions/2026-11-14-native-kits.md). src/hx-specs.mts checks what a schema can't: claims, token names and cases against the API.",
+  "type": "object",
+  "required": ["name", "version", "summary", "role", "properties", "slots", "events", "states", "tokens", "metrics", "claims", "accessibility", "cases", "platforms"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "name": { "description": "Web's name, as in components.claims.json's appliesTo.", "type": "string", "pattern": "^[a-z]+$" },
+    "version": { "description": "Semver. A removed or renamed property, value or slot is a major bump; an added one is minor.", "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "summary": { "description": "What it is for, in one sentence a person would understand.", "type": "string", "minLength": 1 },
+    "role": { "description": "What it is to assistive technology: a control someone presses, words, or a group of things.", "enum": ["control", "label", "group"] },
+    "properties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "description"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "pattern": "^[a-z][a-zA-Z]*$" },
+          "type": { "enum": ["string", "boolean", "number", "enum", "action"] },
+          "description": { "type": "string", "minLength": 1 },
+          "required": { "type": "boolean" },
+          "values": { "type": "array", "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*$" }, "minItems": 2, "uniqueItems": true },
+          "default": { "type": ["string", "boolean", "number"] }
+        }
+      }
+    },
+    "slots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "description"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "pattern": "^[a-z][a-zA-Z]*$" },
+          "description": { "type": "string", "minLength": 1 },
+          "decorative": { "description": "Hidden from assistive technology.", "type": "boolean" }
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "description"],
+        "additionalProperties": false,
+        "properties": { "name": { "type": "string", "pattern": "^[a-z][a-zA-Z]*$" }, "description": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "states": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "description"],
+        "additionalProperties": false,
+        "properties": { "name": { "enum": ["rest", "hover", "pressed", "focused", "disabled", "busy"] }, "description": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "tokens": {
+      "description": "Each part's colour, by token name. {tone} stands for the tone property's value.",
+      "type": "object",
+      "additionalProperties": { "type": "string", "pattern": "^(\\{tone\\}|[a-z]+[a-z0-9-]*)(-foreground)?$" }
+    },
+    "metrics": {
+      "description": "Sizes in points: CSS pixels on web, points on Apple, effective pixels on Windows.",
+      "type": "object",
+      "additionalProperties": { "type": "number" }
+    },
+    "claims": { "description": "Every claim in components.claims.json whose appliesTo names this component.", "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "accessibility": {
+      "type": "object",
+      "required": ["name", "web", "apple", "windows"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "description": "Where its spoken name comes from.", "type": "string", "minLength": 1 },
+        "keyboard": { "description": "What the keyboard does, for a control.", "type": "string" },
+        "web": { "type": "string", "minLength": 1 },
+        "apple": { "type": "string", "minLength": 1 },
+        "windows": { "description": "The UI Automation control type and patterns.", "type": "string", "minLength": 1 }
+      }
+    },
+    "cases": {
+      "description": "Conformance cases: an input, and what a person and an agent must observe. The agent reads the platform's accessibility tree.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "props", "person", "agent"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "props": { "type": "object" },
+          "slots": { "type": "object", "additionalProperties": { "type": "string" } },
+          "person": { "description": "What a person sees, in one sentence.", "type": "string", "minLength": 1 },
+          "agent": {
+            "type": "object",
+            "required": ["role", "name"],
+            "additionalProperties": false,
+            "properties": {
+              "role": { "enum": ["button", "text", "heading", "group", "listitem"] },
+              "name": { "type": "string" },
+              "focusable": { "type": "boolean" },
+              "children": { "type": "array", "items": { "type": "object", "required": ["role", "name"], "additionalProperties": false, "properties": { "role": { "enum": ["button", "text", "heading", "group", "listitem"] }, "name": { "type": "string" } } } }
+            }
+          }
+        }
+      }
+    },
+    "platforms": {
+      "description": "Each platform's type, and anything it does differently, with the reason.",
+      "type": "object",
+      "required": ["web", "apple", "windows"],
+      "additionalProperties": false,
+      "properties": {
+        "web": { "$ref": "#/$defs/platform" },
+        "apple": { "$ref": "#/$defs/platform" },
+        "windows": { "$ref": "#/$defs/platform" },
+        "android": { "$ref": "#/$defs/platform" }
+      }
+    }
+  },
+  "$defs": {
+    "platform": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "type": "string", "minLength": 1 },
+        "deviations": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    }
+  }
+}
