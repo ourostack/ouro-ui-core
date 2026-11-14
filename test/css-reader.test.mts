@@ -10,6 +10,11 @@ test("a base-layer rule that applies a token is not a token", () => {
   assert.deepEqual(readDeclarations(css).declarations.map((d) => d.name), ["--ouro-corner-shape"]);
 });
 
+test("a rule under @supports that sets element-level properties is not a token (web's squircle fallback, v1.3.89)", () => {
+  const css = [":root {", "  --ouro-x: 1px;", "}", "@supports not (corner-shape: squircle) {", "  [data-ouro-surface] {", "    --ouro-sq-m: max(0px, calc(var(--ouro-sq-r) - var(--ouro-sq-w)));", "    display: block;", "  }", "}"].join("\n");
+  assert.deepEqual(readDeclarations(css).declarations.map((d) => d.name), ["--ouro-x"]);
+});
+
 test("a custom property in any other block is refused, naming the block", () => {
   assert.throws(() => readDeclarations(".other {\n  --x: 1;\n}"), /--x sits in a block with no colour mode: \.other/);
   assert.throws(() => readDeclarations("@media print {\n  .a {\n    --x: 1;\n  }\n}"), /no colour mode/);
