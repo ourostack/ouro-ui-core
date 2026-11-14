@@ -37,6 +37,28 @@ export const addShoppingListItem = defineAction({
   cli: "list add",
 });
 
+export const removeShoppingListItem = defineAction({
+  id: "remove_shopping_list_item",
+  consent: "write",
+  label: "Remove",
+  description: "Take an item off your shopping list.",
+  agent: "Remove one item from the person's shopping list by its id. Removing an item that is already gone changes nothing.",
+  input: {
+    id: field.string({ label: "Item", description: "The item's id, from get_shopping_list.", arg: true }),
+    alsoIds: field.list({
+      label: "Other items",
+      description: "More item ids to remove in the same call.",
+      of: field.string({ label: "Item", description: "An item's id." }),
+      optional: true,
+      protocolOnly: true,
+    }),
+  },
+  output: {},
+  destructive: true,
+  idempotent: true,
+  cli: "list remove",
+});
+
 export const shareShoppingList = defineAction({
   id: "share_shopping_list",
   consent: "consequential",
@@ -69,4 +91,4 @@ export const placeGroceryOrder = defineAction({
   cli: "list order",
 });
 
-export default defineActions("shopping", [getShoppingList, addShoppingListItem, shareShoppingList, placeGroceryOrder], { tool: "shop" });
+export default defineActions("shopping", [getShoppingList, addShoppingListItem, removeShoppingListItem, shareShoppingList, placeGroceryOrder], { tool: "shop" });

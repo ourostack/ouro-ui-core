@@ -17,8 +17,9 @@ const CT = "common_types.json#/$defs/";
 function catalogAction(a: Action): CatalogAction {
   const input: CatalogAction["input"] = {};
   // A composed button is one of the person's doors, so a protocol-only field (an idempotency key, a server-side owner)
-  // is the app's to add when it calls the tool, never the agent's to prepare.
-  for (const [name, f] of Object.entries(a.input)) if (!f.protocolOnly) input[name] = { label: f.label, kind: f.kind, optional: f.optional === true, ...(f.kind === "enum" ? { values: [...f.values] } : {}), ...(f.kind === "string" && f.shownAs !== undefined ? { shownAs: f.shownAs } : {}) };
+  // is the app's to add when it calls the tool, never the agent's to prepare. A list, group or one-of field is always
+  // protocol-only.
+  for (const [name, f] of Object.entries(a.input)) if (!f.protocolOnly && f.kind !== "list" && f.kind !== "group" && f.kind !== "one-of") input[name] = { label: f.label, kind: f.kind, optional: f.optional === true, ...(f.kind === "enum" ? { values: [...f.values] } : {}), ...(f.kind === "string" && f.shownAs !== undefined ? { shownAs: f.shownAs } : {}) };
   return {
     consent: a.consent,
     press: pressOf(a.consent),
