@@ -41,7 +41,7 @@ Choosing the consent class:
 
 - **read** changes nothing.
 - **write** changes only the person's own things (their list, their recipes).
-- **consequential** reaches other people or can't be undone (sharing, publishing, deleting someone's access). Agents prepare it; the person says yes: the CLI needs `--why` and previews with `--dry-run`, MCP marks it destructive, WebMCP consequential, and the App Intent asks `requestConfirmation()`.
+- **consequential** reaches other people or can't be undone (sharing, publishing, deleting someone's access). Agents prepare it; the person says yes: the CLI needs `--why` and previews with `--dry-run`, MCP marks it destructive, WebMCP consequential, and the App Intent asks the system's `requestConfirmation()`, or your `confirm` hook (section 4).
 - **person-only** is what only the person may start (paying, ordering, turning on their microphone). Add `personOnly: { reason, how }`, one line each, said to the agent. No agent door offers it; each answers with the typed refusal, which is exactly web's refused outcome: `state` `refused`, error code `person-only`, exit 2, and a message that gives the reason and how the person does it.
 
 Two field options shape the doors a field reaches:
@@ -116,6 +116,13 @@ AddShoppingListItemAction.dialog = { input, result in
     _ = try result.get()
     return IntentDialog(stringLiteral: "Added \(input.name) to your shopping list.")
 }
+```
+
+A consequential action's intent asks the person through `<Action>Action.confirm` (core 0.9.0), so a test can run it. Unset, the system asks with `requestConfirmation()`, as before. Set it to return and the intent confirms; throw and it cancels, and the handler never runs:
+
+```swift
+struct Declined: Error {}
+ShareShoppingListAction.confirm = { input in if input.canEdit == true { throw Declined() } }   // in a test
 ```
 
 An action that runs before its handler is set throws `OuroActionNotBound`. Reins includes person-only actions, because Reins stands in for the person's finger in tests; no production agent door does.
