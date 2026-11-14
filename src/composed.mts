@@ -257,7 +257,8 @@ export interface TreeProblem {
   refusal?: Refusal;
 }
 
-const isObj = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
+/** A JSON object (not null, not an array). The A2UI adapter uses it too, so the modules declare no name twice. */
+export const isObj = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 const BUTTON_PROPS = ["action", "label", "consent", "press", "input", "confirm", "handoff", "emphasis", "@label"];
 
 function checkProp(problems: TreeProblem[], key: string, p: Prop, v: unknown, at: string): void {

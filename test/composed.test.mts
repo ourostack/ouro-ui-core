@@ -95,3 +95,16 @@ test("the A2UI adapter's tree is the composed tree: resolving a case gives what 
   const out = resolveMessages(await read(`standard/hx/a2ui/conformance/${c.catalog}`), c.messages) as { surfaces: Record<string, ComposedNode> };
   for (const tree of Object.values(out.surfaces)) assert.deepEqual(validateTree(catalogs[c.catalog]!, tree), []);
 });
+
+test("the composed tree, its MCP Apps helpers and the A2UI adapter declare no name twice, so an app can join them into one file", async () => {
+  // Web vendors the three as one registry file with the imports between them taken out (ouro-ui's
+  // scripts/core-bundle.mts), so an app that adds it needs no `.mts` import paths.
+  const seen = new Map<string, string>();
+  for (const file of ["src/composed.mts", "src/mcp-app.mts", "src/a2ui.mts"]) {
+    const source = await readFile(new URL(file, root), "utf8");
+    for (const [, name] of source.matchAll(/^(?:export )?(?:const|let|function|type|interface|class|enum) ([A-Za-z_$][\w$]*)/gm)) {
+      assert.equal(seen.get(name!), undefined, `${file} declares ${name}, which ${seen.get(name!)} already declares`);
+      seen.set(name!, file);
+    }
+  }
+});
