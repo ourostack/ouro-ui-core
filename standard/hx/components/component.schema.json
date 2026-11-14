@@ -100,10 +100,10 @@
             "required": ["role", "name"],
             "additionalProperties": false,
             "properties": {
-              "role": { "enum": ["button", "text", "heading", "group", "listitem", "textbox", "image", "progressbar", "status"] },
+              "role": { "enum": ["button", "text", "heading", "group", "listitem", "textbox", "image", "progressbar", "status", "checkbox"] },
               "name": { "type": "string" },
               "focusable": { "type": "boolean" },
-              "children": { "type": "array", "items": { "type": "object", "required": ["role", "name"], "additionalProperties": false, "properties": { "role": { "enum": ["button", "text", "heading", "group", "listitem", "textbox", "image", "progressbar", "status"] }, "name": { "type": "string" } } } }
+              "children": { "type": "array", "items": { "type": "object", "required": ["role", "name"], "additionalProperties": false, "properties": { "role": { "enum": ["button", "text", "heading", "group", "listitem", "textbox", "image", "progressbar", "status", "checkbox"] }, "name": { "type": "string" } } } }
             }
           }
         }
