@@ -13,8 +13,8 @@ const names = (await readdir(dir)).filter((n) => n.endsWith(".spec.json")).sort(
 const specs = await Promise.all(names.map(read)) as ComponentSpec[];
 const validate = new Ajv2020({ strict: true, allowUnionTypes: true, allErrors: true }).compile(schema);
 
-test("Apple's first set has a spec each: Button, Badge, Card and Item", () => {
-  assert.deepEqual(names, ["badge.spec.json", "button.spec.json", "card.spec.json", "item.spec.json"]);
+test("each component Apple has built has a spec: Button, Badge, Card, Item, TextField, Avatar, PageHeader, Skeleton, Spinner and Progress", () => {
+  assert.deepEqual(names, ["avatar.spec.json", "badge.spec.json", "button.spec.json", "card.spec.json", "item.spec.json", "page-header.spec.json", "progress.spec.json", "skeleton.spec.json", "spinner.spec.json", "text-field.spec.json"]);
   for (const s of specs) assert.ok((HX_COMPONENTS as readonly string[]).includes(s.name), s.name);
   for (const [i, s] of specs.entries()) assert.equal(`${s.name}.spec.json`, names[i]);
 });
@@ -28,7 +28,7 @@ test("every spec's claims, tokens and cases agree with the claims and the API", 
 });
 
 test("the checker catches a wrong claim list, an unknown token and a case outside the API", () => {
-  const badge = structuredClone(specs[0]!);
+  const badge = structuredClone(specs.find((s) => s.name === "badge")!);
   badge.claims = ["name.spoken"];
   badge.tokens["label"] = "{tone}-ink";
   badge.cases[0]!.props["tone"] = "teal";
