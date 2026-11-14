@@ -32,34 +32,34 @@ The claims section below is generated from the data with `pnpm hx:page`; edit th
 
 ### `name.spoken`
 
-**must**, for button, empty, alert, sheet, toast, badge. Every control has a name a screen reader speaks and the role it plays (button, heading); a component's title is a heading; decorative icons are hidden from the screen reader.
+**must**, for button, empty, alert, sheet, toast, badge, card, item. Every control has a name a screen reader speaks and the role it plays (button, heading); a component's title is a heading; decorative icons are hidden from the screen reader.
 
 - Why: A control without a name is announced as "button" or skipped, so a blind person cannot tell what it does.
 - Source: <https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html>. WCAG 4.1.2. Apple: https://developer.apple.com/documentation/accessibility/supporting-voiceover-in-your-app.
 
-- Checked on web: The Empty test "renders the title as an <h3>, the description, the icon and the action", the Alert test "shows a dismiss button with onDismiss, named by dismissLabel" and the Sheet test "renders a Close button last in the sheet, hidden until keyboard focus, that closes it" query by role and name; the axe lane checks names. Not yet checked on web: the Badge.
-- Checked on apple: The gallery's ComponentClaimTests.testVoiceOverLabels finds each control by its VoiceOver label as a button, each title as text, and no decorative icon; testEveryComponentPagePassesTheAccessibilityAudit runs performAccessibilityAudit's sufficientElementDescription and trait audits on every page. The Badge: testVoiceOverLabels reads a recipe row on the gallery's badges page as one element that says its badges' words and not their decorative icons, and finds no badge as a button.
+- Checked on web: The Empty test "renders the title as an <h3>, the description, the icon and the action", the Alert test "shows a dismiss button with onDismiss, named by dismissLabel" and the Sheet test "renders a Close button last in the sheet, hidden until keyboard focus, that closes it" query by role and name; the axe lane checks names. Not yet checked on web: the Badge, the Card and the Item.
+- Checked on apple: The gallery's ComponentClaimTests.testVoiceOverLabels finds each control by its VoiceOver label as a button, each title as text, and no decorative icon; testEveryComponentPagePassesTheAccessibilityAudit runs performAccessibilityAudit's sufficientElementDescription and trait audits on every page. The Badge: testVoiceOverLabels reads a recipe row on the gallery's badges page as one element that says its badges' words and not their decorative icons, and finds no badge as a button. The Card: testVoiceOverLabels reads the cards page's titles and description as text and its action as a button. The Item: testVoiceOverLabels reads a pressable row on the items page as one button named by its title and description, its action as its own button, and no decorative icon.
 - Fix: Pass a visible title or an explicit accessibility label; mark titles as headers; hide decorative images.
 
 ### `text.reflows`
 
-**must**, for button, empty, alert, sheet, toast, badge. At the largest text size the platform offers (Apple's accessibility sizes, 200% text on web), titles, messages and action labels wrap onto more lines; none is truncated or clipped.
+**must**, for button, empty, alert, sheet, toast, badge, card, item. At the largest text size the platform offers (Apple's accessibility sizes, 200% text on web), titles, messages and action labels wrap onto more lines; none is truncated or clipped.
 
 - Why: People who need large text lose the words that tell them what an action does when a label is cut off.
 - Source: <https://www.w3.org/WAI/WCAG22/Understanding/resize-text.html>. WCAG 1.4.4. Apple: https://developer.apple.com/design/human-interface-guidelines/typography#Supporting-Dynamic-Type.
 
-- Checked on apple: The gallery's ComponentClaimTests.testEveryComponentPagePassesTheAccessibilityAudit launches every component page at accessibility XXXL and runs performAccessibilityAudit, whose textClipped and dynamicType audits fail clipped or fixed-size text. The Badge: BadgeMetricsTests (Tests/OuroHXTests/ComponentTests.swift) checks it keeps one line only up to the largest standard size and wraps at every accessibility size, and the audit runs on the badges page.
+- Checked on apple: The gallery's ComponentClaimTests.testEveryComponentPagePassesTheAccessibilityAudit launches every component page at accessibility XXXL and runs performAccessibilityAudit, whose textClipped and dynamicType audits fail clipped or fixed-size text. The Badge: BadgeMetricsTests (Tests/OuroHXTests/ComponentTests.swift) checks it keeps one line only up to the largest standard size and wraps at every accessibility size, and the audit runs on the badges page. The Card: CardMetricsTests checks its title and description have no line limit and its action goes under the title at the accessibility sizes. The Item: ItemMetricsTests checks the same for a row, whose actions go under its words and whose picture goes above them; the audit runs on the cards and items pages.
 - Fix: Let labels wrap (no fixed line limit at accessibility sizes, no fixed heights) and use text styles that scale.
 
 ### `contrast.text`
 
-**must**, for button, empty, alert, sheet, toast, badge. Text and icons that carry meaning reach 4.5:1 against what is behind them in every theme, light and dark, and 7:1 when the platform's increased-contrast setting is on.
+**must**, for button, empty, alert, sheet, toast, badge, card, item. Text and icons that carry meaning reach 4.5:1 against what is behind them in every theme, light and dark, and 7:1 when the platform's increased-contrast setting is on.
 
 - Why: Low-contrast text cannot be read by people with low vision, or by anyone in sunlight.
 - Source: <https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html>. WCAG 1.4.3 (4.5:1 for text) and 1.4.6 (7:1, the enhanced level). Ouro chooses 7:1 for increased contrast, and holds meaningful icons to the text ratio, above 1.4.11's 3:1 for graphics.
 
-- Checked on web: The axe lane's color-contrast rule, 4.5:1 in light and dark. Not yet checked on web: 7:1 under increased contrast. Not yet checked on web: the Badge.
-- Checked on apple: ContrastTests (Tests/OuroHXTests/ComponentTests.swift) compute the WCAG ratio of every component's text and icons on its surface, every tone and variant, in all six themes, light and dark, standard and increased contrast; performAccessibilityAudit's contrast audit runs on the gallery. ComponentSnapshotTests keeps references of every component in light, dark and increased contrast. The Badge: ContrastTests' everyBadgeLabelReadsOnItsFillInEveryThemeAndMode covers every tone and variant, and aBadgeTakesTheButtonsColours checks it uses the button's palette.
+- Checked on web: The axe lane's color-contrast rule, 4.5:1 in light and dark. Not yet checked on web: 7:1 under increased contrast. Not yet checked on web: the Badge, the Card and the Item.
+- Checked on apple: ContrastTests (Tests/OuroHXTests/ComponentTests.swift) compute the WCAG ratio of every component's text and icons on its surface, every tone and variant, in all six themes, light and dark, standard and increased contrast; performAccessibilityAudit's contrast audit runs on the gallery. ComponentSnapshotTests keeps references of every component in light, dark and increased contrast. The Badge: ContrastTests' everyBadgeLabelReadsOnItsFillInEveryThemeAndMode covers every tone and variant, and aBadgeTakesTheButtonsColours checks it uses the button's palette. The Card: ContrastTests' cardTextReadsInEveryThemeAndMode covers both variants and the edge. The Item: itemTextReadsInEveryThemeAndMode covers a row's words, its icon tile's symbol and the lines between rows.
 - Fix: Take text colours from the theme's foreground pairs, and raise them under increased contrast (OuroColor.increasedContrast on Apple).
 
 ### `announce.urgency`
