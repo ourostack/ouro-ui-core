@@ -14,6 +14,12 @@ Core is the platform-neutral part of Ouro UI: what is true on every platform, fo
 - `standard/hx/components.claims.json` is the claim set for the components every platform shares (web's names: `button`, `empty`, `alert`, `sheet`, `toast`, `badge`, `card`, `item`); `components.md` beside it is its page, whose claims section `pnpm hx:page` renders from the JSON (a test fails when they differ). Edit the JSON, run `pnpm hx:page`, and bump the set's `version` once a release has shipped it.
 - Same admission rule as AX: `must` needs a stated hazard with a check, or an evaluation. `checkHxClaimSet` in `src/hx-claims.mts` enforces the shape. Each claim's `checks` names the test that proves it on each platform; a platform adds its entry when its tests prove it.
 
+## Ouro HX's component specs
+
+- `standard/hx/components/<name>.spec.json` specifies a component once: its API (properties, slots, events), states, the tokens each part uses, the claims that apply, its accessibility contract on each platform, and conformance cases (an input, what a person sees and what an agent reads in the accessibility tree). `component.schema.json` is the shape; `checkSpec` in `src/hx-specs.mts` checks the rest (claims equal `appliesTo`, tokens exist, cases use the API). Decision: `docs/decisions/2026-11-14-native-kits.md`.
+- Platforms vendor `dist/hx/components/<name>.spec.json` by hash and render the component by hand; core never generates rendering. A removed or renamed property, value or slot bumps the spec's major version; an added one its minor.
+- A platform that differs says so in the spec's `platforms.<platform>.deviations`, with the reason.
+
 ## Ouro Feel's spec
 
 - `standard/feel/feel.spec.json` is what every Feel driver shares: the scenario ids, launch stages, measure names and how they are judged, the seed and the report. `feel.md` beside it is its page, whose spec section `pnpm feel:page` renders from the JSON (a test fails when they differ). The design is `docs/decisions/2026-11-04-ouro-feel.md`.

@@ -4,6 +4,8 @@
 
 The rules are Ouro AX's: a claim is one checkable rule with its reason, its source, its check and its fix, and it is `must` only when it states a hazard with a check, or an evaluation reproduced the failure. `appliesTo` uses web's component names. `checks` says how each platform proves the claim; a platform with no entry has not claimed it yet, and an entry that proves only part of a claim says which part is "Not yet checked". Apple's entries name tests in ouro-ui-apple (`Tests/OuroHXTests`, and the gallery's `Examples/OuroHXGallery/UITests`), first released in its v0.3.0, the release that pins this set; its `ClaimCoverageTests` fails when a claim has no test there.
 
+Each component is also specified once in [`components/`](components/), one `<name>.spec.json` per component (Button, Badge, Card and Item so far): its API, states, tokens, the claims below that apply, its accessibility contract on each platform and its conformance cases. Platforms vendor the spec by hash and render the component by hand.
+
 The claims section below is generated from the data with `pnpm hx:page`; edit the JSON, not the page.
 
 ## The claims
