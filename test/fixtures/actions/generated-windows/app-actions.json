@@ -1,0 +1,134 @@
+{
+  "version": 3,
+  "actions": [
+    {
+      "id": "Ouro.GetShoppingList",
+      "description": "See what's on your shopping list.",
+      "displaysUI": true,
+      "usesGenerativeAI": false,
+      "isAvailable": true,
+      "allowedAppInvokers": [
+        "*"
+      ],
+      "inputs": [],
+      "inputCombinations": [
+        {
+          "inputs": [],
+          "description": "Shopping list"
+        }
+      ],
+      "invocation": {
+        "type": "uri",
+        "uri": "ouro-shop://action/get_shopping_list?token=${$.Token}"
+      }
+    },
+    {
+      "id": "Ouro.AddShoppingListItem",
+      "description": "Add an item to your shopping list.",
+      "displaysUI": true,
+      "usesGenerativeAI": false,
+      "isAvailable": true,
+      "allowedAppInvokers": [
+        "*"
+      ],
+      "inputs": [
+        {
+          "name": "name",
+          "kind": "Text"
+        },
+        {
+          "name": "unit",
+          "kind": "Text",
+          "required": false
+        }
+      ],
+      "inputCombinations": [
+        {
+          "inputs": [
+            "name"
+          ],
+          "description": "Add to list: ${name.Text}"
+        },
+        {
+          "inputs": [
+            "name",
+            "unit"
+          ],
+          "description": "Add to list: ${name.Text}, ${unit.Text}"
+        }
+      ],
+      "invocation": {
+        "type": "uri",
+        "uri": "ouro-shop://action/add_shopping_list_item?name=${name.Text}&unit=${unit.Text}&token=${$.Token}"
+      }
+    },
+    {
+      "id": "Ouro.RemoveShoppingListItem",
+      "description": "Take an item off your shopping list.",
+      "displaysUI": true,
+      "usesGenerativeAI": false,
+      "isAvailable": true,
+      "allowedAppInvokers": [
+        "*"
+      ],
+      "inputs": [
+        {
+          "name": "id",
+          "kind": "Text"
+        }
+      ],
+      "inputCombinations": [
+        {
+          "inputs": [
+            "id"
+          ],
+          "description": "Remove: ${id.Text}"
+        }
+      ],
+      "invocation": {
+        "type": "uri",
+        "uri": "ouro-shop://action/remove_shopping_list_item?id=${id.Text}&token=${$.Token}"
+      }
+    },
+    {
+      "id": "Ouro.ShareShoppingList",
+      "description": "Share your shopping list with someone in your household.",
+      "displaysUI": true,
+      "usesGenerativeAI": false,
+      "isAvailable": true,
+      "allowedAppInvokers": [
+        "*"
+      ],
+      "inputs": [
+        {
+          "name": "with",
+          "kind": "Text"
+        },
+        {
+          "name": "message",
+          "kind": "Text",
+          "required": false
+        }
+      ],
+      "inputCombinations": [
+        {
+          "inputs": [
+            "with"
+          ],
+          "description": "Share list: ${with.Text}"
+        },
+        {
+          "inputs": [
+            "with",
+            "message"
+          ],
+          "description": "Share list: ${with.Text}, ${message.Text}"
+        }
+      ],
+      "invocation": {
+        "type": "uri",
+        "uri": "ouro-shop://action/share_shopping_list?with=${with.Text}&message=${message.Text}&token=${$.Token}"
+      }
+    }
+  ]
+}
