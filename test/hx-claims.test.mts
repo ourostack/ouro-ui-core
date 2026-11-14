@@ -23,6 +23,14 @@ test("the Badge is one of HX's components, and the claims that fit a label cover
   assert.deepEqual(covering, ["contrast.text", "name.spoken", "text.reflows"]);
 });
 
+test("the Card and the Item are HX's components, covered by the claims about words", () => {
+  for (const name of ["card", "item"]) {
+    assert.ok((HX_COMPONENTS as readonly string[]).includes(name));
+    const covering = set.claims.filter((c) => (c["appliesTo"] as string[]).includes(name)).map((c) => c["id"]).sort();
+    assert.deepEqual(covering, ["contrast.text", "name.spoken", "text.reflows"]);
+  }
+});
+
 test("the page lists exactly the claims in the data", () => {
   const onPage = [...page.matchAll(/^### `([a-z]+\.[a-z-]+)`/gm)].map((m) => m[1]);
   assert.deepEqual(onPage, set.claims.map((c) => c["id"]));
