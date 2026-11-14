@@ -15,3 +15,4 @@ New decision records go here. Each has a "Prior art" section linking every find 
 | 2026-11-13 | [Agents use agent interfaces, and one action declaration feeds every surface](2026-11-13-agents-use-agent-interfaces.md) |
 | 2026-11-13 | [Ouro HX is an A2UI catalog, and agent-composed UI carries the action model's consent](2026-11-13-a2ui-catalog.md) |
 | 2026-11-13 | [A tool with one thing to do has no command word](2026-11-13-single-command-tools.md) |
+| 2026-11-14 | [Rounder people, and presence as a dot on the curve](2026-11-14-rounder-people-presence-dot.md) |
