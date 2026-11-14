@@ -92,3 +92,6 @@ export const placeGroceryOrder = defineAction({
 });
 
 export default defineActions("shopping", [getShoppingList, addShoppingListItem, removeShoppingListItem, shareShoppingList, placeGroceryOrder], { tool: "shop" });
+
+/** The Windows projection's options (src/actions-windows.mts): the package's URI scheme and MCP server. */
+export const windows = { scheme: "ouro-shop", server: "OuroShop.Mcp", version: "1.0.0" };

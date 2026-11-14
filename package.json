@@ -20,6 +20,8 @@
     "feel:page": "node scripts/feel-page.mts",
     "actions:generate": "node src/actions.mts generate test/fixtures/actions/shopping.actions.mts test/fixtures/actions/generated",
     "actions:check": "node src/actions.mts check test/fixtures/actions/shopping.actions.mts test/fixtures/actions/generated",
+    "actions:windows:generate": "node src/actions-windows.mts generate test/fixtures/actions/shopping.actions.mts test/fixtures/actions/generated-windows",
+    "actions:windows:check": "node src/actions-windows.mts check test/fixtures/actions/shopping.actions.mts test/fixtures/actions/generated-windows",
     "actions:page": "node scripts/actions-page.mts",
     "a2ui:generate": "node scripts/a2ui-conformance.mts",
     "a2ui:check": "node scripts/a2ui-conformance.mts --check"
