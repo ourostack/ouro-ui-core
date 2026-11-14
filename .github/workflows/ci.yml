@@ -70,6 +70,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm test
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Every projection of the fixture's actions matches its declaration
         run: pnpm actions:check
       - name: Ouro HX's A2UI catalogs and conformance cases match their sources

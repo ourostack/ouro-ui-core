@@ -1,7 +1,7 @@
 {
   "$comment": "tokens:parity compares each generated file with web's file at webTag, byte for byte. Bump webTag when web releases a token change.",
   "webRepo": "ourostack/ouro-ui",
-  "webTag": "v1.3.7",
+  "webTag": "v1.3.24",
   "files": {
     "dist/web/ouro-theme.css": "registry/ouro/theme/ouro-theme.css",
     "dist/web/ouro-base.css": "registry/ouro/theme/ouro-base.css",
