@@ -19,6 +19,7 @@ import {
   agentPressProblem,
   asText,
   COMPONENTS,
+  isObj,
   personPress,
   type Catalog,
   type CatalogAction,
@@ -94,7 +95,6 @@ export interface Problem {
 }
 
 const IDENT = /^[\p{XID_Start}_][\p{XID_Continue}]*$/u;
-const isObj = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 const isBinding = (v: unknown): v is { "@path": string } => isObj(v) && typeof v["@path"] === "string" && Object.keys(v).length === 1;
 const isCall = (v: unknown) => isObj(v) && "@call" in v;
 const MESSAGE_KEYS = ["createSurface", "updateComponents", "updateDataModel", "deleteSurface", "callRendererFunction", "agentFunctionResponse"];
