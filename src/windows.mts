@@ -141,6 +141,9 @@ public sealed record OuroColors(
 ${WINDOWS_COLORS.map((c, i) => `    Color ${csharpName(c)}${i === WINDOWS_COLORS.length - 1 ? ");" : ","}`).join("\n")}
 
 /// <summary>A theme: its colours in light and dark mode, and its corner radius.</summary>
+/// <param name="Name">Which theme it is.</param>
+/// <param name="Light">Its colours in light mode.</param>
+/// <param name="Dark">Its colours in dark mode.</param>
 /// <param name="Radius">The base corner radius in effective pixels (CSS <c>--radius</c> at ${EPX_PER_REM} epx per rem).</param>
 public sealed record OuroTheme(OuroThemeName Name, OuroColors Light, OuroColors Dark, double Radius)
 {
