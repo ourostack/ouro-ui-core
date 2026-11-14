@@ -31,15 +31,27 @@ Or in code, `validateMessages(catalog, messages)`. Each problem is in A2UI's val
 
 ## 4. Return it as an MCP App
 
+Build web's `OuroMcpApp` view once for your catalog, from a checkout of [ouro-ui](https://github.com/ourostack/ouro-ui) at a release tag, and commit the file:
+
+```sh
+node scripts/mcp-app.mts build --catalog ../kitchen/a2ui/catalog.json --out ../kitchen/a2ui/view.html \
+  --handoff-url 'https://kitchen.example.com/recipes?do={action}' --name Kitchen
+```
+
+It writes one HTML file with its script, its styles and your catalog inline, so it loads under MCP Apps' default content security policy. `--handoff-url` is where a person-only button sends the person, with `{action}` replaced by the action id; without it the card tells them what to do in your app. Rebuild it when the catalog changes.
+
 ```ts
+import { readFileSync } from "node:fs";
 import { mcpAppResource, mcpAppToolMeta, mcpAppToolResult } from "../tools/ouro-actions/ouro-a2ui.mts";
+
+const ouroMcpAppHtml = readFileSync("a2ui/view.html", "utf8");
 
 const card = mcpAppResource({ uri: "ui://kitchen/card", name: "Recipe card", html: ouroMcpAppHtml });  // listing + contents
 server.registerTool("show_recipe", { /* ... */ _meta: mcpAppToolMeta("ui://kitchen/card") }, async ({ recipe }) =>
   mcpAppToolResult({ text: `Here is ${name}.`, catalog, messages }));       // validates, then puts the stream in structuredContent.a2ui
 ```
 
-`ouroMcpAppHtml` is web's single-file `OuroMcpApp` view. It renders `structuredContent.a2ui` with Ouro HX, and when the person presses a button it calls that action's own MCP tool (after they confirm, for a consequential one).
+The view renders `structuredContent.a2ui` with Ouro HX, and when the person presses a button it calls that action's own MCP tool through the host (after they confirm, for a consequential one). If your cards show images from your own site, add that origin to the contents: `{ ...card.contents, _meta: { ui: { csp: { resourceDomains: ["https://kitchen.example.com"] } } } }`. Web's [`OuroMcpApp` docs](https://ui.ouroboros.bot/docs/ouro-mcp-app/) have the rest.
 
 ## What every renderer must do
 
