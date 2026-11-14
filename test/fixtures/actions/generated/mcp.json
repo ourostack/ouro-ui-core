@@ -1,5 +1,5 @@
 {
-  "generator": "ouro-actions 0.12.1",
+  "generator": "ouro-actions 0.13.0",
   "set": "shopping",
   "tools": [
     {

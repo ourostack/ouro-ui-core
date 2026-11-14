@@ -16,7 +16,7 @@ import { join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 /** The generator's version, written into every generated file; it is core's version. */
-export const ACTIONS_VERSION = "0.12.1";
+export const ACTIONS_VERSION = "0.13.0";
 const GENERATOR = `ouro-actions ${ACTIONS_VERSION}`;
 
 // ---------------------------------------------------------------------------------------------------------------
