@@ -1,5 +1,5 @@
 {
-  "generator": "ouro-actions 0.9.0",
+  "generator": "ouro-actions 0.10.0",
   "set": "shopping",
   "tools": [
     {
@@ -92,6 +92,38 @@
           "name"
         ],
         "additionalProperties": false
+      }
+    },
+    {
+      "name": "remove_shopping_list_item",
+      "title": "Remove",
+      "description": "Remove one item from the person's shopping list by its id. Removing an item that is already gone changes nothing.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The item's id, from get_shopping_list."
+          },
+          "alsoIds": {
+            "type": "array",
+            "description": "More item ids to remove in the same call.",
+            "items": {
+              "type": "string",
+              "description": "An item's id."
+            }
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "openWorldHint": false,
+        "idempotentHint": true
       }
     },
     {

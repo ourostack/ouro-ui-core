@@ -18,7 +18,7 @@ import {
   toWebMcpTool,
   type InputOf,
 } from "../src/actions.mts";
-import shopping, { addShoppingListItem, getShoppingList, placeGroceryOrder, shareShoppingList } from "./fixtures/actions/shopping.actions.mts";
+import shopping, { addShoppingListItem, getShoppingList, placeGroceryOrder, removeShoppingListItem, shareShoppingList } from "./fixtures/actions/shopping.actions.mts";
 
 const base = {
   id: "pin_recipe",
@@ -63,7 +63,7 @@ test("defineAction refuses a declaration that isn't one, with the fix", () => {
   assert.throws(() => defineAction({ ...base, input: { n: field.integer({ label: "N", description: "n", arg: true } as never) } }), /n.*arg.*string/);
   // An input may not shadow web's kit's own flags or the App Intent's members; an output may use those names.
   for (const name of ["json", "help", "why", "whyFile", "dryRun", "agent", "quiet", "input", "perform"]) {
-    assert.throws(() => defineAction({ ...base, input: { [name]: field.string({ label: "X", description: "x" }) } }), /taken by a surface.*Fix:/, name);
+    assert.throws(() => defineAction({ ...base, input: { [name]: field.string({ label: "X", description: "x" }) } }), /taken by .*Fix:/, name);
   }
   assert.doesNotThrow(() => defineAction({ ...base, output: { id: field.string({ label: "Id", description: "x" }) } }));
   // Web reserves some ids for the person; only a person-only action may take one.
@@ -71,7 +71,7 @@ test("defineAction refuses a declaration that isn't one, with the fix", () => {
   // ask is Siri's one-line question for a missing input; protocolOnly is only for an optional input.
   assert.throws(() => defineAction({ ...base, input: { x: field.string({ label: "X", description: "x", ask: "Which\none?" }) } }), /x.*ask.*one line/);
   assert.throws(() => defineAction({ ...base, output: { x: field.string({ label: "X", description: "x", ask: "Which?" }) } }), /x.*ask/);
-  assert.throws(() => defineAction({ ...base, input: { x: field.string({ label: "X", description: "x", protocolOnly: true }) } }), /x.*protocolOnly.*optional/);
+  assert.throws(() => defineAction({ ...base, input: { x: field.string({ label: "X", description: "x", protocolOnly: false as unknown as true }) } }), /x.*protocolOnly: true without arg/);
   assert.throws(() => defineAction({ ...base, output: { x: field.string({ label: "X", description: "x", optional: true, protocolOnly: true }) } }), /x.*protocolOnly/);
   assert.doesNotThrow(() => defineAction({ ...base, input: { ...base.input, key: field.string({ label: "Key", description: "k", optional: true, protocolOnly: true }) } }));
   assert.doesNotThrow(() => defineAction({ ...base, id: "share", consent: "person-only", personOnly: { reason: "Only they share.", how: "with Share" } }));
@@ -171,14 +171,14 @@ test("MCP and WebMCP tools carry the agent's description and the consent hints",
 test("the generated JSON lists person-only actions only as refusals, on every agent door", () => {
   const files = renderActions(shopping);
   const mcp = JSON.parse(files.get("mcp.json")!);
-  assert.deepEqual(mcp.tools.map((t: { name: string }) => t.name), ["get_shopping_list", "add_shopping_list_item", "share_shopping_list"]);
+  assert.deepEqual(mcp.tools.map((t: { name: string }) => t.name), ["get_shopping_list", "add_shopping_list_item", "remove_shopping_list_item", "share_shopping_list"]);
   assert.deepEqual(mcp.refusals, { place_grocery_order: refusal(placeGroceryOrder) });
   const web = JSON.parse(files.get("webmcp.json")!);
-  assert.equal(web.tools.length, 3);
+  assert.equal(web.tools.length, 4);
   assert.deepEqual(web.refusals, mcp.refusals);
   const cli = JSON.parse(files.get("commands.json")!);
   assert.deepEqual(cli.personOnly, { "list order": { reason: placeGroceryOrder.personOnly!.reason, how: placeGroceryOrder.personOnly!.how } });
-  assert.equal(cli.commands.length, 3);
+  assert.equal(cli.commands.length, 4);
   assert.deepEqual(JSON.parse(files.get("actions.json")!).actions.map((a: { id: string }) => a.id), shopping.actions.map((a) => a.id));
 });
 
@@ -235,7 +235,7 @@ test("compareMcp passes the generated tools and names each way a live server dri
   const tools = structuredClone(generated.tools) as Record<string, unknown>[];
   tools[1]!["description"] = "Adds an item.";
   (tools[1]!["inputSchema"] as { required: string[] }).required = [];
-  tools[2]!["annotations"] = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
+  tools[3]!["annotations"] = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
   tools.splice(0, 1);
   tools.push({ name: "place_grocery_order", description: "", inputSchema: {} }, { name: "secret_tool", description: "", inputSchema: {} });
   const problems = compareMcp(shopping, { tools });
@@ -255,7 +255,7 @@ test("compareMcp passes the generated tools and names each way a live server dri
   // A missing hint is MCP's default (readOnlyHint false, destructiveHint and openWorldHint true), which is right for a
   // consequential action and wrong for a read; a null entry and a tool listed twice are named, not thrown.
   const defaults = structuredClone(generated.tools) as Record<string, unknown>[];
-  delete defaults[2]!["annotations"];
+  delete defaults[3]!["annotations"];
   assert.deepEqual(compareMcp(shopping, { tools: defaults }), []);
   delete defaults[0]!["annotations"];
   assert.ok(compareMcp(shopping, { tools: defaults }).some((p) => p.startsWith("get_shopping_list: annotation readOnlyHint")));
@@ -279,7 +279,7 @@ test("the CLI: check exits 0 on the fixture and 1 with findings on drift; usage 
   };
   const ok = await run(["check", decl, gen]);
   assert.equal(ok.code, 0);
-  assert.match(ok.out, /4 actions, every projection matches its declaration/);
+  assert.match(ok.out, /5 actions, every projection matches its declaration/);
 
   const tmp = await mkdtemp(join(tmpdir(), "ouro-actions-"));
   try {
@@ -511,4 +511,213 @@ test("shownAs names the sibling input that holds the person's word for an id", (
   assert.throws(() => defineAction(f({ n: field.integer({ label: "N", description: "n", shownAs: "t" } as never), t: field.string({ label: "T", description: "t", optional: true }) })), /n.*shownAs.*string/);
   // It is a catalog and docs matter, not a door's: MCP's schema is unchanged.
   assert.deepEqual(Object.keys(inputSchema(defineAction(f(ok))).properties), ["recipe", "title"]);
+});
+
+test("a write can be destructive, and a write or consequential action idempotent: MCP's destructiveHint and idempotentHint", () => {
+  assert.deepEqual(annotationsOf(removeShoppingListItem), { readOnlyHint: false, destructiveHint: true, openWorldHint: false, idempotentHint: true });
+  assert.deepEqual(annotationsOf(defineAction({ ...base, consent: "consequential", idempotent: true })), { readOnlyHint: false, destructiveHint: true, openWorldHint: true, idempotentHint: true });
+  // Declared hints change only MCP: the effect class, the CLI and WebMCP stay the consent class's.
+  assert.equal(toCommand(removeShoppingListItem).effect, "private");
+  assert.deepEqual(toWebMcpTool(removeShoppingListItem).annotations, { readOnlyHint: false, consequentialHint: false });
+  assert.throws(() => defineAction({ ...base, consent: "read", destructive: true }), /destructive is for a write.*Fix:/);
+  assert.throws(() => defineAction({ ...base, consent: "consequential", destructive: true }), /consequential action is destructive already/);
+  assert.throws(() => defineAction({ ...base, consent: "read", idempotent: true }), /idempotent.*a read is idempotent already.*Fix:/);
+  assert.throws(() => defineAction({ ...base, destructive: false as unknown as true }), /destructive/);
+  const tools = JSON.parse(renderActions(shopping).get("mcp.json")!).tools as { name: string; annotations: Record<string, unknown> }[];
+  const live = structuredClone(tools);
+  delete live.find((t) => t.name === "remove_shopping_list_item")!.annotations["idempotentHint"];
+  assert.deepEqual(compareMcp(shopping, { tools: live }), [
+    'remove_shopping_list_item: annotation idempotentHint is missing (MCP\'s default, false), the declaration (consent "write", destructive, idempotent) says true. Fix: serve the declaration\'s annotations.',
+  ]);
+  const claimed = tools.map((t) => (t.name === "add_shopping_list_item" ? { ...t, annotations: { ...t.annotations, idempotentHint: true } } : t));
+  assert.match(compareMcp(shopping, { tools: claimed })[0]!, /^add_shopping_list_item: annotation idempotentHint is true, the declaration \(consent "write"\) says false/);
+});
+
+test("constrained fields: a string's maxLength and format, a nullable value, a boolean that must be true, enum values with separators", () => {
+  const a = defineAction({
+    ...base,
+    input: {
+      recipe: field.string({ label: "Recipe", description: "The recipe's id.", arg: true }),
+      prompt: field.string({ label: "Prompt", description: "What to add.", optional: true, maxLength: 240 }),
+      cookedAt: field.string({ label: "Cooked", description: "When.", optional: true, format: "date-time" }),
+      photo: field.string({ label: "Photo", description: "Its URL; null clears it.", optional: true, nullable: true }),
+      confirm: field.boolean({ label: "Confirm", description: "Say yes.", const: true }),
+      mimeType: field.enum({ label: "Type", description: "The image's type.", values: ["image/jpeg", "image/png", "shopping-list", "a_b", "v1.2"] }),
+    },
+  });
+  assert.deepEqual(inputSchema(a).properties, {
+    recipe: { type: "string", description: "The recipe's id." },
+    prompt: { type: "string", description: "What to add.", maxLength: 240 },
+    cookedAt: { type: "string", description: "When.", format: "date-time" },
+    photo: { type: ["string", "null"], description: "Its URL; null clears it." },
+    confirm: { type: "boolean", description: "Say yes.", const: true },
+    mimeType: { type: "string", description: "The image's type.", enum: ["image/jpeg", "image/png", "shopping-list", "a_b", "v1.2"] },
+  });
+  assert.deepEqual(inputSchema(a).required, ["recipe", "confirm", "mimeType"]);
+  const swift = renderActions(defineActions("pins", [a])).get("OuroActions.swift")!;
+  assert.match(swift, /case imageJpeg = "image\/jpeg"\n    case imagePng = "image\/png"\n    case shoppingList = "shopping-list"\n    case aB = "a_b"\n    case v12 = "v1.2"/);
+  const value: InputOf<typeof a> = { recipe: "r1", confirm: true, mimeType: "image/png", photo: null };
+  assert.equal(value.photo, null);
+  const at = (input: Record<string, unknown>) => () => defineAction({ ...base, input: input as never });
+  assert.throws(at({ x: field.string({ label: "X", description: "x", maxLength: 0 }) }), /maxLength.*whole number above 0/);
+  assert.throws(at({ x: field.string({ label: "X", description: "x", format: "phone" as "date" }) }), /format.*date-time, date, uri, email/);
+  assert.throws(at({ x: field.string({ label: "X", description: "x", nullable: true }) }), /nullable.*optional/);
+  assert.throws(at({ x: field.enum({ label: "X", description: "x", values: ["a"], optional: true, nullable: true }) }), /nullable/);
+  assert.throws(at({ x: field.boolean({ label: "X", description: "x", const: false as unknown as true }) }), /const.*const: true/);
+  assert.throws(at({ x: field.enum({ label: "X", description: "x", values: ["Image/JPEG"] }) }), /values.*lowercase.*image\/jpeg/);
+  assert.throws(at({ x: field.enum({ label: "X", description: "x", values: ["a-b", "a/b"] }) }), /values "a-b" and "a\/b" are the same Swift case, aB/);
+});
+
+test("structured fields: a list, a group and a one-of are protocol-only, carry their JSON Schema, and come in on the CLI as JSON", async () => {
+  const ingredient = field.group({
+    label: "Ingredient",
+    description: "One ingredient.",
+    fields: {
+      name: field.string({ label: "Name", description: "What it is." }),
+      quantity: field.number({ label: "Quantity", description: "How much.", optional: true }),
+    },
+  });
+  const a = defineAction({
+    ...base,
+    input: {
+      recipe: field.string({ label: "Recipe", description: "The recipe's id.", arg: true }),
+      steps: field.list({
+        label: "Steps",
+        description: "The recipe's steps, in order.",
+        optional: true,
+        protocolOnly: true,
+        of: field.group({
+          label: "Step",
+          description: "One step.",
+          fields: {
+            text: field.string({ label: "Text", description: "What to do." }),
+            uses: field.list({ label: "Uses", description: "Earlier step numbers it uses.", optional: true, of: field.integer({ label: "Step", description: "A step number.", min: 1 }) }),
+            ingredients: field.list({ label: "Ingredients", description: "What it needs.", optional: true, of: ingredient }),
+          },
+        }),
+      }),
+      expiresInDays: field.oneOf({
+        label: "Expires",
+        description: "Days until it expires, or never.",
+        optional: true,
+        protocolOnly: true,
+        nullable: true,
+        options: [
+          field.integer({ label: "Days", description: "1 to 365 days.", min: 1, max: 365 }),
+          field.enum({ label: "Never", description: "It never expires.", values: ["never"] }),
+        ],
+      }),
+      dryRun: field.boolean({ label: "Plan only", description: "Check the input and change nothing.", optional: true, protocolOnly: true, flag: "plan-only" }),
+    },
+  });
+  const props = inputSchema(a).properties as Record<string, unknown>;
+  assert.deepEqual(props["steps"], {
+    type: "array",
+    description: "The recipe's steps, in order.",
+    items: {
+      type: "object",
+      description: "One step.",
+      properties: {
+        text: { type: "string", description: "What to do." },
+        uses: { type: "array", description: "Earlier step numbers it uses.", items: { type: "integer", description: "A step number.", minimum: 1 } },
+        ingredients: {
+          type: "array",
+          description: "What it needs.",
+          items: {
+            type: "object",
+            description: "One ingredient.",
+            properties: { name: { type: "string", description: "What it is." }, quantity: { type: "number", description: "How much." } },
+            required: ["name"],
+            additionalProperties: false,
+          },
+        },
+      },
+      required: ["text"],
+      additionalProperties: false,
+    },
+  });
+  assert.deepEqual(props["expiresInDays"], {
+    oneOf: [{ type: "integer", description: "1 to 365 days.", minimum: 1, maximum: 365 }, { type: "string", description: "It never expires.", enum: ["never"] }, { type: "null" }],
+    description: "Days until it expires, or never.",
+  });
+  assert.deepEqual(props["dryRun"], { type: "boolean", description: "Check the input and change nothing." });
+  const value: InputOf<typeof a> = { recipe: "r1", steps: [{ text: "Boil.", uses: [1], ingredients: [{ name: "salt" }] }], expiresInDays: null };
+  assert.equal(value.steps?.[0]?.ingredients?.[0]?.name, "salt");
+  // @ts-expect-error a step needs its text
+  const wrong: InputOf<typeof a> = { recipe: "r1", steps: [{}] };
+  void wrong;
+  // The CLI: a structured field is one JSON string, a field whose flag the kit takes has its own, and fromCli undoes both.
+  assert.deepEqual(toCommand(a).flags, {
+    steps: { type: "string", description: "The recipe's steps, in order, as JSON." },
+    "expires-in-days": { type: "string", description: "Days until it expires, or never, as JSON." },
+    "plan-only": { type: "boolean", description: "Check the input and change nothing." },
+  });
+  const web = renderActions(defineActions("pins", [a])).get("web.ts")!;
+  assert.match(web, /"pin-recipe": \{ "expires-in-days": "expiresInDays", "plan-only": "dryRun" \},/);
+  assert.match(web, /"pin-recipe": \["steps", "expiresInDays"\],/);
+  const { mkdtemp, writeFile, rm } = await import("node:fs/promises");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const dir = await mkdtemp(join(tmpdir(), "ouro-actions-web-"));
+  try {
+    await writeFile(join(dir, "web.ts"), web);
+    const { fromCli } = (await import(join(dir, "web.ts"))) as { fromCli: (action: string, input: Record<string, unknown>) => Record<string, unknown> };
+    assert.deepEqual(fromCli("pin-recipe", { recipe: "r1", steps: '[{"text":"Boil."}]', "expires-in-days": "30", "plan-only": true }), { recipe: "r1", steps: [{ text: "Boil." }], expiresInDays: 30, dryRun: true });
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+  // Swift: the structured fields stay off the input, the App Intent and Reins; the plain protocol-only one stays on the input.
+  const files = renderActions(defineActions("pins", [a]));
+  assert.match(files.get("OuroActions.swift")!, /public struct PinRecipeInput: Codable, Sendable, Hashable \{\n    public var recipe: String\n    public var dryRun: Bool\?\n/);
+  assert.doesNotMatch(files.get("OuroActions.swift")! + files.get("OuroActionsReins.swift")!, /steps|expiresInDays/);
+});
+
+test("a required protocol-only field stays required on MCP and the CLI, and is optional and off the person's doors in Swift", () => {
+  const a = defineAction({ ...base, input: { ...base.input, key: field.string({ label: "Key", description: "A retry key.", protocolOnly: true }) } });
+  assert.deepEqual(inputSchema(a).required, ["recipe", "key"]);
+  assert.deepEqual(toCommand(a).flags, { key: { type: "string", description: "A retry key.", required: true } });
+  const files = renderActions(defineActions("pins", [a]));
+  assert.match(files.get("OuroActions.swift")!, /public var key: String\?\n    public init\(recipe: String, key: String\? = nil\)/);
+  assert.match(files.get("OuroActions.swift")!, /PinRecipeInput\(recipe: recipe\)/);
+  assert.doesNotMatch(files.get("OuroActionsReins.swift")!, /"key"/);
+  assert.throws(() => defineAction({ ...base, input: { recipe: field.string({ label: "R", description: "r", arg: true, protocolOnly: true }) } }), /protocolOnly.*never a CLI argument/);
+});
+
+test("defineAction refuses a structured field a door can't carry, with the fix", () => {
+  const item = field.string({ label: "Item", description: "An item." });
+  const at = (input: Record<string, unknown>, output: Record<string, unknown> = {}) => () => defineAction({ ...base, input: input as never, output: output as never });
+  assert.throws(at({ xs: field.list({ label: "Xs", description: "xs", of: item, optional: true }) }), /xs.*a list field is only for programs.*protocolOnly: true/);
+  assert.doesNotThrow(at({ xs: field.list({ label: "Xs", description: "xs", of: item, protocolOnly: true }) }));
+  assert.throws(at({}, { xs: field.list({ label: "Xs", description: "xs", of: item }) }), /output field can't be a list.*JSON/);
+  assert.throws(at({ xs: field.list({ label: "Xs", description: "xs", of: { ...item, optional: true }, optional: true, protocolOnly: true }) }), /item: an item can't be optional/);
+  assert.throws(at({ xs: field.list({ label: "Xs", description: "xs", of: { ...item, protocolOnly: true }, optional: true, protocolOnly: true }) }), /item: protocolOnly is for an action's own input/);
+  assert.throws(at({ xs: field.list({ label: "Xs", description: "xs", of: { ...item, description: "" }, optional: true, protocolOnly: true }) }), /item: description is empty/);
+  assert.throws(at({ g: field.group({ label: "G", description: "g", fields: { Bad: item }, optional: true, protocolOnly: true }) }), /"Bad": a field name is camelCase/);
+  assert.throws(at({ o: field.oneOf({ label: "O", description: "o", options: [item], optional: true, protocolOnly: true }) }), /options needs two shapes or more/);
+  assert.throws(at({ o: field.oneOf({ label: "O", description: "o", options: [item, { ...item, optional: true }], optional: true, protocolOnly: true }) }), /option 2: an option can't be optional/);
+  assert.throws(at({ dryRun: field.boolean({ label: "D", description: "d", optional: true, flag: "Plan Only" }) }), /flag.*kebab case/);
+  assert.throws(at({ planOnly: field.boolean({ label: "P", description: "p", optional: true }), dryRun: field.boolean({ label: "D", description: "d", optional: true, flag: "plan-only" }) }), /"planOnly" and "dryRun" share the CLI flag --plan-only/);
+  assert.throws(at({ x: field.string({ label: "X", description: "x", flag: "json" }) }), /--json is taken by web's kit/);
+});
+
+test("the reviewer's four: nullable const, overlapping one-of options, nested enum cases and output enums", () => {
+  const consentWrite = { id: "do_it", consent: "write", label: "Do it", description: "Does it.", agent: "Does it.", output: {} } as const;
+  assert.throws(
+    () => defineAction({ ...consentWrite, input: { ok: field.boolean({ label: "OK", description: "Confirm.", optional: true, nullable: true, const: true, protocolOnly: true }) } }),
+    /a const field can't be nullable/,
+  );
+  assert.throws(
+    () => defineAction({ ...consentWrite, input: { days: field.oneOf({ label: "Days", description: "Days.", optional: true, protocolOnly: true, options: [field.string({ label: "Text", description: "Any." }), field.enum({ label: "Never", description: "Never.", values: ["never"] })] }) } }),
+    /both can take the same string value/,
+  );
+  assert.throws(
+    () => defineAction({ ...consentWrite, input: { n: field.oneOf({ label: "N", description: "N.", optional: true, protocolOnly: true, options: [field.number({ label: "Num", description: "Num." }), field.integer({ label: "Int", description: "Int." })] }) } }),
+    /both can take the same number value/,
+  );
+  // An enum inside a group never becomes a Swift enum, so values that would share a Swift case are fine there.
+  defineAction({ ...consentWrite, input: { g: field.group({ label: "G", description: "G.", protocolOnly: true, fields: { k: field.enum({ label: "K", description: "K.", values: ["a1", "a.1"] }) } }) } });
+  assert.throws(
+    () => defineAction({ ...consentWrite, consent: "read", input: {}, output: { st: field.enum({ label: "State", description: "State.", values: ["on", "off"] }) } }),
+    /an output field can't be an enum/,
+  );
 });

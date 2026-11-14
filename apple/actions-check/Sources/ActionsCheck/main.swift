@@ -104,6 +104,9 @@ func check() async throws {
     }
     ShareShoppingListAction.confirm = nil
     expect(ShareShoppingListAction.confirm == nil, "the hook is unset by default, so the system's own confirmation asks")
+    // A list field is protocol-only: it stays off the Swift input, the App Intent and Reins.
+    expect(RemoveShoppingListItemIntent(RemoveShoppingListItemInput(id: "i1")).input == RemoveShoppingListItemInput(id: "i1"), "a list field stays off the Swift input and the intent")
+    expect(ReinsAction.removeShoppingListItem().input == .object(properties: ["id": .string], required: ["id"]), "a list field stays off Reins")
 
     if failures.isEmpty {
         print("ok    generated Swift: one handler behind the intent, the button and Reins; person-only refuses")
