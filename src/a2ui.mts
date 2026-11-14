@@ -161,7 +161,7 @@ export interface CatalogAction {
   press: Press;
   label: string;
   description: string;
-  input: Record<string, { label: string; kind: "string" | "number" | "integer" | "boolean" | "enum"; optional: boolean; values?: string[] }>;
+  input: Record<string, { label: string; kind: "string" | "number" | "integer" | "boolean" | "enum"; optional: boolean; values?: string[]; shownAs?: string }>;
   /** For a person-only action: where the person does it, and the refusal every agent door answers. */
   personOnly?: { how: string; refusal: Refusal };
 }
@@ -540,8 +540,45 @@ function resolveValue(data: Json, scope: string, v: unknown): Json | undefined {
   return v as Json;
 }
 
+/**
+ * The rows of a confirm sheet: each prepared input with the person's label. An id shows its name (the app's resolver,
+ * else the sibling `shownAs` names, else the value itself), with the id as `raw` when the name replaced it; a name
+ * field that stands in for an id has no row of its own.
+ */
+function confirmFields(action: string, a: CatalogAction, input: Obj, options: ResolveOptions): { label: string; value: string; raw?: string }[] {
+  const names = new Set(Object.entries(a.input).filter(([k, f]) => k in input && f.shownAs !== undefined && f.shownAs in a.input).map(([, f]) => f.shownAs!));
+  return Object.entries(a.input)
+    .filter(([k]) => k in input && !names.has(k))
+    .map(([k, f]) => {
+      const raw = asText(input[k]);
+      const sibling = f.shownAs !== undefined ? input[f.shownAs] : undefined;
+      const prepared = typeof sibling === "string" && sibling.trim() !== "" ? sibling.trim() : undefined;
+      const value = options.label?.({ action, field: k, value: raw, input }) ?? prepared ?? raw;
+      return value === raw ? { label: f.label, value } : { label: f.label, value, raw };
+    });
+}
+
+/** What a resolver is asked to name: one prepared input of a button that confirms. */
+export interface LabelContext {
+  action: string;
+  field: string;
+  /** The prepared value, as text: the id. */
+  value: string;
+  /** Every prepared input of the button. */
+  input: Obj;
+}
+
+export interface ResolveOptions {
+  /**
+   * The app's own word for an id, from its own data, such as a recipe's title for `rcp_lemon_orzo`; undefined to leave it
+   * to the field's `shownAs`, then to the value itself. It is asked for each field a confirm sheet shows, and wins over
+   * what the agent prepared, since the agent's text is the one thing the person can't check.
+   */
+  label?: (context: LabelContext) => string | undefined;
+}
+
 /** One surface as every renderer must show it. */
-export function resolveSurface(catalogJson: unknown, surface: Surface): Resolved | null {
+export function resolveSurface(catalogJson: unknown, surface: Surface, options: ResolveOptions = {}): Resolved | null {
   const cat = loadCatalog(catalogJson);
   const root = surface.components.get("root");
   if (!root) return null;
@@ -617,7 +654,7 @@ export function resolveSurface(catalogJson: unknown, surface: Surface): Resolved
         props.confirm = {
           title: a.label,
           description: a.description,
-          fields: Object.entries(a.input).filter(([k]) => k in input).map(([k, f]) => ({ label: f.label, value: asText(input[k]) })),
+          fields: confirmFields(id, a, input, options),
         };
       }
       if (a.personOnly) props.handoff = a.personOnly.how;
@@ -629,11 +666,11 @@ export function resolveSurface(catalogJson: unknown, surface: Surface): Resolved
 }
 
 /** Every surface a stream leaves, resolved; the validator's problems instead when it has any. */
-export function resolveMessages(catalogJson: unknown, messages: readonly unknown[]): { surfaces: Record<string, Resolved | null> } | { problems: Problem[] } {
+export function resolveMessages(catalogJson: unknown, messages: readonly unknown[], options: ResolveOptions = {}): { surfaces: Record<string, Resolved | null> } | { problems: Problem[] } {
   const problems = validateMessages(catalogJson, messages);
   if (problems.length) return { problems };
   const surfaces: Record<string, Resolved | null> = {};
-  for (const [id, s] of applyMessages(messages)) surfaces[id] = resolveSurface(catalogJson, s);
+  for (const [id, s] of applyMessages(messages)) surfaces[id] = resolveSurface(catalogJson, s, options);
   return { surfaces };
 }
 

@@ -71,6 +71,14 @@ export interface StringField extends FieldBase {
    * several lines. Not for a positional `arg`, an `entity` or a `protocolOnly` field.
    */
   multiline?: boolean;
+  /**
+   * Input only: this string is an id the person never reads, such as `rcp_lemon_orzo`, and `shownAs` names the optional
+   * sibling input string that carries their word for it, such as `recipeTitle`. A confirm sheet shows that name in its
+   * place, with the id beside it as `raw`. The agent prepares both; the app's own resolver (A2UI `label`) can override
+   * the name from its own data. MCP, the CLI and the App Intent just see two inputs, so a tool that doesn't want the
+   * name there uses the resolver alone.
+   */
+  shownAs?: string;
 }
 export interface NumberField extends FieldBase { kind: "number" | "integer"; min?: number; max?: number }
 export interface BooleanField extends FieldBase { kind: "boolean" }
@@ -193,6 +201,17 @@ function checkFields(where: string, fields: unknown, input: boolean): void {
       if (f.kind !== "string" || !input) throw new Error(`${at}: entity is only for an input string field, whose value is the entity's id. Fix: drop entity.`);
       if (!/^[A-Z][A-Za-z0-9]*$/.test(f.entity)) throw new Error(`${at}: entity is not a Swift type name. Fix: the app's App Entity, such as "MarkdownDocumentEntity".`);
       if (f.protocolOnly) throw new Error(`${at}: entity is for the person's doors, and a protocol-only field isn't on them. Fix: drop entity or protocolOnly.`);
+    }
+    if ("shownAs" in f && f.shownAs !== undefined) {
+      const to = f.shownAs;
+      const sibling = (fields as Record<string, Field>)[to];
+      if (f.kind !== "string") throw new Error(`${at}: shownAs is only for a string field, the id. Fix: drop shownAs.`);
+      if (!input) throw new Error(`${at}: shownAs is only for an input field. Fix: drop shownAs.`);
+      if (to === name) throw new Error(`${at}: shownAs names the field itself. Fix: name the sibling that holds the person's word for it, such as "recipeTitle".`);
+      if (typeof to !== "string" || !sibling) throw new Error(`${at}: shownAs ${JSON.stringify(to)} is not another input field. Fix: declare it beside this one, such as recipeTitle: field.string({ ..., optional: true }).`);
+      if (sibling.kind !== "string" || !sibling.optional) throw new Error(`${at}: shownAs ${JSON.stringify(to)} must be an optional string input, so a call without a name still works. Fix: make "${to}" an optional string.`);
+      if (sibling.protocolOnly) throw new Error(`${at}: shownAs ${JSON.stringify(to)} is protocolOnly, so the person's doors don't carry it. Fix: drop protocolOnly from "${to}".`);
+      if ("shownAs" in sibling && sibling.shownAs !== undefined) throw new Error(`${at}: shownAs ${JSON.stringify(to)} is itself shown as another field, and a name has no name. Fix: drop shownAs from "${to}".`);
     }
     if ("multiline" in f && f.multiline !== undefined) {
       if (f.kind !== "string") throw new Error(`${at}: multiline is only for a string field. Fix: drop multiline.`);

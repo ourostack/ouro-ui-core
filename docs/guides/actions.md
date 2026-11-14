@@ -51,6 +51,8 @@ Two field options shape the doors a field reaches:
 
 - **`multiline: true`** on an input string field (core 0.9.0): the value is long text, such as Markdown or a message. The App Intent's parameter takes `String.IntentInputOptions(multiline: true)`, so Shortcuts opens a multiline editor, and the description MCP, WebMCP and the CLI show ends "It may run over several lines." Not for a positional `arg`, an `entity` or a `protocolOnly` field. Declarations without it generate the same bytes as before.
 
+- **`shownAs: "recipeTitle"`** on an input string field that is an id (core 0.9.0): the person never reads `rcp_lemon_orzo`, so name the optional sibling input string that holds their word for it. A confirm sheet shows that name in the id's row, with the id beside it (`raw`), and has no row for the name field. Declare the sibling beside the id (`recipeTitle: field.string({ ..., optional: true })`); the agent prepares both. MCP, the CLI and the App Intent see two ordinary inputs. If your tool shouldn't take a name, leave `shownAs` out and have your renderer pass a `label` resolver instead (see [the A2UI guide](a2ui.md)); the resolver looks the id up in your own data and wins over what the agent prepared.
+
 Three more options carry what a real App Intent needs (core 0.6.1; none of them changes MCP, the CLI or web):
 
 - **`entity: "MarkdownDocumentEntity"`** on an input string field: the App Intent's parameter is your App Entity, so Shortcuts shows its picker and phrases can name it. `Input`, MCP and the CLI keep a string, the entity's `id`. The type must be `public`, with `init(id: String)` and `id: String`.

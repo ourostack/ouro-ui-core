@@ -35,7 +35,8 @@ export const shareRecipe = defineAction({
   description: "Send this recipe to someone.",
   agent: "Send one recipe to another person by email; they see the recipe and the person's name.",
   input: {
-    recipe: field.string({ label: "Recipe", description: "The recipe's id.", arg: true }),
+    recipe: field.string({ label: "Recipe", description: "The recipe's id.", arg: true, shownAs: "recipeTitle" }),
+    recipeTitle: field.string({ label: "Recipe title", description: "The recipe's title, which the person sees instead of its id when they confirm.", optional: true }),
     with: field.string({ label: "Send to", description: "The email address of the person to send it to." }),
   },
   output: {},

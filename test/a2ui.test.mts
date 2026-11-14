@@ -197,3 +197,45 @@ test("each resolved node carries its component id, for the action message's sour
   assert.ok("surfaces" in out);
   assert.deepEqual([out.surfaces.buttons!.id, ...out.surfaces.buttons!.children.map((n) => n.id)], ["root", "open", "shop", "share", "order"]);
 });
+
+const shareStream = (input: Record<string, unknown>, data: unknown = { recipe: { id: "rcp_lemon_orzo", title: "Lemon orzo" } }) =>
+  create([{ id: "root", component: "ActionButton", action: "share_recipe", input }], data);
+const confirmOf = (messages: unknown[], options?: Parameters<typeof resolveMessages>[2]) =>
+  ((resolveMessages(app, messages, options) as { surfaces: Record<string, Resolved> }).surfaces.s!.props as { confirm: { fields: unknown[] } }).confirm.fields;
+
+test("a confirm sheet shows the name a field's shownAs names, and keeps the id beside it", () => {
+  assert.equal(loadCatalog(app).actions.share_recipe!.input.recipe!.shownAs, "recipeTitle");
+  const input = { recipe: { "@path": "/recipe/id" }, recipeTitle: { "@path": "/recipe/title" }, with: "sam@example.com" };
+  assert.deepEqual(confirmOf(shareStream(input)), [
+    { label: "Recipe", value: "Lemon orzo", raw: "rcp_lemon_orzo" },
+    { label: "Send to", value: "sam@example.com" },
+  ]);
+});
+
+test("without a name, the confirm sheet shows the id as it did before, and an empty name is no name", () => {
+  assert.deepEqual(confirmOf(shareStream({ recipe: { "@path": "/recipe/id" }, with: "sam@example.com" })), [
+    { label: "Recipe", value: "rcp_lemon_orzo" },
+    { label: "Send to", value: "sam@example.com" },
+  ]);
+  assert.deepEqual(confirmOf(shareStream({ recipe: { "@path": "/recipe/id" }, recipeTitle: "  ", with: "x@y.z" }))[0], { label: "Recipe", value: "rcp_lemon_orzo" });
+});
+
+test("the app's own resolver names an id from its own data, and wins over what the agent prepared", () => {
+  const seen: unknown[] = [];
+  const label = (c: { action: string; field: string; value: string; input: Record<string, unknown> }) => {
+    seen.push([c.action, c.field, c.value]);
+    return c.field === "recipe" ? "Lemon orzo (yours)" : undefined;
+  };
+  const input = { recipe: { "@path": "/recipe/id" }, recipeTitle: "Something else", with: "sam@example.com" };
+  assert.deepEqual(confirmOf(shareStream(input), { label }), [
+    { label: "Recipe", value: "Lemon orzo (yours)", raw: "rcp_lemon_orzo" },
+    { label: "Send to", value: "sam@example.com" },
+  ]);
+  assert.deepEqual(seen, [["share_recipe", "recipe", "rcp_lemon_orzo"], ["share_recipe", "with", "sam@example.com"]]);
+});
+
+test("a run button has no confirm sheet, so nothing asks the resolver", () => {
+  const stream = create([{ id: "root", component: "ActionButton", action: "get_recipe", input: { recipe: "rcp_1" } }]);
+  const out = resolveMessages(app, stream, { label: () => { throw new Error("asked"); } }) as { surfaces: Record<string, Resolved> };
+  assert.equal((out.surfaces.s!.props as { confirm?: unknown }).confirm, undefined);
+});
