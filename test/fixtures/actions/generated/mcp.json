@@ -108,6 +108,10 @@
           "canEdit": {
             "type": "boolean",
             "description": "Whether they may change the list, not only see it."
+          },
+          "message": {
+            "type": "string",
+            "description": "A note to send with the invitation. It may run over several lines."
           }
         },
         "required": [

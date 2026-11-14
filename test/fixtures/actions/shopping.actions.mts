@@ -46,6 +46,7 @@ export const shareShoppingList = defineAction({
   input: {
     with: field.string({ label: "With", description: "The email address of the person to share with.", arg: true, entity: "HouseholdMemberEntity" }),
     canEdit: field.boolean({ label: "Can edit", description: "Whether they may change the list, not only see it.", optional: true }),
+    message: field.string({ label: "Note", description: "A note to send with the invitation.", optional: true, multiline: true }),
   },
   output: {},
   cli: "list share",

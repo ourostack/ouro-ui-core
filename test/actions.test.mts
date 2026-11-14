@@ -149,7 +149,10 @@ test("the CLI projection is a defineCommand definition: args, optional flags, ef
   });
   assert.equal(toCommand(getShoppingList).readOnly, true);
   assert.equal(toCommand(shareShoppingList).effect, "others");
-  assert.deepEqual(toCommand(shareShoppingList).flags, { "can-edit": { type: "boolean", description: "Whether they may change the list, not only see it." } });
+  assert.deepEqual(toCommand(shareShoppingList).flags, {
+    "can-edit": { type: "boolean", description: "Whether they may change the list, not only see it." },
+    message: { type: "string", description: "A note to send with the invitation. It may run over several lines." },
+  });
   assert.throws(() => toCommand(placeGroceryOrder), /person-only/);
 });
 
@@ -405,7 +408,7 @@ test("Swift: an intent can take an App Entity, return a value to Shortcuts and o
   // share_shopping_list: `with` is a HouseholdMemberEntity in the intent and a plain string in Input, MCP and the CLI.
   assert.match(swift, /@Parameter\(title: "With", description: [^\n]*\)\n    public var with: HouseholdMemberEntity\n/);
   assert.match(swift, /self\.with = HouseholdMemberEntity\(id: input\.with\)/);
-  assert.match(swift, /ShareShoppingListInput\(with: with\.id, canEdit: canEdit\)/);
+  assert.match(swift, /ShareShoppingListInput\(with: with\.id, canEdit: canEdit, message: message\)/);
   assert.match(swift, /public struct ShareShoppingListInput: Codable, Sendable, Hashable \{\n    public var with: String\n/);
   assert.equal((inputSchema(shareShoppingList).properties["with"] as { type: string }).type, "string");
   // An optional entity is optional on both sides.
@@ -466,4 +469,25 @@ test("the generator runs alone, as an app vendors it: copied into an empty folde
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
+});
+
+test("a multiline input says so on every door that has words for it", () => {
+  const message = { type: "string", description: "A note to send with the invitation. It may run over several lines." };
+  assert.deepEqual(inputSchema(shareShoppingList).properties.message, message);
+  assert.deepEqual(toWebMcpTool(shareShoppingList).inputSchema.properties.message, message);
+  assert.deepEqual(toMcpTool(shareShoppingList).inputSchema.properties.message, message);
+  // The App Intent's parameter opens a multiline editor; a single-line field has no input options.
+  const swift = renderActions(shopping).get("OuroActions.swift")!;
+  assert.match(swift, /@Parameter\(title: "Note", description: "A note to send with the invitation\. It may run over several lines\.", inputOptions: String\.IntentInputOptions\(multiline: true\)\)/);
+  assert.equal((swift.match(/IntentInputOptions/g) ?? []).length, 1);
+});
+
+test("multiline is only for an optional-or-required input string that is not a positional argument or an entity", () => {
+  const field1 = (o: object) => ({ ...base, input: { x: field.string({ label: "X", description: "x", ...o } as never) } });
+  assert.doesNotThrow(() => defineAction(field1({ multiline: true })));
+  assert.throws(() => defineAction(field1({ multiline: true, arg: true })), /x.*multiline.*arg/);
+  assert.throws(() => defineAction(field1({ multiline: true, entity: "RecipeEntity" })), /x.*multiline.*entity/);
+  assert.throws(() => defineAction({ ...base, output: { x: field.string({ label: "X", description: "x", multiline: true } as never) } }), /x.*multiline.*input/);
+  assert.throws(() => defineAction({ ...base, input: { x: field.integer({ label: "X", description: "x", multiline: true } as never) } }), /x.*multiline.*string/);
+  assert.throws(() => defineAction(field1({ multiline: true, protocolOnly: true, optional: true })), /x.*multiline.*protocolOnly/);
 });
