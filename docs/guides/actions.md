@@ -49,6 +49,8 @@ Two field options shape the doors a field reaches:
 - `ask` (input only): the one-line question Siri asks when a required value is missing, such as `"What should I add to your shopping list?"`. It becomes the App Intent parameter's `requestValueDialog`.
 - `protocolOnly: true` (an optional input): a field only programs send, such as an idempotency key or a server-side owner. MCP, WebMCP and the CLI carry it; the App Intent and Reins, which stand for the person, leave it out, and the Swift input passes `nil`. Use it to keep an existing MCP tool's inputs while the person's doors stay clean.
 
+- **`multiline: true`** on an input string field (core 0.9.0): the value is long text, such as Markdown or a message. The App Intent's parameter takes `String.IntentInputOptions(multiline: true)`, so Shortcuts opens a multiline editor, and the description MCP, WebMCP and the CLI show ends "It may run over several lines." Not for a positional `arg`, an `entity` or a `protocolOnly` field. Declarations without it generate the same bytes as before.
+
 Three more options carry what a real App Intent needs (core 0.6.1; none of them changes MCP, the CLI or web):
 
 - **`entity: "MarkdownDocumentEntity"`** on an input string field: the App Intent's parameter is your App Entity, so Shortcuts shows its picker and phrases can name it. `Input`, MCP and the CLI keep a string, the entity's `id`. The type must be `public`, with `init(id: String)` and `id: String`.

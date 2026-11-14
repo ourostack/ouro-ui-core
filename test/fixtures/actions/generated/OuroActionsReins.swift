@@ -13,7 +13,7 @@ extension AddShoppingListItemInput: ReinsInput {
 }
 
 extension ShareShoppingListInput: ReinsInput {
-    public static var reinsSchema: ReinsSchema { .object(properties: ["with": .string, "canEdit": .boolean], required: ["with"]) }
+    public static var reinsSchema: ReinsSchema { .object(properties: ["with": .string, "canEdit": .boolean, "message": .string], required: ["with"]) }
 }
 
 extension PlaceGroceryOrderInput: ReinsInput {

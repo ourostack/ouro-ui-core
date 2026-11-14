@@ -248,9 +248,11 @@ extension AddShoppingListItemButton where Label == Text {
 public struct ShareShoppingListInput: Codable, Sendable, Hashable {
     public var with: String
     public var canEdit: Bool?
-    public init(with: String, canEdit: Bool? = nil) {
+    public var message: String?
+    public init(with: String, canEdit: Bool? = nil, message: String? = nil) {
         self.with = with
         self.canEdit = canEdit
+        self.message = message
     }
 }
 
@@ -283,6 +285,8 @@ public struct ShareShoppingListIntent: AppIntent {
     public var with: HouseholdMemberEntity
     @Parameter(title: "Can edit", description: "Whether they may change the list, not only see it.")
     public var canEdit: Bool?
+    @Parameter(title: "Note", description: "A note to send with the invitation. It may run over several lines.", inputOptions: String.IntentInputOptions(multiline: true))
+    public var message: String?
 
     public init() {}
 
@@ -290,10 +294,11 @@ public struct ShareShoppingListIntent: AppIntent {
         self.init()
         self.with = HouseholdMemberEntity(id: input.with)
         self.canEdit = input.canEdit
+        self.message = input.message
     }
 
     public var input: ShareShoppingListInput {
-        ShareShoppingListInput(with: with.id, canEdit: canEdit)
+        ShareShoppingListInput(with: with.id, canEdit: canEdit, message: message)
     }
 
     @MainActor

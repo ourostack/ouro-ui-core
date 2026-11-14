@@ -100,6 +100,13 @@
           "description": "Whether they may change the list, not only see it.",
           "optional": true,
           "kind": "boolean"
+        },
+        "message": {
+          "label": "Note",
+          "description": "A note to send with the invitation.",
+          "optional": true,
+          "multiline": true,
+          "kind": "string"
         }
       },
       "output": {},

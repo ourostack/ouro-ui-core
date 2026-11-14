@@ -65,6 +65,12 @@ export interface StringField extends FieldBase {
    * `init(id: String)` and `id: String`.
    */
   entity?: string;
+  /**
+   * Input only: the value is long text, such as Markdown or a message. The App Intent's parameter opens a multiline editor
+   * (`String.IntentInputOptions(multiline: true)`), and the description MCP, WebMCP and the CLI show says it may run over
+   * several lines. Not for a positional `arg`, an `entity` or a `protocolOnly` field.
+   */
+  multiline?: boolean;
 }
 export interface NumberField extends FieldBase { kind: "number" | "integer"; min?: number; max?: number }
 export interface BooleanField extends FieldBase { kind: "boolean" }
@@ -188,6 +194,13 @@ function checkFields(where: string, fields: unknown, input: boolean): void {
       if (!/^[A-Z][A-Za-z0-9]*$/.test(f.entity)) throw new Error(`${at}: entity is not a Swift type name. Fix: the app's App Entity, such as "MarkdownDocumentEntity".`);
       if (f.protocolOnly) throw new Error(`${at}: entity is for the person's doors, and a protocol-only field isn't on them. Fix: drop entity or protocolOnly.`);
     }
+    if ("multiline" in f && f.multiline !== undefined) {
+      if (f.kind !== "string") throw new Error(`${at}: multiline is only for a string field. Fix: drop multiline.`);
+      if (!input) throw new Error(`${at}: multiline is only for an input field. Fix: drop multiline.`);
+      if (f.arg) throw new Error(`${at}: multiline can't be a positional arg, which is one word on the command line. Fix: drop arg or multiline.`);
+      if (f.entity !== undefined) throw new Error(`${at}: multiline is for typed text, and an entity is picked. Fix: drop entity or multiline.`);
+      if (f.protocolOnly) throw new Error(`${at}: multiline is for the person's doors, and a protocol-only field isn't on them. Fix: drop multiline or protocolOnly.`);
+    }
     if ("arg" in f && f.arg && (f.kind !== "string" || f.optional || !input)) throw new Error(`${at}: arg is only for a required string input field, since web's CLI arguments are strings. Fix: drop arg, or make it a required string.`);
     if (f.kind === "enum" && (!Array.isArray(f.values) || f.values.length === 0 || !f.values.every((v) => /^[a-z][a-z0-9-]*$/.test(v)))) {
       throw new Error(`${at}: values is empty or not lowercase words. Fix: values: ["all", "unchecked"].`);
@@ -310,8 +323,11 @@ export function refusal(a: Action): Refusal {
 
 type Json = null | boolean | number | string | Json[] | { [k: string]: Json };
 
+/** The field's description as an agent reads it: long text says it may run over several lines. */
+const describe = (f: Field) => (f.kind === "string" && f.multiline ? `${f.description} It may run over several lines.` : f.description);
+
 function fieldSchema(f: Field): Record<string, Json> {
-  const s: Record<string, Json> = { type: f.kind === "enum" ? "string" : f.kind, description: f.description };
+  const s: Record<string, Json> = { type: f.kind === "enum" ? "string" : f.kind, description: describe(f) };
   if (f.kind === "enum") s["enum"] = [...f.values];
   if ((f.kind === "number" || f.kind === "integer") && f.min !== undefined) s["minimum"] = f.min;
   if ((f.kind === "number" || f.kind === "integer") && f.max !== undefined) s["maximum"] = f.max;
@@ -344,7 +360,7 @@ export interface CommandJson {
 }
 
 function flagSpec(f: Field): Record<string, Json> {
-  const s: Record<string, Json> = { type: f.kind === "integer" ? "number" : f.kind, description: f.description };
+  const s: Record<string, Json> = { type: f.kind === "integer" ? "number" : f.kind, description: describe(f) };
   if (f.kind === "enum") s["values"] = [...f.values];
   if (f.kind === "number" || f.kind === "integer") {
     if (f.min !== undefined) s["min"] = f.min;
@@ -584,7 +600,8 @@ function renderSwift(set: ActionSet): string {
       for (const [n, f] of fields) {
         const entity = entityOf(f);
         const ask = f.ask !== undefined ? `, requestValueDialog: ${swiftLit(f.ask)}` : "";
-        L.push(`    @Parameter(title: ${swiftLit(f.label)}, description: ${swiftLit(f.description)}${ask})`);
+        const multiline = f.kind === "string" && f.multiline ? ", inputOptions: String.IntentInputOptions(multiline: true)" : "";
+        L.push(`    @Parameter(title: ${swiftLit(f.label)}, description: ${swiftLit(describe(f))}${ask}${multiline})`);
         L.push(`    public var ${swiftId(n)}: ${entity ? `${entity}${f.optional ? "?" : ""}` : swiftType(a, n, f)}`);
       }
       if (fields.length) L.push("");
