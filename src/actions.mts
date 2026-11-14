@@ -581,7 +581,7 @@ function renderSwift(set: ActionSet): string {
     L.push(`    /// The app's handler; every door calls it.`);
     L.push(`    public static var perform: (@MainActor @Sendable (${P}Input) async throws -> ${P}Output)?`);
     if (agentDoor && a.consent === "consequential") {
-      L.push("    /// How the intent asks the person before it acts. Unset, the system asks (`requestConfirmation()`). A test sets it: return to");
+      L.push("    /// How the intent asks the person before it acts. Unset, the system asks. A test sets it: return to");
       L.push("    /// confirm, or throw to cancel, and the handler never runs. The app can also set it to ask in its own way.");
       L.push(`    public static var confirm: (@MainActor @Sendable (${P}Input) async throws -> Void)?`);
     }
