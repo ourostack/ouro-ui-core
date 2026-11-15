@@ -15,6 +15,11 @@ test("a rule under @supports that sets element-level properties is not a token (
   assert.deepEqual(readDeclarations(css).declarations.map((d) => d.name), ["--ouro-x"]);
 });
 
+test("a Tailwind @utility that sets element-level properties is not a token (web rounded-full, v1.3.189)", () => {
+  const css = [":root {", "  --ouro-x: 1px;", "}", "@utility rounded-full {", "  --corner-shape: round;", "  corner-shape: round;", "}"].join("\n");
+  assert.deepEqual(readDeclarations(css).declarations.map((d) => d.name), ["--ouro-x"]);
+});
+
 test("a custom property in any other block is refused, naming the block", () => {
   assert.throws(() => readDeclarations(".other {\n  --x: 1;\n}"), /--x sits in a block with no colour mode: \.other/);
   assert.throws(() => readDeclarations("@media print {\n  .a {\n    --x: 1;\n  }\n}"), /no colour mode/);

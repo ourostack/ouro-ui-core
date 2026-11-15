@@ -6,7 +6,7 @@ export type Mode = "light" | "dark" | "both";
 
 /**
  * A rule that applies a token to elements (`@layer base { selector { --x: var(--token) } }`, or the same under
- * `@supports`, such as web's squircle fallback): not a token, kept as written.
+ * `@supports`, such as web's squircle fallback, or a Tailwind `@utility`, such as web's rounded-full): not a token, kept as written.
  */
 const RULE = "rule";
 
@@ -28,6 +28,7 @@ function modeOf(stack: string[]): Mode | typeof RULE | null {
   if (selector === ".dark") return "dark";
   if (selector === ":root:where(:not(.light, .dark))" && stack.at(-2) === "@media (prefers-color-scheme: dark)") return "dark";
   if (stack.length === 2 && (stack[0] === "@layer base" || stack[0]!.startsWith("@supports "))) return RULE;
+  if (stack.length === 1 && stack[0]!.startsWith("@utility ")) return RULE;
   return null;
 }
 
