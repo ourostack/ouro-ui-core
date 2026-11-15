@@ -61,6 +61,15 @@ function points(value: unknown, where: string): string {
   throw new Error(`${where} is not a dimension`);
 }
 
+/** A resolved \`font-heading\`: its families, most preferred first. */
+const headingFamilies = (value: unknown, theme: string): string[] => {
+  const families = typeof value === "string" ? splitTopLevel(value, ",").map((f) => f.trim().replace(/^["']|["']$/g, "")) : value;
+  if (!Array.isArray(families) || families.length === 0 || !families.every((f) => typeof f === "string" && f.length > 0)) {
+    throw new Error(`${theme} font-heading: a list of font families expected, got ${JSON.stringify(value)}`);
+  }
+  return families as string[];
+};
+
 const get = (map: Map<string, Resolved>, id: string, where: string) => {
   const r = map.get(id);
   if (!r) throw new Error(`${where}: no token ${id}`);
@@ -337,13 +346,18 @@ public struct OuroTheme: Sendable {
     public let radius: Double
     /// The tokens only this theme defines, such as Cookbook's \`sj-*\`. Empty for the others.
     public let extras: OuroThemeExtras
+    /// The heading's font families (CSS \`--font-heading\`), most preferred first, as CSS lists them: the font of
+    /// headings and of the titles web sets in it (empty state, page header, card, sheet and dialog). Generic names
+    /// such as \`system-ui\` or \`serif\` stand for the system's own faces. Empty means the system font.
+    public let heading: [String]
 
-    public init(name: OuroThemeName, light: OuroColors, dark: OuroColors, radius: Double, extras: OuroThemeExtras = .empty) {
+    public init(name: OuroThemeName, light: OuroColors, dark: OuroColors, radius: Double, extras: OuroThemeExtras = .empty, heading: [String] = []) {
         self.name = name
         self.light = light
         self.dark = dark
         self.radius = radius
         self.extras = extras
+        self.heading = heading
     }
 
     /// The colours for a colour scheme, such as \`@Environment(\\.colorScheme)\`.
@@ -422,7 +436,8 @@ ${THEMES.map((t) => `        case .${t}: return ${t}`).join("\n")}
         light: ${colors("light")},
         dark: ${colors("dark")},
         radius: ${points(get(tokens, "radius", theme).light, `${theme} radius`)},
-        extras: ${swiftExtras(allExtras.get(theme)!)}
+        extras: ${swiftExtras(allExtras.get(theme)!)},
+        heading: [${headingFamilies(get(tokens, "font-heading", theme).light, theme).map((f) => JSON.stringify(f)).join(", ")}]
     )
 `);
   }
