@@ -19,3 +19,4 @@ New decision records go here. Each has a "Prior art" section linking every find 
 | 2026-11-14 | [Ouro's composed-UI tree is the source of truth, and A2UI and MCP Apps are adapters at the edge](2026-11-14-composed-ui-own-tree.md) |
 | 2026-11-14 | [Native kits: WinUI 3 on Windows, and a component specified once in core](2026-11-14-native-kits.md) |
 | 2026-11-14 | [Android: one Compose kit, AppFunctions for agents, checked on emulators](2026-11-14-android-kit.md) |
+| 2026-11-15 | [CI that finishes in under ten minutes, merge queue removed](2026-11-15-ci-under-ten-minutes.md) |
