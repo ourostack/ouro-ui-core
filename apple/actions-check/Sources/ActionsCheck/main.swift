@@ -72,7 +72,7 @@ func check() async throws {
     // The person-only action: no intent, a typed refusal for any bridge that asks, still in Reins as the person's finger.
     let refusal = OuroActions.refusal(for: "place_grocery_order")
     expect(refusal?.code == "person-only" && refusal?.thing == "list order", "place_grocery_order refuses with person-only")
-    expect(refusal?.exit == 2 && refusal?.message == "list order: \(refusal?.problem ?? "")." , "the refusal carries web's exit and message")
+    expect(refusal?.exit == 2 && refusal?.message == "Place order: \(refusal?.problem ?? "")." , "the refusal carries web's exit, and a message named by the label")
     expect(OuroActions.refusal(for: "placeGroceryOrder") == refusal, "the refusal answers to the camel name too")
     expect(OuroActions.refusal(for: "add_shopping_list_item") == nil, "an agent action has no refusal")
     expect(OuroActions.consent["share_shopping_list"] == .consequential, "the consent class is carried")

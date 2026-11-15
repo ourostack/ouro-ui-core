@@ -442,15 +442,18 @@ export interface Refusal {
 const sentence = (text: string) => text.trim().replace(/[.\s]+$/, "");
 
 /**
- * The answer every agent door gives a person-only action, byte for byte what web's CLI answers a person-only word
- * under `--json` (cli.ts: `outcome({ action, state: "refused", summary, error })` over `personOnlyError`): a refused
- * outcome whose error has code `person-only`, exit 2 (web's `usage`), the reason and how the person does it.
+ * The answer every agent door gives a person-only action, in the shape web's CLI answers a person-only word under
+ * `--json` (cli.ts: `outcome({ action, state: "refused", summary, error })` over `personOnlyError`): a refused outcome
+ * whose error has code `person-only`, exit 2 (web's `usage`), the reason and how the person does it. `action` and
+ * `error.thing` keep the command words, which identify it; the summary and message name it by its label, the words
+ * on the person's button, because an agent relays them to a person, and on an App Action, MCP or A2UI door the
+ * command words mean nothing to them.
  */
 export function refusal(a: Action): Refusal {
   if (a.consent !== "person-only" || !a.personOnly) throw new Error(`action "${a.id}" is not person-only, so nothing refuses it. Fix: refuse only person-only actions.`);
   const thing = a.cliWords;
   const problem = `${sentence(a.personOnly.reason)}. Ask the person, who does it ${sentence(a.personOnly.how)}`;
-  const message = `${thing}: ${sentence(problem)}.`;
+  const message = `${a.label}: ${sentence(problem)}.`;
   return {
     ax: "outcome/1",
     action: thing,

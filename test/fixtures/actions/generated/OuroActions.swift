@@ -42,7 +42,7 @@ public enum OuroActions {
     public static func refusal(for action: String) -> OuroActionRefusal? {
         switch action {
         case "place_grocery_order", "place-grocery-order", "placeGroceryOrder":
-            return OuroActionRefusal(thing: "list order", problem: "You can't place an order or pay for the person; only they can. Ask the person, who does it with Place order on the shopping list", message: "list order: You can't place an order or pay for the person; only they can. Ask the person, who does it with Place order on the shopping list.", reason: "You can't place an order or pay for the person; only they can.", how: "with Place order on the shopping list")
+            return OuroActionRefusal(thing: "list order", problem: "You can't place an order or pay for the person; only they can. Ask the person, who does it with Place order on the shopping list", message: "Place order: You can't place an order or pay for the person; only they can. Ask the person, who does it with Place order on the shopping list.", reason: "You can't place an order or pay for the person; only they can.", how: "with Place order on the shopping list")
         default:
             return nil
         }

@@ -99,10 +99,11 @@ test("MCP annotations are web's effectAnnotations for each consent class", () =>
   assert.deepEqual(annotationsOf(shareShoppingList), { readOnlyHint: false, destructiveHint: true, openWorldHint: true });
 });
 
-test("the typed refusal is web's refused outcome with a person-only error", () => {
+test("the typed refusal is web's refused outcome with a person-only error, named by the label a person knows", () => {
   const problem = "You can't place an order or pay for the person; only they can. Ask the person, who does it with Place order on the shopping list";
-  const message = `list order: ${problem}.`;
-  // Byte for byte web's cli.ts answer to a person-only word under --json: outcome({ action, state: "refused", summary, error }).
+  const message = `Place order: ${problem}.`;
+  // web's cli.ts answer to a person-only word under --json, outcome({ action, state: "refused", summary, error }), with
+  // the label in place of the command words in what a person reads.
   assert.deepEqual(refusal(placeGroceryOrder), {
     ax: "outcome/1",
     action: "list order",
