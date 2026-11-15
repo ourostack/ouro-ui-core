@@ -76,6 +76,8 @@ jobs:
         run: pnpm actions:check
       - name: Every Windows projection of the fixture's actions matches its declaration
         run: pnpm actions:windows:check
+      - name: Every Android projection of the fixture's actions matches its declaration
+        run: pnpm actions:android:check
       - name: Ouro HX's A2UI catalogs and conformance cases match their sources
         run: pnpm a2ui:check
 

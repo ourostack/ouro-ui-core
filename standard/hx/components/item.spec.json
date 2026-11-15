@@ -112,7 +112,8 @@
     "keyboard": "A pressable row is one tab stop; Enter and Space press it. Its actions are their own tab stops.",
     "web": "A <div> (or li, article); with href the title's link stretches over the row.",
     "apple": "With onPress, one button named by its title and description; its actions stay their own controls.",
-    "windows": "Pressable: UI Automation ControlType.Button with the Invoke pattern, named by its title, help text its description. Otherwise ControlType.Group named by its title. Actions keep their own controls."
+    "windows": "Pressable: UI Automation ControlType.Button with the Invoke pattern, named by its title, help text its description. Otherwise ControlType.Group named by its title. Actions keep their own controls.",
+    "android": "Pressable: one merged Role.Button node with OnClick, named by its title and description. Otherwise one merged node with no click action. Actions keep their own nodes."
   },
   "cases": [
     {
@@ -158,6 +159,9 @@
     },
     "windows": {
       "type": "Ouro.UI.Windows.OuroItem, a templated WinUI Control"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroItem, in Jetpack Compose (ourostack/ouro-ui-android)"
     }
   }
 }

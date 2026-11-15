@@ -20,7 +20,7 @@ Core holds what is true on every platform. Today that is three things: Ouro HX's
 |---|---|---|
 | Ouro HX for web | [ourostack/ouro-ui](https://github.com/ourostack/ouro-ui) | `dist/web/*.css` |
 | Ouro HX for Apple | [ourostack/ouro-ui-apple](https://github.com/ourostack/ouro-ui-apple) | `dist/apple/OuroTokens.swift` |
-| Ouro HX for Android | [ourostack/ouro-ui-android](https://github.com/ourostack/ouro-ui-android) | `dist/android/OuroTokens.kt` |
+| Ouro HX for Android | [ourostack/ouro-ui-android](https://github.com/ourostack/ouro-ui-android) | `dist/android/OuroTokens.kt`, `dist/actions/ouro-actions-android.mts` |
 | Ouro HX for Windows | [ourostack/ouro-ui-windows](https://github.com/ourostack/ouro-ui-windows) | `dist/windows/OuroTokens.cs`, `dist/windows/OuroTokens.xaml` |
 
 ## What's inside
