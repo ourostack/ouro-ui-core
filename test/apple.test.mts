@@ -68,5 +68,15 @@ test("pearl has empty extras", async () => {
   const extras = await themeExtras("pearl");
   for (const list of Object.values(extras)) assert.deepEqual(list, []);
   const swift = await renderApple("test");
-  assert.match(swift, /public static let pearl = OuroTheme\([\s\S]*?extras: \.empty\n {4}\)/);
+  assert.match(swift, /public static let pearl = OuroTheme\([\s\S]*?extras: \.empty,\n {8}heading: /);
+});
+
+test("every theme carries its heading's font families, aliases resolved", async () => {
+  const swift = await renderApple("test");
+  assert.match(swift, /public let heading: \[String\]/);
+  assert.match(swift, /extras: OuroThemeExtras = \.empty, heading: \[String\] = \[\]\)/);
+  // Cookbook's font-heading is {font-sj-display}: Fraunces, then Georgia.
+  assert.match(swift, /name: \.cookbook,[\s\S]*?heading: \["Fraunces", "Georgia", "Times New Roman", "serif"\]\n    \)/);
+  assert.match(swift, /name: \.pearl,[\s\S]*?heading: \["-apple-system", "BlinkMacSystemFont", "SF Pro Display", "Geist", "ui-sans-serif", "system-ui", "sans-serif"\]\n    \)/);
+  assert.equal((swift.match(/^        heading: \[/gm) ?? []).length, 6, "one heading line per theme");
 });
