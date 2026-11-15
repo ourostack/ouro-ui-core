@@ -127,7 +127,8 @@
     "keyboard": "Tab focuses it; Enter and Space press it.",
     "web": "<button> (or <a> with href), named by its text; aria-busy while busy.",
     "apple": "A SwiftUI Button (Button(intent:) with an action), with the button trait.",
-    "windows": "UI Automation ControlType.Button with the Invoke pattern, named by its words; AutomationId action.<id> with an action."
+    "windows": "UI Automation ControlType.Button with the Invoke pattern, named by its words; AutomationId action.<id> with an action.",
+    "android": "Compose semantics with Role.Button, an OnClick action and focus, named by its words; Modifier.ouroAction tags it action <id>;<consent> with an action."
   },
   "cases": [
     {
@@ -187,6 +188,9 @@
     },
     "windows": {
       "type": "Ouro.UI.Windows.OuroButton, a templated WinUI Button"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroButton, in Jetpack Compose (ourostack/ouro-ui-android)"
     }
   }
 }

@@ -78,7 +78,8 @@
     "name": "Its title, which is a heading.",
     "web": "A <div> (or article, section, li) with the title as a heading.",
     "apple": "The title has the header trait; the action is its own button.",
-    "windows": "UI Automation ControlType.Group named by its title; the title is a Text with heading level 2; the action keeps its own control."
+    "windows": "UI Automation ControlType.Group named by its title; the title is a Text with heading level 2; the action keeps its own control.",
+    "android": "A traversal group whose title has the heading semantics; the action keeps its own Button node."
   },
   "cases": [
     {
@@ -124,6 +125,9 @@
     },
     "windows": {
       "type": "Ouro.UI.Windows.OuroCard, a templated WinUI ContentControl"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroCard, in Jetpack Compose (ourostack/ouro-ui-android)"
     }
   }
 }

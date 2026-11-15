@@ -95,3 +95,6 @@ export default defineActions("shopping", [getShoppingList, addShoppingListItem, 
 
 /** The Windows projection's options (src/actions-windows.mts): the package's URI scheme and MCP server. */
 export const windows = { scheme: "ouro-shop", server: "OuroShop.Mcp", version: "1.0.0" };
+
+/** The Android projection's options (src/actions-android.mts): the Kotlin package of OuroActions.kt. */
+export const android = { package: "bot.ouro.shop.actions" };

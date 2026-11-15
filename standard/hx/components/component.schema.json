@@ -79,7 +79,8 @@
         "keyboard": { "description": "What the keyboard does, for a control.", "type": "string" },
         "web": { "type": "string", "minLength": 1 },
         "apple": { "type": "string", "minLength": 1 },
-        "windows": { "description": "The UI Automation control type and patterns.", "type": "string", "minLength": 1 }
+        "windows": { "description": "The UI Automation control type and patterns.", "type": "string", "minLength": 1 },
+        "android": { "description": "The Compose semantics TalkBack and agents read: role, actions and name.", "type": "string", "minLength": 1 }
       }
     },
     "cases": {

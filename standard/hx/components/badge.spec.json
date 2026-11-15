@@ -68,7 +68,8 @@
     "name": "Its words. Its icon is hidden.",
     "web": "A <span> whose text is read with what it sits in.",
     "apple": "Combined into one element with its words; never a button.",
-    "windows": "UI Automation ControlType.Text named by its words, not keyboard focusable."
+    "windows": "UI Automation ControlType.Text named by its words, not keyboard focusable.",
+    "android": "One merged node read with its words, no role, not clickable and not focusable; its icon is cleared from the semantics."
   },
   "cases": [
     {
@@ -111,6 +112,9 @@
     },
     "windows": {
       "type": "Ouro.UI.Windows.OuroBadge, a templated WinUI Control"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroBadge, in Jetpack Compose (ourostack/ouro-ui-android)"
     }
   }
 }

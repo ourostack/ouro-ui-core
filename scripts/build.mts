@@ -11,6 +11,7 @@
 //   dist/feel/feel.spec.json      Ouro Feel's spec, byte for byte from standard/feel/
 //   dist/actions/ouro-actions.mts the one action model's generator, byte for byte from src/actions.mts, for apps to vendor
 //   dist/actions/ouro-actions-windows.mts  the Windows projections (App Actions, the MCP bundle, OuroActions.g.cs), from src/actions-windows.mts importing ./ouro-actions.mts
+//   dist/actions/ouro-actions-android.mts  the Android projection (AppFunctions, doors.json, OuroActions.kt), from src/actions-android.mts importing ./ouro-actions.mts
 //   dist/ax/actions.claims.json   Ouro AX's action claims, byte for byte from standard/ax/
 //   dist/composed/ouro-composed.mts  Ouro's composed UI: components, consent rules, the tree and its validator, byte for byte from src/composed.mts
 //   dist/composed/ouro-mcp-app.mts   the MCP Apps adapter, from src/mcp-app.mts with its imports renamed to the vendored files
@@ -83,6 +84,10 @@ files.set("a2ui/ouro-a2ui.mts", await vendored("src/a2ui.mts", ["composed", "mcp
 const actionsWindows = (await readFile(new URL("src/actions-windows.mts", root), "utf8")).replace('from "./actions.mts"', 'from "./ouro-actions.mts"');
 if (/^(?:import|export)\b[^;]*?\bfrom\s+["'](?!node:|\.\/ouro-actions\.mts["'])/m.test(actionsWindows)) throw new Error("src/actions-windows.mts imports something other than node: modules and ./actions.mts, so a vendored copy can't run beside ouro-actions.mts alone. Fix: inline it.");
 files.set("actions/ouro-actions-windows.mts", actionsWindows);
+// The Android projection is a CLI on the same terms.
+const actionsAndroid = (await readFile(new URL("src/actions-android.mts", root), "utf8")).replace('from "./actions.mts"', 'from "./ouro-actions.mts"');
+if (/^(?:import|export)\b[^;]*?\bfrom\s+["'](?!node:|\.\/ouro-actions\.mts["'])/m.test(actionsAndroid)) throw new Error("src/actions-android.mts imports something other than node: modules and ./actions.mts, so a vendored copy can't run beside ouro-actions.mts alone. Fix: inline it.");
+files.set("actions/ouro-actions-android.mts", actionsAndroid);
 const a2uiCatalog = (await readFile(new URL("src/a2ui-catalog.mts", root), "utf8")).replace('from "./actions.mts"', 'from "./ouro-actions.mts"').replace('from "./a2ui.mts"', 'from "./ouro-a2ui.mts"');
 if (/from\s+["']\.\/(?!ouro-actions\.mts|ouro-a2ui\.mts)/.test(a2uiCatalog)) throw new Error("src/a2ui-catalog.mts imports a file the release doesn't ship. Fix: import only ./actions.mts and ./a2ui.mts.");
 files.set("a2ui/ouro-a2ui-catalog.mts", a2uiCatalog);
