@@ -20,6 +20,11 @@ test("a Tailwind @utility that sets element-level properties is not a token (web
   assert.deepEqual(readDeclarations(css).declarations.map((d) => d.name), ["--ouro-x"]);
 });
 
+test("one of Ouro's own classes that sets element-level properties is not a token (web's static skip link, v1.3.204)", () => {
+  const css = [":root {", "  --ouro-x: 1px;", "}", ".ouro-skip-link {", "  --corner-shape: var(--ouro-corner-shape);", "  corner-shape: var(--ouro-corner-shape);", "}"].join("\n");
+  assert.deepEqual(readDeclarations(css).declarations.map((d) => d.name), ["--ouro-x"]);
+});
+
 test("a custom property in any other block is refused, naming the block", () => {
   assert.throws(() => readDeclarations(".other {\n  --x: 1;\n}"), /--x sits in a block with no colour mode: \.other/);
   assert.throws(() => readDeclarations("@media print {\n  .a {\n    --x: 1;\n  }\n}"), /no colour mode/);

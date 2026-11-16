@@ -29,6 +29,8 @@ function modeOf(stack: string[]): Mode | typeof RULE | null {
   if (selector === ":root:where(:not(.light, .dark))" && stack.at(-2) === "@media (prefers-color-scheme: dark)") return "dark";
   if (stack.length === 2 && (stack[0] === "@layer base" || stack[0]!.startsWith("@supports "))) return RULE;
   if (stack.length === 1 && stack[0]!.startsWith("@utility ")) return RULE;
+  // One of Ouro's own classes in the static stylesheet (`.ouro-skip-link { --corner-shape: ... }`) sets a property for its elements, not a token.
+  if (stack.length === 1 && stack[0]!.startsWith(".ouro-")) return RULE;
   return null;
 }
 

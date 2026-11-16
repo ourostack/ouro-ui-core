@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   ACTIONS_VERSION,
+  actionsReport,
   annotationsOf,
   checkGenerated,
   compareMcp,
@@ -721,4 +722,64 @@ test("the reviewer's four: nullable const, overlapping one-of options, nested en
     () => defineAction({ ...consentWrite, consent: "read", input: {}, output: { st: field.enum({ label: "State", description: "State.", values: ["on", "off"] }) } }),
     /an output field can't be an enum/,
   );
+});
+
+test("check --report proves the action claims on the committed projections, as an X-ray-shaped report", async () => {
+  const { readFile: read, readdir: list } = await import("node:fs/promises");
+  const gen = new URL("./fixtures/actions/generated/", import.meta.url);
+  const found = new Map<string, string>();
+  for (const name of await list(gen)) found.set(name, await read(new URL(name, gen), "utf8"));
+  const claimSet = JSON.parse(await read(new URL("../standard/ax/actions.claims.json", import.meta.url), "utf8")) as { version: string; claims: { id: string; tier: "must" | "should"; rule: string }[] };
+  const at = () => new Date("2026-11-16T00:00:00Z");
+  const good = actionsReport(shopping, found, claimSet.claims, { claimSetVersion: claimSet.version, app: "Shopping", commit: "abc", now: at });
+  assert.deepEqual(good.summary, { claims: claimSet.claims.length, holding: claimSet.claims.length, must: 3, mustHolding: 3, checks: claimSet.claims.length });
+  assert.deepEqual([good.tool, good.target.app.name, good.target.commit, good.claimSet.version, good.at], ["ouro-actions", "Shopping", "abc", claimSet.version, "2026-11-16T00:00:00.000Z"]);
+
+  // A person-only action offered as an MCP tool, and a consequential one no longer marked so on WebMCP.
+  const mcp = JSON.parse(found.get("mcp.json")!);
+  mcp.tools.push({ ...mcp.tools[0], name: "place_grocery_order" });
+  const webmcp = JSON.parse(found.get("webmcp.json")!);
+  webmcp.tools.find((t: { name: string }) => t.name === "share_shopping_list").annotations.consequentialHint = false;
+  const tampered = new Map(found).set("mcp.json", JSON.stringify(mcp)).set("webmcp.json", JSON.stringify(webmcp));
+  const bad = actionsReport(shopping, tampered, claimSet.claims, { claimSetVersion: claimSet.version, now: at });
+  const verdict = Object.fromEntries(bad.claims.map((c) => [c.id, c.holds]));
+  assert.equal(verdict["action.projections-match"], false);
+  assert.equal(verdict["action.person-only-refuses"], false);
+  assert.equal(verdict["action.consequential-confirms"], false);
+  assert.match(bad.claims.find((c) => c.id === "action.person-only-refuses")!.problems[0]!, /place_grocery_order: mcp\.json offers it as a tool/);
+  assert.deepEqual([bad.summary.must, bad.summary.mustHolding], [3, 0]);
+  assert.equal(bad.target.app.name, shopping.tool ?? shopping.name, "the app is named for the set's tool when --app is not given");
+
+  // A claim this ouro-actions has no proof for never passes.
+  const unknown = actionsReport(shopping, found, [{ id: "action.new-claim", tier: "must", rule: "x" }], { claimSetVersion: "9.9.9", now: at });
+  assert.equal(unknown.summary.mustHolding, 0);
+});
+
+test("the CLI: check --report writes the report and still exits on drift; its options are checked", async () => {
+  const { mkdtemp, readFile: read, rm } = await import("node:fs/promises");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const decl = new URL("./fixtures/actions/shopping.actions.mts", import.meta.url).pathname;
+  const gen = new URL("./fixtures/actions/generated", import.meta.url).pathname;
+  const claims = new URL("../standard/ax/actions.claims.json", import.meta.url).pathname;
+  const run = async (argv: string[]) => {
+    let out = "";
+    let err = "";
+    const code = await main(argv, { out: (s) => void (out += s), err: (s) => void (err += s) });
+    return { code, out, err };
+  };
+  const tmp = await mkdtemp(join(tmpdir(), "ouro-actions-report-"));
+  try {
+    const file = join(tmp, "xray", "report.json");
+    const ok = await run(["check", decl, gen, "--report", file, "--claims", claims, "--app", "Shopping", "--commit", "abc"]);
+    assert.equal(ok.code, 0);
+    assert.match(ok.out, /3 of 3 must claims and 5 of 5 claims hold; wrote /);
+    const written = JSON.parse(await read(file, "utf8"));
+    assert.deepEqual([written.target.app.name, written.target.commit, written.summary.mustHolding], ["Shopping", "abc", 3]);
+    for (const argv of [["check", decl, gen, "--claims", claims], ["check", decl, gen, "--report"], ["check", decl, gen, "--report", file, "--report", file], ["check", decl, gen, "--app", "x", "--report"], ["generate", decl, gen, "--report", file]]) {
+      assert.equal((await run(argv)).code, 2, argv.join(" "));
+    }
+  } finally {
+    await rm(tmp, { recursive: true, force: true });
+  }
 });
