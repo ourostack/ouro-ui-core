@@ -789,7 +789,7 @@ test("check --report proves the action claims on the committed projections, as a
   assert.equal(unknown.summary.mustHolding, 0);
 });
 
-test("the CLI: check --report writes the report and still exits on drift; its options are checked", async () => {
+test("the CLI: check --report writes the report and exits 1 on drift or a must claim that does not hold; its options are checked", async () => {
   const { mkdtemp, readFile: read, rm } = await import("node:fs/promises");
   const { tmpdir } = await import("node:os");
   const { join } = await import("node:path");
@@ -810,6 +810,16 @@ test("the CLI: check --report writes the report and still exits on drift; its op
     assert.match(ok.out, /3 of 3 must claims and 5 of 5 claims hold; wrote /);
     const written = JSON.parse(await read(file, "utf8"));
     assert.deepEqual([written.target.app.name, written.target.commit, written.summary.mustHolding], ["Shopping", "abc", 3]);
+    // A must claim that does not hold fails the check, even with no drift, and the error names it.
+    const extra = join(tmp, "claims.json");
+    const set = JSON.parse(await read(claims, "utf8"));
+    set.claims.push({ id: "action.new-claim", tier: "must", rule: "x" });
+    const { writeFile: write } = await import("node:fs/promises");
+    await write(extra, JSON.stringify(set));
+    const failing = await run(["check", decl, gen, "--report", file, "--claims", extra]);
+    assert.equal(failing.code, 1);
+    assert.match(failing.out, /3 of 4 must claims/);
+    assert.match(failing.err, /must claim action\.new-claim does not hold/);
     for (const argv of [["check", decl, gen, "--claims", claims], ["check", decl, gen, "--report"], ["check", decl, gen, "--report", file, "--report", file], ["check", decl, gen, "--app", "x", "--report"], ["generate", decl, gen, "--report", file]]) {
       assert.equal((await run(argv)).code, 2, argv.join(" "));
     }
