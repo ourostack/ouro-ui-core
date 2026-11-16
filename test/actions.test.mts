@@ -817,3 +817,51 @@ test("the CLI: check --report writes the report and still exits on drift; its op
     await rm(tmp, { recursive: true, force: true });
   }
 });
+
+test("ourostack/desk: a wire name puts the JSON property under the tool's own name, and the declaration keeps its camelCase name", () => {
+  const desk = defineAction({
+    ...base,
+    input: {
+      hasInstructions: field.boolean({ label: "Instructions", description: "Whether an answer already gave them.", optional: true, wire: "has_instructions" }),
+      claimId: field.string({ label: "Claim", description: "The claim the card was taken under.", wire: "claim_id" }),
+    },
+  });
+  assert.deepEqual(Object.keys(desk.input), ["hasInstructions", "claimId"]);
+  assert.deepEqual(Object.keys(inputSchema(desk).properties), ["has_instructions", "claim_id"]);
+  assert.deepEqual(inputSchema(desk).required, ["claim_id"]);
+  assert.deepEqual(Object.keys(toMcpTool(desk).inputSchema.properties), ["has_instructions", "claim_id"]);
+  assert.throws(
+    () => defineAction({ ...base, input: { claimId: field.string({ label: "Claim", description: "A claim.", wire: "claim id" }) } }),
+    /wire is not a JSON property name\. Fix: letters, digits and underscores/u,
+  );
+  assert.throws(
+    () => defineAction({ ...base, input: { claimId: field.string({ label: "Claim", description: "A claim.", wire: "claim_id" }), other: field.string({ label: "Other", description: "Another.", wire: "claim_id" }) } }),
+    /both named "claim_id" on the wire/u,
+  );
+});
+
+test("ourostack/desk: an anyOf takes one value or a list, with the field's description once and no option descriptions", () => {
+  const track = (label: string) => field.string({ label, description: "Track name or names." });
+  const desk = defineAction({
+    ...base,
+    input: {
+      track: field.oneOf({
+        label: "Track",
+        description: "Track name or names.",
+        combinator: "anyOf",
+        protocolOnly: true,
+        optional: true,
+        options: [track("Track"), field.list({ label: "Tracks", description: "Track name or names.", of: track("Track") })],
+      }),
+    },
+  });
+  assert.deepEqual(inputSchema(desk).properties, {
+    track: { anyOf: [{ type: "string" }, { type: "array", items: { type: "string" } }], description: "Track name or names." },
+  });
+  const oneOf = defineAction({ ...base, input: { track: field.oneOf({ label: "Track", description: "Track name or names.", protocolOnly: true, optional: true, options: [track("Track"), field.integer({ label: "Days", description: "A number of days." })] }) } });
+  assert.deepEqual(Object.keys(inputSchema(oneOf).properties.track as object), ["oneOf", "description"]);
+  assert.throws(
+    () => defineAction({ ...base, input: { track: field.oneOf({ label: "Track", description: "Track name or names.", combinator: "allOf" as "anyOf", protocolOnly: true, optional: true, options: [track("Track"), field.list({ label: "Tracks", description: "Track name or names.", of: track("Track") })] }) } }),
+    /combinator is not "oneOf" or "anyOf"/u,
+  );
+});

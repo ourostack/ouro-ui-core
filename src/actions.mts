@@ -16,7 +16,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 /** The generator's version, written into every generated file; it is core's version. */
-export const ACTIONS_VERSION = "0.17.1";
+export const ACTIONS_VERSION = "0.17.2";
 const GENERATOR = `ouro-actions ${ACTIONS_VERSION}`;
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -63,6 +63,12 @@ interface FieldBase {
   flag?: string;
   /** Input only, and optional: the value may also be null, which a program sends to clear it (JSON Schema's `null`). */
   nullable?: boolean;
+  /**
+   * Input only, and optional: the property name the field has on the JSON wire (MCP, WebMCP), when the existing tool's
+   * input is named differently from the declaration's camelCase name, such as `wire: "has_instructions"` for
+   * `hasInstructions`. Only the JSON property changes; the other projections keep the declaration's name.
+   */
+  wire?: string;
 }
 /** A JSON Schema `format` a string can name; MCP and WebMCP carry it, and the CLI and Swift take the string as it is. */
 export const STRING_FORMATS = Object.freeze(["date-time", "date", "uri", "email"] as const);
@@ -109,7 +115,11 @@ export interface EnumField<V extends string = string> extends FieldBase { kind: 
  */
 export interface ListField extends FieldBase { kind: "list"; of?: Field }
 export interface GroupField extends FieldBase { kind: "group"; fields?: Fields }
-export interface OneOfField extends FieldBase { kind: "one-of"; options: readonly Field[] }
+/**
+ * `combinator` is JSON Schema's `oneOf` (the default: exactly one option matches) or `anyOf` (one or more match; the
+ * options take the field's description, and their own are left out).
+ */
+export interface OneOfField extends FieldBase { kind: "one-of"; options: readonly Field[]; combinator?: "oneOf" | "anyOf" }
 export type Field = StringField | NumberField | BooleanField | EnumField | ListField | GroupField | OneOfField;
 export type Fields = Readonly<Record<string, Field>>;
 
@@ -214,6 +224,7 @@ export interface Names {
 
 const ID = /^[a-z][a-z0-9]*(_[a-z0-9]+)*$/;
 const FIELD_NAME = /^[a-z][a-zA-Z0-9]*$/;
+const WIRE_NAME = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 /**
  * What an input field may not take: web's kit's own flags (`--json`, `--help`, `--why`, `--why-file`, `--dry-run`,
  * `--agent`, `--quiet`), which the field's flag would shadow (a field keeps its name and takes another with `flag`), and
@@ -245,6 +256,7 @@ function checkField(at: string, f: Field, input: boolean, top: boolean): void {
   if (!KINDS.includes(f?.kind)) throw new Error(`${at}: has no kind. Fix: build it with field.string, field.number, field.integer, field.boolean, field.enum, field.list, field.group or field.oneOf.`);
   if (!oneLine(f.label)) throw new Error(`${at}: label is empty or more than one line. Fix: the person's word for it, such as "Quantity".`);
   if (!oneLine(f.description)) throw new Error(`${at}: description is empty or more than one line. Fix: one sentence for the agent.`);
+  if (f.wire !== undefined && !WIRE_NAME.test(f.wire)) throw new Error(`${at}: wire is not a JSON property name. Fix: letters, digits and underscores, starting with a letter, such as "has_instructions".`);
   if (!top) {
     for (const key of ["ask", "protocolOnly", "returned", "flag", "arg", "entity", "multiline", "shownAs"] as const) {
       if (key in f && (f as unknown as Record<string, unknown>)[key] !== undefined) throw new Error(`${at}: ${key} is for an action's own input or output field, not one inside a list, group or one-of. Fix: drop ${key}.`);
@@ -301,6 +313,7 @@ function checkField(at: string, f: Field, input: boolean, top: boolean): void {
   }
   if (f.kind === "group" && f.fields !== undefined) checkFields(`${at}`, f.fields, input, false);
   if (f.kind === "one-of") {
+    if (f.combinator !== undefined && f.combinator !== "oneOf" && f.combinator !== "anyOf") throw new Error(`${at}: combinator is not "oneOf" or "anyOf". Fix: combinator: "anyOf" when a value may match more than one option, else leave it out.`);
     if (!Array.isArray(f.options) || f.options.length < 2) throw new Error(`${at}: options needs two shapes or more. Fix: options: [field.integer({ ... }), field.enum({ ... })], or use the one field.`);
     // JSON Schema's oneOf takes a value that matches exactly one option, so no two options may take the same value.
     const shapes = new Map<string, number>();
@@ -337,6 +350,12 @@ function checkFields(where: string, fields: unknown, input: boolean, top = true)
       if ("shownAs" in sibling && sibling.shownAs !== undefined) throw new Error(`${at}: shownAs ${JSON.stringify(to)} is itself shown as another field, and a name has no name. Fix: drop shownAs from "${to}".`);
     }
     checkField(at, f, input, top);
+  }
+  const wires = new Map<string, string>();
+  for (const [name, f] of Object.entries(fields as Record<string, Field>)) {
+    const wire = f.wire ?? name;
+    if (wires.has(wire)) throw new Error(`${where}: "${wires.get(wire)}" and "${name}" are both named "${wire}" on the wire. Fix: give one a different wire name.`);
+    wires.set(wire, name);
   }
   if (top && !input) {
     const returned = Object.entries(fields as Record<string, Field>).filter(([, f]) => f.returned);
@@ -491,9 +510,10 @@ const describe = (f: Field) => (f.kind === "string" && f.multiline ? `${f.descri
 
 function fieldSchema(f: Field): Record<string, Json> {
   if (f.kind === "one-of") {
-    const options: Json[] = f.options.map((o) => fieldSchema(o));
+    const anyOf = f.combinator === "anyOf";
+    const options: Json[] = f.options.map((o) => (anyOf ? withoutDescriptions(fieldSchema(o)) : fieldSchema(o)));
     if (f.nullable) options.push({ type: "null" });
-    return { oneOf: options, description: describe(f) };
+    return anyOf ? { anyOf: options, description: describe(f) } : { oneOf: options, description: describe(f) };
   }
   const type = f.kind === "enum" ? "string" : f.kind === "list" ? "array" : f.kind === "group" ? "object" : f.kind;
   const s: Record<string, Json> = { type: f.nullable ? [type, "null"] : type, description: describe(f) };
@@ -508,13 +528,23 @@ function fieldSchema(f: Field): Record<string, Json> {
   return s;
 }
 
+/** The JSON property a field has on the wire: its `wire` name, or its declaration name. */
+const wireOf = (name: string, f: Field) => f.wire ?? name;
+
+/** An anyOf option takes the one-of field's description, so its own (and its items') descriptions are left out. */
+function withoutDescriptions(s: Json): Json {
+  if (Array.isArray(s)) return s.map(withoutDescriptions);
+  if (s === null || typeof s !== "object") return s;
+  return Object.fromEntries(Object.entries(s).filter(([k, v]) => k !== "description" || typeof v !== "string").map(([k, v]) => [k, withoutDescriptions(v)]));
+}
+
 /** An open object leaves out `additionalProperties` and an empty `required`, as an MCP server already serves them. */
 function objectSchema(fields: Fields, open = false): { type: "object"; properties: Record<string, Json>; required?: string[]; additionalProperties?: false } {
   const entries = Object.entries(fields);
-  const required = entries.filter(([, f]) => !f.optional).map(([k]) => k);
+  const required = entries.filter(([, f]) => !f.optional).map(([k, f]) => wireOf(k, f));
   return {
     type: "object",
-    properties: Object.fromEntries(entries.map(([k, f]) => [k, fieldSchema(f)])),
+    properties: Object.fromEntries(entries.map(([k, f]) => [wireOf(k, f), fieldSchema(f)])),
     ...(open && required.length === 0 ? {} : { required }),
     ...(open ? {} : { additionalProperties: false }),
   };
