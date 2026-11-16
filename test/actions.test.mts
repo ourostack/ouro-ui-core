@@ -865,3 +865,33 @@ test("ourostack/desk: an anyOf takes one value or a list, with the field's descr
     /combinator is not "oneOf" or "anyOf"/u,
   );
 });
+
+test("ourostack/desk: --targets generates and checks only the projections a product serves, and names unknown ones", async () => {
+  const { mkdtemp, readdir, rm } = await import("node:fs/promises");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const { targetFiles, checkGenerated: check } = await import("../src/actions.mts");
+  const decl = new URL("./fixtures/actions/shopping.actions.mts", import.meta.url).pathname;
+  const run = async (argv: string[]) => {
+    let out = "";
+    let err = "";
+    const code = await main(argv, { out: (s) => void (out += s), err: (s) => void (err += s) });
+    return { code, out, err };
+  };
+  assert.deepEqual([...targetFiles("mcp,actions")!].sort(), ["actions.json", "mcp.json"]);
+  assert.equal(targetFiles(undefined), undefined);
+  assert.throws(() => targetFiles("mcp,swfit"), /swfit is not a projection\. Fix: use any of actions, commands, mcp, webmcp, web, swift, reins/u);
+  const tmp = await mkdtemp(join(tmpdir(), "ouro-actions-targets-"));
+  try {
+    const out = join(tmp, "desk");
+    assert.equal((await run(["generate", decl, out, "--targets", "mcp,actions"])).code, 0);
+    assert.deepEqual((await readdir(out)).sort(), ["actions.json", "mcp.json"]);
+    assert.equal((await run(["check", decl, out, "--targets", "mcp,actions"])).code, 0);
+    const partial = await run(["check", decl, out]);
+    assert.equal(partial.code, 1);
+    assert.match(partial.err, /commands\.json: missing/u);
+    assert.equal((await run(["generate", decl, out, "--targets", "mcp,swfit"])).code, 2);
+  } finally {
+    await rm(tmp, { recursive: true, force: true });
+  }
+});
