@@ -535,6 +535,32 @@ test("a write can be destructive, and a write or consequential action idempotent
   assert.match(compareMcp(shopping, { tools: claimed })[0]!, /^add_shopping_list_item: annotation idempotentHint is true, the declaration \(consent "write"\) says false/);
 });
 
+test("a free-form list or group is any JSON array or object, a program-only field with no shape", () => {
+  const a = defineAction({
+    ...base,
+    input: {
+      provenance: field.group({ label: "Provenance", description: "Attribution.", optional: true, protocolOnly: true }),
+      participants: field.list({ label: "Participants", description: "Who took part.", protocolOnly: true }),
+    },
+  });
+  assert.deepEqual(inputSchema(a).properties, {
+    provenance: { type: "object", description: "Attribution." },
+    participants: { type: "array", description: "Who took part." },
+  });
+  assert.throws(() => defineAction({ ...base, input: { x: field.list({ label: "X", description: "x" }) } }), /a list field is only for programs.*protocolOnly: true/);
+  assert.throws(() => defineAction({ ...base, input: { x: field.group({ label: "X", description: "x" }) } }), /a group field is only for programs.*protocolOnly: true/);
+  assert.throws(() => defineAction({ ...base, output: { x: field.list({ label: "X", description: "x" }) } }), /output field can't be a list/);
+});
+
+test("openInput: an action's input schema is the open one an MCP server serves, without an empty required list or additionalProperties", () => {
+  const open = defineAction({ ...base, openInput: true, input: { note: field.string({ label: "Note", description: "The note.", optional: true }) } });
+  assert.deepEqual(inputSchema(open), { type: "object", properties: { note: { type: "string", description: "The note." } } });
+  const openRequired = defineAction({ ...base, openInput: true, input: { friendId: field.string({ label: "Friend", description: "Who.", arg: true }) } });
+  assert.deepEqual(inputSchema(openRequired), { type: "object", properties: { friendId: { type: "string", description: "Who." } }, required: ["friendId"] });
+  assert.deepEqual(inputSchema(defineAction({ ...base, input: {} })), { type: "object", properties: {}, required: [], additionalProperties: false });
+  assert.throws(() => defineAction({ ...base, openInput: "yes" as unknown as true }), /openInput is "yes"/);
+});
+
 test("constrained fields: a string's maxLength and format, a nullable value, a boolean that must be true, enum values with separators", () => {
   const a = defineAction({
     ...base,

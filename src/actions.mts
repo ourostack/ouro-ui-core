@@ -16,7 +16,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 /** The generator's version, written into every generated file; it is core's version. */
-export const ACTIONS_VERSION = "0.16.0";
+export const ACTIONS_VERSION = "0.17.0";
 const GENERATOR = `ouro-actions ${ACTIONS_VERSION}`;
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -103,10 +103,12 @@ export interface EnumField<V extends string = string> extends FieldBase { kind: 
 /**
  * The structured fields, for an existing MCP tool's inputs that a person's door can't carry: a list of values, a group
  * of named fields, or one of several shapes. They are protocol-only input fields: MCP and WebMCP carry their JSON
- * Schema and the CLI takes them as JSON; the App Intent, Reins and the Swift input leave them out.
+ * Schema and the CLI takes them as JSON; the App Intent, Reins and the Swift input leave them out. A list without `of`, or a
+ * group without `fields`, is free-form: any JSON array, or any JSON object, for an existing MCP tool's input that takes one
+ * without a shape.
  */
-export interface ListField extends FieldBase { kind: "list"; of: Field }
-export interface GroupField extends FieldBase { kind: "group"; fields: Fields }
+export interface ListField extends FieldBase { kind: "list"; of?: Field }
+export interface GroupField extends FieldBase { kind: "group"; fields?: Fields }
 export interface OneOfField extends FieldBase { kind: "one-of"; options: readonly Field[] }
 export type Field = StringField | NumberField | BooleanField | EnumField | ListField | GroupField | OneOfField;
 export type Fields = Readonly<Record<string, Field>>;
@@ -136,7 +138,9 @@ type ValueOf<F> = Nullable<F, F extends { kind: "string" } ? string
   : F extends { kind: "boolean" } ? boolean
   : F extends { kind: "enum"; values: readonly (infer V)[] } ? V
   : F extends { kind: "list"; of: infer I } ? ValueOf<I>[]
+  : F extends { kind: "list" } ? unknown[]
   : F extends { kind: "group"; fields: infer G } ? ValuesOf<G>
+  : F extends { kind: "group" } ? Record<string, unknown>
   : F extends { kind: "one-of"; options: readonly (infer U)[] } ? ValueOf<U>
   : never>;
 type OptionalKeys<F> = { [K in keyof F]: F[K] extends Opt & { optional: true } ? K : never }[keyof F];
@@ -181,6 +185,12 @@ export interface ActionDef<I extends Fields = Fields, O extends Fields = Fields>
   destructive?: true;
   /** Calling it again with the same input changes nothing more: MCP's `idempotentHint`, so a client may retry it. */
   idempotent?: true;
+  /**
+   * The input takes keys it doesn't name, and a schema with no required input has no `required` list: the input schema
+   * an MCP server already serves for a tool moved onto the model. Declare it only to keep an existing tool's input exactly;
+   * a new action keeps the closed schema, which rejects a key it doesn't name.
+   */
+  openInput?: true;
 }
 
 export interface Action<I extends Fields = Fields, O extends Fields = Fields> extends Readonly<ActionDef<I, O>> {
@@ -285,11 +295,11 @@ function checkField(at: string, f: Field, input: boolean, top: boolean): void {
       cases.set(caseName(v), v);
     }
   }
-  if (f.kind === "list") {
+  if (f.kind === "list" && f.of !== undefined) {
     if (f.of?.optional) throw new Error(`${at} item: an item can't be optional. Fix: drop optional from of.`);
     checkField(`${at} item`, f.of, input, false);
   }
-  if (f.kind === "group") checkFields(`${at}`, f.fields, input, false);
+  if (f.kind === "group" && f.fields !== undefined) checkFields(`${at}`, f.fields, input, false);
   if (f.kind === "one-of") {
     if (!Array.isArray(f.options) || f.options.length < 2) throw new Error(`${at}: options needs two shapes or more. Fix: options: [field.integer({ ... }), field.enum({ ... })], or use the one field.`);
     // JSON Schema's oneOf takes a value that matches exactly one option, so no two options may take the same value.
@@ -370,6 +380,7 @@ export function defineAction<const I extends Fields, const O extends Fields>(def
   if (def.idempotent !== undefined && (def.idempotent !== true || (def.consent !== "write" && def.consent !== "consequential"))) {
     throw new Error(`${at}: idempotent is for a write or consequential action that changes nothing more when called again with the same input; a read is idempotent already. Fix: idempotent: true, or drop it.`);
   }
+  if (def.openInput !== undefined && def.openInput !== true) throw new Error(`${at}: openInput is ${JSON.stringify(def.openInput)}. Fix: true, or drop it.`);
   checkFields(`${at} input`, def.input, true);
   checkFields(`${at} output`, def.output, false);
   const n = names(id);
@@ -492,23 +503,26 @@ function fieldSchema(f: Field): Record<string, Json> {
   if (f.kind === "string" && f.maxLength !== undefined) s["maxLength"] = f.maxLength;
   if (f.kind === "string" && f.format !== undefined) s["format"] = f.format;
   if (f.kind === "boolean" && f.const !== undefined) s["const"] = f.const;
-  if (f.kind === "list") s["items"] = fieldSchema(f.of);
-  if (f.kind === "group") Object.assign(s, objectSchema(f.fields));
+  if (f.kind === "list" && f.of !== undefined) s["items"] = fieldSchema(f.of);
+  if (f.kind === "group" && f.fields !== undefined) Object.assign(s, objectSchema(f.fields));
   return s;
 }
 
-function objectSchema(fields: Fields): { type: "object"; properties: Record<string, Json>; required: string[]; additionalProperties: false } {
+/** An open object leaves out `additionalProperties` and an empty `required`, as an MCP server already serves them. */
+function objectSchema(fields: Fields, open = false): { type: "object"; properties: Record<string, Json>; required?: string[]; additionalProperties?: false } {
   const entries = Object.entries(fields);
+  const required = entries.filter(([, f]) => !f.optional).map(([k]) => k);
   return {
     type: "object",
     properties: Object.fromEntries(entries.map(([k, f]) => [k, fieldSchema(f)])),
-    required: entries.filter(([, f]) => !f.optional).map(([k]) => k),
-    additionalProperties: false,
+    ...(open && required.length === 0 ? {} : { required }),
+    ...(open ? {} : { additionalProperties: false }),
   };
 }
 
 /** The input's JSON Schema, shared by MCP, WebMCP and the CLI's `help --json`. */
-export const inputSchema = (a: Action) => objectSchema(a.input);
+export const inputSchema = (a: Action) => objectSchema(a.input, a.openInput === true);
+
 /** The output's JSON Schema. */
 export const outputSchema = (a: Action) => objectSchema(a.output);
 
