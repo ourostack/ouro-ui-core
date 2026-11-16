@@ -1,5 +1,5 @@
 {
-  "generator": "ouro-actions-windows 0.15.0",
+  "generator": "ouro-actions-windows 0.16.0",
   "set": "shopping",
   "actions": {
     "get_shopping_list": {

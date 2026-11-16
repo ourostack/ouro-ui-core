@@ -145,6 +145,14 @@ node tools/ouro-actions/ouro-actions.mts compare-mcp actions/shopping.actions.mt
 
 `check` fails, exit 1, naming each file that differs, is missing or wasn't generated, at its first differing line. `compare-mcp` takes your running server's `tools/list` result (add `--undeclared <names.json>`, a JSON array of tool names, while you move a server tool by tool) and fails on a declared tool that is missing or has another description, input schema or annotations, a person-only action listed as a tool, or a tool nobody declared and the undeclared list doesn't name. The list can only shrink: a name on it that is now declared, or no longer served, fails too. Run it while your MCP server is still hand-written, so drift shows before you move it onto `mcp.json`. Exit 2 is a usage error.
 
+Add `--report` to `check` to prove the action claims (`actions.claims.json`, vendored beside the generator) on the committed projections, and upload the report as a CI artifact whose name contains `xray`, beside any Ouro AX X-ray report:
+
+```sh
+node tools/ouro-actions/ouro-actions.mts check actions/shopping.actions.mts actions/generated --report xray/actions/report.json --app "Spoonjoy" --commit "$GITHUB_SHA"
+```
+
+The report has the X-ray's shape (`summary.must`, `summary.mustHolding`, each claim with its problems), so the [adoption ledger](https://ui.ouroboros.bot/adoption/) counts its `must` claims. Each claim is proved from what the files say: projections equal to their declaration, every person-only action refused on every agent door and offered on none, and every consequential action marked so on MCP, WebMCP and the CLI and confirmed in its App Intent. `--claims` reads the claim set from another path, `--app` names the app (the set's `tool` otherwise). A drifted folder still exits 1, after the report is written.
+
 ## What Spoonjoy changes to adopt it
 
 1. Vendor `ouro-actions.mts` from the release, by hash.
