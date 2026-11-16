@@ -16,7 +16,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 /** The generator's version, written into every generated file; it is core's version. */
-export const ACTIONS_VERSION = "0.17.0";
+export const ACTIONS_VERSION = "0.17.1";
 const GENERATOR = `ouro-actions ${ACTIONS_VERSION}`;
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -222,8 +222,8 @@ const FIELD_NAME = /^[a-z][a-zA-Z0-9]*$/;
  */
 const KIT_FLAGS = Object.freeze(["json", "help", "why", "why-file", "dry-run", "agent", "quiet"]);
 const INTENT_MEMBERS = Object.freeze(["input", "perform"]);
-/** An enum value: lowercase words and digits, joined by -, _, / or . (`shopping-list`, `image/jpeg`). */
-const ENUM_VALUE = /^[a-z][a-z0-9]*([-_/.][a-z0-9]+)*$/;
+/** An enum value: lowercase words and digits, joined by -, _, /, . or : (`shopping-list`, `image/jpeg`, `notes:safe`). */
+const ENUM_VALUE = /^[a-z][a-z0-9]*([-_/.:][a-z0-9]+)*$/;
 /**
  * Ids web's `defineComponentAx` reserves for the person (its `RESERVED_PERSON_ONLY`), which only a person-only action may
  * take. Web also reads an id's meaning (`share-screen`, `mic-on`); its defineComponentAx and X-ray still apply that.
@@ -285,7 +285,7 @@ function checkField(at: string, f: Field, input: boolean, top: boolean): void {
   if (f.kind === "boolean" && f.const !== undefined && f.nullable) throw new Error(`${at}: a const field can't be nullable, since const: true takes only true. Fix: drop nullable.`);
   if (f.kind === "enum") {
     if (!Array.isArray(f.values) || f.values.length === 0 || !f.values.every((v) => ENUM_VALUE.test(v))) {
-      throw new Error(`${at}: values is empty or not lowercase words. Fix: values: ["all", "unchecked"]; words may be joined by -, _, / or ., as in "image/jpeg".`);
+      throw new Error(`${at}: values is empty or not lowercase words. Fix: values: ["all", "unchecked"]; words may be joined by -, _, /, . or :, as in "image/jpeg" or "notes:safe".`);
     }
     // Only an action's own enum fields become Swift enums, so only they must keep their cases apart.
     const cases = new Map<string, string>();
@@ -671,7 +671,7 @@ function renderWeb(set: ActionSet): string {
 const swiftLit = (s: string) => `"${s.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
 const SWIFT_KEYWORDS = new Set(["as", "break", "case", "catch", "class", "continue", "default", "defer", "do", "else", "enum", "extension", "fallthrough", "false", "for", "func", "guard", "if", "import", "in", "init", "inout", "internal", "is", "let", "nil", "operator", "private", "protocol", "public", "repeat", "rethrows", "return", "self", "Self", "static", "struct", "subscript", "super", "switch", "throw", "throws", "true", "try", "typealias", "var", "where", "while"]);
 const swiftId = (name: string) => (SWIFT_KEYWORDS.has(name) ? `\`${name}\`` : name);
-const caseName = (v: string) => swiftId(names(v.replace(/[-/.]/g, "_").replace(/_+/g, "_")).camel);
+const caseName = (v: string) => swiftId(names(v.replace(/[-/.:]/g, "_").replace(/_+/g, "_")).camel);
 const enumType = (a: Action, field: string) => `${a.names.pascal}${field.charAt(0).toUpperCase()}${field.slice(1)}Value`;
 
 /** Optional in Swift: an optional field, or a protocol-only one, which the person's doors leave nil. */

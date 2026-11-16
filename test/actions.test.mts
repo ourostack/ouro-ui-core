@@ -561,6 +561,14 @@ test("openInput: an action's input schema is the open one an MCP server serves, 
   assert.throws(() => defineAction({ ...base, openInput: "yes" as unknown as true }), /openInput is "yes"/);
 });
 
+test("an enum value may join words with a colon, as notes:safe: MCP keeps it, and Swift names its case notesSafe", () => {
+  const a = defineAction({ ...base, input: { scope: field.enum({ label: "Scope", description: "What to share.", values: ["notes:safe", "notes:all", "outcomes"] }) } });
+  assert.deepEqual(inputSchema(a).properties, { scope: { type: "string", description: "What to share.", enum: ["notes:safe", "notes:all", "outcomes"] } });
+  const swift = renderActions(defineActions("pins", [a])).get("OuroActions.swift")!;
+  assert.match(swift, /case notesSafe = "notes:safe"\n    case notesAll = "notes:all"/);
+  assert.throws(() => defineAction({ ...base, input: { scope: field.enum({ label: "Scope", description: "x", values: ["Notes:safe"] }) } }), /values is empty or not lowercase words/);
+});
+
 test("constrained fields: a string's maxLength and format, a nullable value, a boolean that must be true, enum values with separators", () => {
   const a = defineAction({
     ...base,
