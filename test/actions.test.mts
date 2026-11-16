@@ -895,3 +895,26 @@ test("ourostack/desk: --targets generates and checks only the projections a prod
     await rm(tmp, { recursive: true, force: true });
   }
 });
+
+test("ourostack/desk: a string's pattern and a list's bounds are its JSON Schema, and a bad one is refused with the fix", () => {
+  const desk = defineAction({
+    ...base,
+    input: {
+      contextId: field.string({ label: "Context", description: "The context's id.", pattern: "^[0-9a-f]{8}$" }),
+      args: field.list({ label: "Args", description: "The command and its arguments.", protocolOnly: true, minItems: 1, maxItems: 256, of: field.string({ label: "Argument", description: "One argument.", maxLength: 65536 }) }),
+    },
+  });
+  assert.deepEqual(inputSchema(desk).properties, {
+    contextId: { type: "string", description: "The context's id.", pattern: "^[0-9a-f]{8}$" },
+    args: { type: "array", description: "The command and its arguments.", minItems: 1, maxItems: 256, items: { type: "string", description: "One argument.", maxLength: 65536 } },
+  });
+  assert.deepEqual(inputSchema(desk).required, ["contextId", "args"]);
+  assert.throws(
+    () => defineAction({ ...base, input: { contextId: field.string({ label: "Context", description: "An id.", pattern: "([" }) } }),
+    /pattern "\(\[" is not a regular expression\. Fix:/u,
+  );
+  assert.throws(
+    () => defineAction({ ...base, input: { args: field.list({ label: "Args", description: "Arguments.", protocolOnly: true, minItems: 3, maxItems: 1, of: field.string({ label: "Argument", description: "One." }) }) } }),
+    /minItems 3 is above maxItems 1\. Fix:/u,
+  );
+});
