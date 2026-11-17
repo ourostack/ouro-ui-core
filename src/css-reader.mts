@@ -38,7 +38,18 @@ export function readDeclarations(css: string): { lines: string[]; declarations: 
   const lines = css.split("\n");
   const stack: string[] = [];
   const declarations: Declaration[] = [];
+  // Inside a comment that spans lines, a wrapped line can begin with a property's name (web's ouro-base.css at
+  // v1.3.270: "--radius-* steps into an app's theme"), which is prose, not a declaration.
+  let inComment = false;
   lines.forEach((text, index) => {
+    if (inComment) {
+      inComment = !text.includes("*/");
+      return;
+    }
+    if (text.trimStart().startsWith("/*")) {
+      inComment = !text.includes("*/");
+      return;
+    }
     const open = /^\s*(.*?)\s*\{\s*$/.exec(text);
     if (open && !text.trimStart().startsWith("--")) {
       stack.push(open[1]!);
