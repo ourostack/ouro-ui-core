@@ -43,3 +43,8 @@ test("the reader reads every token stylesheet of web's latest release", async (t
     assert.doesNotThrow(() => readDeclarations(text), `${path} at ${tag}: add it to src/css-reader.mts and rerun pnpm tokens:import`);
   }
 });
+
+test("a comment that spans lines is prose, though a wrapped line begins with a property's name (web's ouro-base.css, v1.3.270)", () => {
+  const css = [":root {", "  /* shadcn init writes shadcn's own", "     --radius-* steps into an app's theme, and shadcn add never replaces a variable the app has, so", "     Ouro's corners use their own steps. */", "  --ouro-x: 1px;", "  /* one line */", "  --ouro-y: 2px;", "}"].join("\n");
+  assert.deepEqual(readDeclarations(css).declarations.map((d) => d.name), ["--ouro-x", "--ouro-y"]);
+});
