@@ -25,6 +25,8 @@ import bot.ouro.ui.actions.callFromAppFunction
 /** What get_shopping_list takes. */
 data class GetShoppingListInput(
     val show: String? = null,
+    val sort: String? = null,
+    val store: String? = null,
 )
 
 /** What get_shopping_list returns. */
@@ -167,9 +169,15 @@ abstract class BaseShoppingAppFunctionService : AppFunctionService() {
         @AppFunctionInstruction("Which items to list; all of them when left out.")
         @AppFunctionStringValueConstraint(enumValues = ["all", "unchecked"])
         show: String? = null,
+        @AppFunctionInstruction("How to order the items: the order they were added when left out.")
+        @AppFunctionStringValueConstraint(enumValues = ["added", "name"])
+        sort: String? = null,
+        @AppFunctionInstruction("Only the items for this store, by its name; every store when left out.")
+        store: String? = null,
     ): GetShoppingListOutput {
         if (show != null && show !in listOf("all", "unchecked")) throw AppFunctionInvalidArgumentException("show is not one of all, unchecked.")
-        return GetShoppingList.callFromAppFunction(GetShoppingListInput(show = show))
+        if (sort != null && sort !in listOf("added", "name")) throw AppFunctionInvalidArgumentException("sort is not one of added, name.")
+        return GetShoppingList.callFromAppFunction(GetShoppingListInput(show = show, sort = sort, store = store))
     }
 
     @AppFunctionDeclaration(isDescribedByKDoc = false)

@@ -61,10 +61,24 @@ public enum GetShoppingListShowValue: String, Codable, Sendable, Hashable, CaseI
     ]
 }
 
+public enum GetShoppingListSortValue: String, Codable, Sendable, Hashable, CaseIterable, AppEnum {
+    case added = "added"
+    case name = "name"
+    public static let typeDisplayRepresentation: TypeDisplayRepresentation = "Sort"
+    public static let caseDisplayRepresentations: [GetShoppingListSortValue: DisplayRepresentation] = [
+        .added: "added",
+        .name: "name",
+    ]
+}
+
 public struct GetShoppingListInput: Codable, Sendable, Hashable {
     public var show: GetShoppingListShowValue?
-    public init(show: GetShoppingListShowValue? = nil) {
+    public var sort: GetShoppingListSortValue?
+    public var store: String?
+    public init(show: GetShoppingListShowValue? = nil, sort: GetShoppingListSortValue? = nil, store: String? = nil) {
         self.show = show
+        self.sort = sort
+        self.store = store
     }
 }
 
@@ -99,16 +113,22 @@ public struct GetShoppingListIntent: AppIntent {
 
     @Parameter(title: "Show", description: "Which items to list; all of them when left out.")
     public var show: GetShoppingListShowValue?
+    @Parameter(title: "Sort", description: "How to order the items: the order they were added when left out.")
+    public var sort: GetShoppingListSortValue?
+    @Parameter(title: "Store", description: "Only the items for this store, by its name; every store when left out.")
+    public var store: String?
 
     public init() {}
 
     public init(_ input: GetShoppingListInput) {
         self.init()
         self.show = input.show
+        self.sort = input.sort
+        self.store = input.store
     }
 
     public var input: GetShoppingListInput {
-        GetShoppingListInput(show: show)
+        GetShoppingListInput(show: show, sort: sort, store: store)
     }
 
     @MainActor

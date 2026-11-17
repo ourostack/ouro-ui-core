@@ -8,6 +8,20 @@
       "summary": "Read the person's shopping list: each item's id, name, quantity, unit and whether it is checked.",
       "effect": "private",
       "readOnly": true,
+      "args": [
+        {
+          "name": "sort",
+          "description": "How to order the items: the order they were added when left out.",
+          "values": [
+            "added",
+            "name"
+          ]
+        },
+        {
+          "name": "store",
+          "description": "Only the items for this store, by its name; every store when left out."
+        }
+      ],
       "flags": {
         "show": {
           "type": "enum",

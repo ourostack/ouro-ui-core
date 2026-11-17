@@ -10,16 +10,28 @@
       "allowedAppInvokers": [
         "*"
       ],
-      "inputs": [],
+      "inputs": [
+        {
+          "name": "store",
+          "kind": "Text",
+          "required": false
+        }
+      ],
       "inputCombinations": [
         {
           "inputs": [],
           "description": "Shopping list"
+        },
+        {
+          "inputs": [
+            "store"
+          ],
+          "description": "Shopping list: ${store.Text}"
         }
       ],
       "invocation": {
         "type": "uri",
-        "uri": "ouro-shop://action/get_shopping_list?token=${$.Token}"
+        "uri": "ouro-shop://action/get_shopping_list?store=${store.Text}&token=${$.Token}"
       }
     },
     {
