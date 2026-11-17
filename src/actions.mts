@@ -16,7 +16,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 /** The generator's version, written into every generated file; it is core's version. */
-export const ACTIONS_VERSION = "0.17.5";
+export const ACTIONS_VERSION = "0.17.6";
 const GENERATOR = `ouro-actions ${ACTIONS_VERSION}`;
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -947,6 +947,9 @@ export function renderActions(set: ActionSet): Map<string, string> {
 }
 
 /** Every way `found` differs from what the set generates: a missing, extra or different file, at its first differing line. `only` checks just those files. */
+/** A projection without its generator's version, so files a newer ouro-actions would stamp differently still match. */
+const unstamped = (text: string) => text.replace(/\bouro-actions \d+\.\d+\.\d+\b/g, "ouro-actions");
+
 export function checkGenerated(set: ActionSet, found: ReadonlyMap<string, string>, only?: ReadonlySet<string>): string[] {
   const expected = renderActions(set);
   const problems: string[] = [];
@@ -957,7 +960,7 @@ export function checkGenerated(set: ActionSet, found: ReadonlyMap<string, string
       problems.push(`${path}: missing. Fix: run generate.`);
       continue;
     }
-    if (have === text) continue;
+    if (have === text || unstamped(have) === unstamped(text)) continue;
     const a = text.split("\n");
     const b = have.split("\n");
     let i = 0;
