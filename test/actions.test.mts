@@ -928,3 +928,13 @@ test("ourostack/desk: a string's pattern and a list's bounds are its JSON Schema
     /minItems 3 is above maxItems 1\. Fix:/u,
   );
 });
+
+test("check accepts projections an older ouro-actions stamped, so updating the generator alone does not drift", async () => {
+  const { readFile: read, readdir: list } = await import("node:fs/promises");
+  const gen = new URL("./fixtures/actions/generated/", import.meta.url);
+  const found = new Map<string, string>();
+  for (const name of await list(gen)) found.set(name, (await read(new URL(name, gen), "utf8")).replace(/ouro-actions \d+\.\d+\.\d+/g, "ouro-actions 0.1.0"));
+  assert.deepEqual(checkGenerated(shopping, found), []);
+  const edited = new Map(found).set("mcp.json", found.get("mcp.json")!.replace("shopping", "shoping"));
+  assert.match(checkGenerated(shopping, edited)[0]!, /^mcp\.json:\d+: drifted from its declaration/);
+});
