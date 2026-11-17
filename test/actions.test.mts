@@ -55,12 +55,8 @@ test("defineAction refuses a declaration that isn't one, with the fix", () => {
   assert.throws(() => defineAction({ ...base, agent: "Two\nlines" }), /agent.*one line/);
   assert.throws(() => defineAction({ ...base, label: " " }), /label/);
   assert.throws(() => defineAction({ ...base, consent: "sometimes" as "write" }), /consent/);
-  assert.throws(
-    () => defineAction({ ...base, input: { x: field.string({ label: "X", description: "x", optional: true, arg: true }) } }),
-    /x.*arg.*required/,
-  );
   assert.throws(() => defineAction({ ...base, input: { x: field.enum({ label: "X", description: "x", values: [] }) } }), /values/);
-  // arg only on a required string, since web's CLI arguments are strings.
+  // arg only on a string or enum input, since a positional is one word on the command line.
   assert.throws(() => defineAction({ ...base, input: { n: field.integer({ label: "N", description: "n", arg: true } as never) } }), /n.*arg.*string/);
   // An input may not shadow web's kit's own flags or the App Intent's members; an output may use those names.
   for (const name of ["json", "help", "why", "whyFile", "dryRun", "agent", "quiet", "input", "perform"]) {
@@ -156,6 +152,65 @@ test("the CLI projection is a defineCommand definition: args, optional flags, ef
     message: { type: "string", description: "A note to send with the invitation. It may run over several lines." },
   });
   assert.throws(() => toCommand(placeGroceryOrder), /person-only/);
+});
+
+test("an optional word is an args entry without required, after the required ones, and its usage is bracketed", () => {
+  const find = defineAction({
+    ...base,
+    id: "find_recipe",
+    cli: "recipe find",
+    input: {
+      recipe: field.string({ label: "Recipe", description: "The recipe's id.", arg: true }),
+      sort: field.enum({ label: "Sort", description: "How to order the results.", values: ["newest", "name"], optional: true, arg: true }),
+      cook: field.string({ label: "Cook", description: "Whose cooking to show.", optional: true, arg: true }),
+    },
+  });
+  assert.deepEqual(toCommand(find).args, [
+    { name: "recipe", description: "The recipe's id.", required: true },
+    { name: "sort", description: "How to order the results.", values: ["newest", "name"] },
+    { name: "cook", description: "Whose cooking to show." },
+  ]);
+  assert.match(renderActions(defineActions("kitchen", [find], { tool: "kitchen" })).get("web.ts")!, /"find-recipe": "kitchen recipe find <recipe> \[<sort>\] \[<cook>\]"/);
+});
+
+test("a required word after an optional one is refused, naming both with the fix; optional words may follow each other", () => {
+  const word = (label: string, optional = false) => field.string({ label, description: `The ${label.toLowerCase()}.`, arg: true, ...(optional ? { optional: true } : {}) });
+  assert.throws(
+    () => defineAction({ ...base, input: { app: word("App", true), item: word("Item") } }),
+    /"item": a required arg comes after the optional arg "app"; a positional can't be skipped\. Fix: make "item" optional, or put it before "app"\./,
+  );
+  // A flag between them doesn't make the required word skippable: only the order of the words counts.
+  assert.throws(
+    () => defineAction({ ...base, input: { app: word("App", true), quantity: field.number({ label: "Quantity", description: "How many.", optional: true }), item: word("Item") } }),
+    /"item": a required arg comes after the optional arg "app"/,
+  );
+  assert.doesNotThrow(() => defineAction({ ...base, input: { item: word("Item"), app: word("App", true), store: word("Store", true) } }));
+});
+
+test("arg is refused on a number, boolean, output, nullable word, or a structured field, and allowed on an optional enum", () => {
+  const at = (input: Record<string, unknown>) => () => defineAction({ ...base, input: input as never });
+  assert.throws(at({ n: field.number({ label: "N", description: "n", arg: true }) }), /n.*arg is only for an input string or enum field.*Fix: drop arg/);
+  assert.throws(at({ b: field.boolean({ label: "B", description: "b", arg: true }) }), /b.*arg is only for an input string or enum field/);
+  assert.throws(at({ s: field.string({ label: "S", description: "s", arg: true, optional: true, nullable: true }) }), /s.*a positional arg can't be nullable.*Fix:/);
+  assert.throws(() => defineAction({ ...base, output: { x: field.string({ label: "X", description: "x", arg: true }) } }), /x.*arg is only for an input/);
+  assert.throws(at({ xs: field.list({ label: "Xs", description: "xs", of: field.string({ label: "X", description: "x" }), arg: true, protocolOnly: true } as never) }), /never a CLI argument/);
+  assert.throws(at({ g: field.group({ label: "G", description: "g", fields: {}, arg: true, protocolOnly: true } as never) }), /never a CLI argument/);
+  assert.throws(
+    at({ o: field.oneOf({ label: "O", description: "o", options: [field.integer({ label: "Days", description: "Days." }), field.boolean({ label: "Yes", description: "Yes." })], arg: true, protocolOnly: true } as never) }),
+    /never a CLI argument/,
+  );
+  assert.doesNotThrow(at({ sort: field.enum({ label: "Sort", description: "How to order.", values: ["newest"], optional: true, arg: true }) }));
+});
+
+test("the fixture's optional words are optional on the CLI, MCP and WebMCP, and an enum word keeps its values", () => {
+  assert.deepEqual(toCommand(getShoppingList).args, [
+    { name: "sort", description: "How to order the items: the order they were added when left out.", values: ["added", "name"] },
+    { name: "store", description: "Only the items for this store, by its name; every store when left out." },
+  ]);
+  assert.deepEqual(inputSchema(getShoppingList).required, []);
+  assert.deepEqual(inputSchema(getShoppingList).properties.sort, { type: "string", description: "How to order the items: the order they were added when left out.", enum: ["added", "name"] });
+  assert.deepEqual(toWebMcpTool(getShoppingList).inputSchema.properties.store, { type: "string", description: "Only the items for this store, by its name; every store when left out." });
+  assert.equal(JSON.parse(renderActions(shopping).get("commands.json")!).commands[0].args.every((a: { required?: boolean }) => a.required === undefined), true);
 });
 
 test("MCP and WebMCP tools carry the agent's description and the consent hints", () => {

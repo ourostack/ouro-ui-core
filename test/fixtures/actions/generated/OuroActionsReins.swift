@@ -5,7 +5,7 @@
 import OuroReins
 
 extension GetShoppingListInput: ReinsInput {
-    public static var reinsSchema: ReinsSchema { .object(properties: ["show": .oneOf(["all", "unchecked"])], required: []) }
+    public static var reinsSchema: ReinsSchema { .object(properties: ["show": .oneOf(["all", "unchecked"]), "sort": .oneOf(["added", "name"]), "store": .string], required: []) }
 }
 
 extension AddShoppingListItemInput: ReinsInput {

@@ -65,6 +65,18 @@
                       "all",
                       "unchecked"
                     ]
+                  },
+                  "sort": {
+                    "type": "string",
+                    "description": "How to order the items: the order they were added when left out.",
+                    "enum": [
+                      "added",
+                      "name"
+                    ]
+                  },
+                  "store": {
+                    "type": "string",
+                    "description": "Only the items for this store, by its name; every store when left out."
                   }
                 },
                 "required": [],

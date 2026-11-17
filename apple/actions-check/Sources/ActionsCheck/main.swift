@@ -67,7 +67,7 @@ func check() async throws {
     let session = ReinsSession(root: { ReinsNode("list", actions: [.addShoppingListItem()]) })
     let reply = await session.perform("addShoppingListItem", input: .object(["name": .string("eggs")]))
     expect(reply.ok && calls.count == 2 && calls.last?.name == "eggs", "a Reins action runs the same handler")
-    expect(ReinsAction.getShoppingList().input == .object(properties: ["show": .oneOf(["all", "unchecked"])], required: []), "an optional enum is a oneOf, not required")
+    expect(ReinsAction.getShoppingList().input == .object(properties: ["show": .oneOf(["all", "unchecked"]), "sort": .oneOf(["added", "name"]), "store": .string], required: []), "optional enums and strings are oneOf and string, none required")
 
     // The person-only action: no intent, a typed refusal for any bridge that asks, still in Reins as the person's finger.
     let refusal = OuroActions.refusal(for: "place_grocery_order")

@@ -16,7 +16,7 @@ export const componentAx = {
 
 export const twins = {
   actions: {
-    "get-shopping-list": "shop list show",
+    "get-shopping-list": "shop list show [<sort>] [<store>]",
     "add-shopping-list-item": "shop list add <name>",
     "remove-shopping-list-item": "shop list remove <id>",
     "share-shopping-list": "shop list share <with>",
