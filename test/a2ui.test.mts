@@ -82,6 +82,28 @@ test("every conformance case resolves to its expect", () => {
   for (const c of cases) assert.deepEqual(resolveMessages(catalogs[c.catalog], c.messages), c.expect, c.name);
 });
 
+test("the validator takes a component, action or input name from the catalog only when the catalog itself has it (ouro-ui-core#91)", () => {
+  for (const name of ["constructor", "toString"]) {
+    assert.ok(validateMessages(app, create([{ id: "root", component: name }])).some((p) => p.message.includes("is not in this catalog")), `component ${name}`);
+    assert.ok(validateMessages(app, create([{ id: "root", component: "ActionButton", action: name }])).some((p) => p.message.includes("not one of the app's actions")), `action ${name}`);
+    assert.ok(validateMessages(app, create([{ id: "root", component: "ActionButton", action: "share_recipe", input: JSON.parse(`{"recipe":"r","with":"s@e.com",${JSON.stringify(name)}:true}`) }])).some((p) => p.message.includes(`share_recipe has no input ${name}`)), `input ${name}`);
+  }
+});
+
+test("a stream can't write to an object's prototype through updateDataModel, and a catalog can't name a built-in as a component (ouro-ui-core#91)", () => {
+  const stream = [...create([{ id: "root", component: "Text", text: "hi" }]), { version: "1.0", updateDataModel: { surfaceId: "s", path: "/__proto__/polluted", value: "yes" } }];
+  assert.ok(validateMessages(app, stream).some((p) => p.path.endsWith("/updateDataModel/path")));
+  applyMessages(stream);
+  assert.equal(({} as Record<string, unknown>).polluted, undefined);
+  assert.throws(() => loadCatalog({ catalogId: "x", components: { Text: {}, toString: {} } }), /component toString is not Ouro HX's/);
+  for (const pointer of ["/__proto__/x", "constructor", "items/__proto__"]) {
+    const bound = create([{ id: "root", component: "Card", children: ["f", "b"] }, { id: "f", component: "Text", text: { "@path": pointer } }, { id: "b", component: "ActionButton", action: "share_recipe", input: { recipe: { "@path": pointer }, with: "s@e.com" } }]);
+    assert.ok(validateMessages(app, bound).filter((p) => p.message.includes("never through __proto__")).length >= 2, pointer);
+  }
+  const template = create([{ id: "root", component: "Stack", children: { componentId: "t", path: "/__proto__" } }, { id: "t", component: "Text", text: "x" }]);
+  assert.ok(validateMessages(app, template).some((p) => p.message.includes("never through __proto__")));
+});
+
 test("an agent can't press a button through the screen", () => {
   const cat = loadCatalog(app);
   assert.match(functionCallProblem(cat, "share_recipe").message, /through their own tool \(MCP share_recipe\)/);

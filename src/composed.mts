@@ -203,7 +203,7 @@ export const componentsFor = (actions: Readonly<Record<string, CatalogAction>>):
 
 /** Why an agent can't press a button through the screen, whatever the format asked: agents use their own doors. */
 export function agentPressProblem(cat: Catalog, name: unknown): { message: string; refusal?: Refusal } {
-  const a = typeof name === "string" ? cat.actions[name] : undefined;
+  const a = typeof name === "string" ? own(cat.actions, name) : undefined;
   if (a?.personOnly) return { message: a.personOnly.refusal.summary, refusal: a.personOnly.refusal };
   if (a) return { message: `${name} is an action, and agents run actions through their own tool (MCP ${name}), not through the person's screen.` };
   return { message: `This catalog has no functions an agent may call${typeof name === "string" ? `, so ${name} is not one` : ""}.` };
@@ -216,24 +216,38 @@ export function agentPressProblem(cat: Catalog, name: unknown): { message: strin
 /** A value bound to the data model: `{ "@path": "/servings" }`. In a tree, the path is absolute. */
 export const isBinding = (v: unknown): v is { "@path": string } => isObj(v) && typeof v["@path"] === "string" && Object.keys(v).length === 1;
 
-/** Reads a JSON pointer (RFC 6901). A missing value is undefined. */
+/** A pointer segment that would reach an object's prototype instead of the data: never followed or written. */
+const UNSAFE_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+const segments = (pointer: string) => pointer.replace(/^\//, "").split("/").map((k) => k.replace(/~1/g, "/").replace(/~0/g, "~"));
+
+/** Whether no segment of a pointer, absolute or relative, names an object's prototype (ouro-ui-core#91). */
+export const isSafePointer = (pointer: string): boolean => !segments(pointer).some((k) => UNSAFE_KEYS.has(k));
+
+/** Whether a pointer stays in the data: absolute, and safe. */
+export const isDataPointer = (pointer: string): boolean => pointer.startsWith("/") && isSafePointer(pointer);
+
+/** Reads a JSON pointer (RFC 6901). A missing value is undefined, and so is anything the data doesn't itself hold. */
 export function getPointer(data: Json, pointer: string): Json | undefined {
   if (pointer === "" || pointer === "/") return data;
   let cur: Json | undefined = data;
   for (const raw of pointer.replace(/^\//, "").split("/")) {
     const key = raw.replace(/~1/g, "/").replace(/~0/g, "~");
     if (Array.isArray(cur)) cur = /^\d+$/.test(key) ? cur[Number(key)] : undefined;
-    else if (cur && typeof cur === "object") cur = (cur as Obj)[key];
+    else if (cur && typeof cur === "object") cur = Object.hasOwn(cur, key) ? (cur as Obj)[key] : undefined;
     else return undefined;
     if (cur === undefined) return undefined;
   }
   return cur;
 }
 
-/** Writes a JSON pointer, creating objects on the way; null deletes. It returns a copy and leaves `data` as it was. */
+/**
+ * Writes a JSON pointer, creating objects on the way; null deletes. It returns a copy and leaves `data` as it was. A
+ * pointer with a segment that names an object's prototype writes nothing.
+ */
 export function setPointer(data: Json, pointer: string, value: Json): Json {
   if (pointer === "" || pointer === "/") return value === null ? {} : value;
-  const keys = pointer.replace(/^\//, "").split("/").map((k) => k.replace(/~1/g, "/").replace(/~0/g, "~"));
+  const keys = segments(pointer);
+  if (keys.some((k) => UNSAFE_KEYS.has(k))) return data;
   const root: Json = data && typeof data === "object" ? structuredClone(data) : {};
   let cur = root as Obj | Json[];
   keys.forEach((k, i) => {
@@ -247,7 +261,7 @@ export function setPointer(data: Json, pointer: string, value: Json): Json {
       } else (container as unknown as Record<string | number, Json>)[index] = value;
       return;
     }
-    const next = (container as unknown as Record<string | number, Json>)[index];
+    const next = Object.hasOwn(container, index) ? (container as unknown as Record<string | number, Json>)[index] : undefined;
     if (!next || typeof next !== "object") (container as unknown as Record<string | number, Json>)[index] = {};
     cur = (container as unknown as Record<string | number, Json>)[index] as Obj;
   });
@@ -269,8 +283,8 @@ export function asText(v: Json | undefined): string {
  */
 /** The input fields a confirm sheet has a row for, in order: each prepared one, less a name that stands in for an id. */
 function confirmKeys(a: CatalogAction, input: Obj): string[] {
-  const names = new Set(Object.entries(a.input).filter(([k, f]) => k in input && f.shownAs !== undefined && f.shownAs in a.input).map(([, f]) => f.shownAs!));
-  return Object.keys(a.input).filter((k) => k in input && !names.has(k));
+  const names = new Set(Object.entries(a.input).filter(([k, f]) => Object.hasOwn(input, k) && f.shownAs !== undefined && Object.hasOwn(a.input, f.shownAs)).map(([, f]) => f.shownAs!));
+  return Object.keys(a.input).filter((k) => Object.hasOwn(input, k) && !names.has(k));
 }
 
 function confirmFields(action: string, a: CatalogAction, input: Obj, options: ResolveOptions): { label: string; value: string; raw?: string; bind?: string }[] {
@@ -341,6 +355,12 @@ export interface TreeProblem {
 
 /** A JSON object (not null, not an array). The A2UI adapter uses it too, so the modules declare no name twice. */
 export const isObj = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
+
+/**
+ * A catalog entry by a name a sender chose, only when the catalog itself has it: `constructor` or `toString` is never a
+ * component, an action or an input field (ouro-ui-core#91).
+ */
+export const own = <T,>(record: Readonly<Record<string, T>>, key: string): T | undefined => (Object.hasOwn(record, key) ? record[key] : undefined);
 const BUTTON_PROPS = ["action", "label", "consent", "press", "input", "confirm", "handoff", "emphasis", "@label"];
 
 function checkProp(problems: TreeProblem[], key: string, p: Prop, v: unknown, at: string): void {
@@ -363,7 +383,7 @@ function checkProp(problems: TreeProblem[], key: string, p: Prop, v: unknown, at
       if (v !== 1 && v !== 2 && v !== 3) bad("1, 2 or 3");
       break;
     case "path":
-      if (typeof v !== "string" || !v.startsWith("/")) bad("a JSON pointer into the data model, such as /servings");
+      if (typeof v !== "string" || !isDataPointer(v)) bad("a JSON pointer into the data model, such as /servings");
       break;
     case "terms":
       if (!Array.isArray(v) || !v.every((it) => isObj(it) && typeof it.term === "string" && typeof it.detail === "string" && Object.keys(it).length === 2)) bad("a list of { term, detail } text");
@@ -408,7 +428,7 @@ export function validateTree(cat: Catalog, node: unknown, path = ""): TreeProble
       problems.push({ path: at, message: "A node is { id, component, props, children }." });
       return;
     }
-    const spec = cat.components[n.component];
+    const spec = own(cat.components, n.component);
     if (!spec) {
       problems.push({ path: `${at}/component`, message: `${JSON.stringify(n.component)} is not in this catalog; use one of ${Object.keys(cat.components).join(", ")}.` });
       return;
@@ -428,7 +448,7 @@ export function validateTree(cat: Catalog, node: unknown, path = ""): TreeProble
     }
     if (n.component === "ActionButton") {
       const id = props.action;
-      const a = typeof id === "string" ? cat.actions[id] : undefined;
+      const a = typeof id === "string" ? own(cat.actions, id) : undefined;
       if (!a || typeof id !== "string") problems.push({ path: `${at}/props/action`, message: `${JSON.stringify(id)} is not one of the app's actions: ${Object.keys(cat.actions).join(", ")}.` });
       else {
         const input = props.input;
@@ -437,8 +457,8 @@ export function validateTree(cat: Catalog, node: unknown, path = ""): TreeProble
         else {
           for (const [k, v] of Object.entries(input)) {
             // A field the catalog doesn't carry would be sent without a row on the confirm sheet.
-            if (!(k in a.input)) problems.push({ path: `${at}/props/input/${k}`, message: `${id} has no input ${k}; its fields are ${Object.keys(a.input).join(", ") || "none"}.` });
-            if (isObj(v) && "@path" in v && !(isBinding(v) && v["@path"].startsWith("/"))) problems.push({ path: `${at}/props/input/${k}`, message: `${k} is a value, or {"@path": "/..."} bound to the data model.` });
+            if (own(a.input, k) === undefined) problems.push({ path: `${at}/props/input/${k}`, message: `${id} has no input ${k}; its fields are ${Object.keys(a.input).join(", ") || "none"}.` });
+            if (isObj(v) && "@path" in v && !(isBinding(v) && isDataPointer(v["@path"]))) problems.push({ path: `${at}/props/input/${k}`, message: `${k} is a value, or {"@path": "/..."} bound to the data model.` });
           }
           const expected = actionButtonProps(cat, id, input as Obj);
           for (const key of ["label", "consent", "press", "handoff"]) {

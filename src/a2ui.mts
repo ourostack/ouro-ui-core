@@ -22,7 +22,10 @@ import {
   getPointer,
   INPUT_COMPONENTS,
   isBinding,
+  isDataPointer,
   isObj,
+  isSafePointer,
+  own,
   personPress,
   setPointer,
   type Catalog,
@@ -81,7 +84,7 @@ export function loadCatalog(cat: unknown): LoadedCatalog {
   const actions = c.metadata?.extensions?.[EXTENSION]?.actions ?? {};
   const components: Record<string, ComponentSpec> = {};
   for (const name of Object.keys(c.components)) {
-    const spec = name === "ActionButton" ? ACTION_BUTTON : COMPONENTS[name];
+    const spec = name === "ActionButton" ? ACTION_BUTTON : own(COMPONENTS, name);
     if (!spec) throw new Error(`catalog ${c.catalogId}: component ${name} is not Ouro HX's. Fix: regenerate it with ouro-a2ui catalog.`);
     components[name] = spec;
   }
@@ -143,7 +146,7 @@ function checkInput(w: Walk, action: CatalogAction, id: string, input: unknown, 
   }
   const given = (input ?? {}) as Record<string, unknown>;
   for (const [name, v] of Object.entries(given)) {
-    const f = action.input[name];
+    const f = own(action.input, name);
     const at = `${path}/${name}`;
     if (!f) {
       w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: at, message: `${id} has no input ${name}; its fields are ${Object.keys(action.input).join(", ") || "none"}.` });
@@ -159,7 +162,17 @@ function checkInput(w: Walk, action: CatalogAction, id: string, input: unknown, 
   }
 }
 
+/** Every pointer a component names (a binding or a template's path) that would reach an object's prototype. */
+function unsafePointers(w: Walk, v: unknown, path: string): void {
+  if (Array.isArray(v)) return v.forEach((x, i) => unsafePointers(w, x, `${path}/${i}`));
+  if (!isObj(v)) return;
+  const pointer = isBinding(v) ? v["@path"] : typeof v.componentId === "string" && typeof v.path === "string" ? v.path : undefined;
+  if (pointer !== undefined && !isSafePointer(pointer)) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path, message: `${JSON.stringify(pointer)} points into the data model, never through __proto__, constructor or prototype.` });
+  for (const [k, x] of Object.entries(v)) unsafePointers(w, x, `${path}/${k}`);
+}
+
 function checkComponent(w: Walk, comp: unknown, path: string, refs: Map<string, string>, ids: Set<string>): void {
+  unsafePointers(w, comp, path);
   if (!isObj(comp)) {
     w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path, message: "A component is an object with id and component." });
     return;
@@ -167,7 +180,7 @@ function checkComponent(w: Walk, comp: unknown, path: string, refs: Map<string, 
   const { id, component } = comp;
   if (typeof id !== "string" || !IDENT.test(id)) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: `${path}/id`, message: `id ${JSON.stringify(id)} is not an identifier: letters, digits and _, not starting with a digit (user_card, not user-card).` });
   else ids.add(id);
-  const spec = typeof component === "string" ? w.cat.components[component] : undefined;
+  const spec = typeof component === "string" ? own(w.cat.components, component) : undefined;
   if (!spec) {
     w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: `${path}/component`, message: `${JSON.stringify(component)} is not in this catalog; use one of ${Object.keys(w.cat.components).join(", ")}.` });
     return;
@@ -175,7 +188,7 @@ function checkComponent(w: Walk, comp: unknown, path: string, refs: Map<string, 
   if ("@catalogId" in comp && comp["@catalogId"] !== w.cat.catalogId) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: `${path}/@catalogId`, message: `This renderer has only the catalog ${w.cat.catalogId}.` });
   for (const key of Object.keys(comp)) {
     if (key === "id" || key === "component" || key === "@catalogId" || key === "@metadata" || key === "@accessibility") continue;
-    if (!(key in spec.props)) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: `${path}/${key}`, message: `${component} has no ${key}${Object.keys(spec.props).length ? `; its props are ${Object.keys(spec.props).join(", ")}` : ""}.` });
+    if (!Object.hasOwn(spec.props, key)) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: `${path}/${key}`, message: `${component} has no ${key}${Object.keys(spec.props).length ? `; its props are ${Object.keys(spec.props).join(", ")}` : ""}.` });
   }
   if (isObj(comp["@accessibility"])) {
     for (const [k, v] of Object.entries(comp["@accessibility"])) {
@@ -225,13 +238,13 @@ function checkComponent(w: Walk, comp: unknown, path: string, refs: Map<string, 
         if (!isBinding(v)) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: at, message: `${key} is {"@path": "/..."}: where the person's answer goes in the data model.` });
         break;
       case "action":
-        if (typeof v !== "string" || !w.cat.actions[v]) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: at, message: `${JSON.stringify(v)} is not one of the app's actions: ${Object.keys(w.cat.actions).join(", ")}.` });
+        if (typeof v !== "string" || !own(w.cat.actions, v)) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: at, message: `${JSON.stringify(v)} is not one of the app's actions: ${Object.keys(w.cat.actions).join(", ")}.` });
         break;
       case "input":
         break;
     }
   }
-  if (component === "ActionButton" && typeof comp.action === "string" && w.cat.actions[comp.action]) checkInput(w, w.cat.actions[comp.action]!, comp.action, comp.input, `${path}/input`);
+  if (component === "ActionButton" && typeof comp.action === "string" && own(w.cat.actions, comp.action)) checkInput(w, own(w.cat.actions, comp.action)!, comp.action, comp.input, `${path}/input`);
 }
 
 /**
@@ -291,7 +304,7 @@ export function validateMessages(catalogJson: unknown, messages: unknown): Probl
       return;
     }
     if (key === "updateDataModel") {
-      if (body.path !== undefined && (typeof body.path !== "string" || (body.path !== "" && !body.path.startsWith("/")))) problems.push({ code: "VALIDATION_FAILED", surfaceId, path: `${at}/updateDataModel/path`, message: "path is a JSON pointer starting with /." });
+      if (body.path !== undefined && (typeof body.path !== "string" || (body.path !== "" && !isDataPointer(body.path)))) problems.push({ code: "VALIDATION_FAILED", surfaceId, path: `${at}/updateDataModel/path`, message: "path is a JSON pointer starting with /." });
       if (!("value" in body)) problems.push({ code: "VALIDATION_FAILED", surfaceId, path: `${at}/updateDataModel/value`, message: "updateDataModel needs value (null deletes)." });
       return;
     }
