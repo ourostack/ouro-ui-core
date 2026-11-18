@@ -276,17 +276,18 @@ export function asText(v: Json | undefined): string {
   return JSON.stringify(v);
 }
 
-/**
- * The rows of a confirm sheet: each prepared input with the person's label. An id shows its name (the app's resolver,
- * else the sibling `shownAs` names, else the value itself), with the id as `raw` when the name replaced it; a name
- * field that stands in for an id has no row of its own.
- */
 /** The input fields a confirm sheet has a row for, in order: each prepared one, less a name that stands in for an id. */
 function confirmKeys(a: CatalogAction, input: Obj): string[] {
   const names = new Set(Object.entries(a.input).filter(([k, f]) => Object.hasOwn(input, k) && f.shownAs !== undefined && Object.hasOwn(a.input, f.shownAs)).map(([, f]) => f.shownAs!));
   return Object.keys(a.input).filter((k) => Object.hasOwn(input, k) && !names.has(k));
 }
 
+/**
+ * The rows of a confirm sheet: each prepared input with the person's label. An id shows its name (the app's resolver,
+ * else the sibling `shownAs` names, else the value itself), with the id as `raw` when the name replaced it; a name
+ * field that stands in for an id has no row of its own. Only an id field (one with `shownAs`) shows a name; every
+ * other row shows exactly what will be sent.
+ */
 function confirmFields(action: string, a: CatalogAction, input: Obj, options: ResolveOptions): { label: string; value: string; raw?: string; bind?: string }[] {
   return confirmKeys(a, input)
     .map((k) => [k, a.input[k]!] as const)
