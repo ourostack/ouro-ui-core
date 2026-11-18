@@ -15,8 +15,12 @@ New decision records go here. Each has a "Prior art" section linking every find 
 | 2026-11-13 | [Agents use agent interfaces, and one action declaration feeds every surface](2026-11-13-agents-use-agent-interfaces.md) |
 | 2026-11-13 | [Ouro HX is an A2UI catalog, and agent-composed UI carries the action model's consent](2026-11-13-a2ui-catalog.md) (superseded in part by 2026-11-14's composed tree) |
 | 2026-11-13 | [A tool with one thing to do has no command word](2026-11-13-single-command-tools.md) |
+| 2026-11-13 | [Squircles, the Quiet switch and avatars with presence](2026-11-13-squircles-switch-avatars.md) |
+| 2026-11-13 | [ThreadRail, a thread beside its conversation](2026-11-13-thread-rail.md) |
 | 2026-11-14 | [Rounder people, and presence as a dot on the curve](2026-11-14-rounder-people-presence-dot.md) |
-| 2026-11-14 | [Ouro's composed-UI tree is the source of truth, and A2UI and MCP Apps are adapters at the edge](2026-11-14-composed-ui-own-tree.md) |
+| 2026-11-14 | [Ouro's composed-UI tree is the source of truth, and A2UI and MCP Apps are adapters at the edge](2026-11-14-composed-ui-own-tree.md) (item 7 superseded by 2026-11-17's composed tree leads) |
 | 2026-11-14 | [Native kits: WinUI 3 on Windows, and a component specified once in core](2026-11-14-native-kits.md) |
 | 2026-11-14 | [Android: one Compose kit, AppFunctions for agents, checked on emulators](2026-11-14-android-kit.md) |
 | 2026-11-15 | [CI that finishes in under ten minutes, merge queue removed](2026-11-15-ci-under-ten-minutes.md) |
+| 2026-11-17 | [Ouro UI leads with its composed tree, beside the one action](2026-11-17-composed-tree-leads.md) |
+| 2026-11-17 | [Native kits, no cross-platform frameworks](2026-11-17-native-kits-no-cross-platform.md) |
