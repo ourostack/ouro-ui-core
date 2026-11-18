@@ -19,8 +19,12 @@ import {
   agentPressProblem,
   asText,
   COMPONENTS,
+  getPointer,
+  INPUT_COMPONENTS,
+  isBinding,
   isObj,
   personPress,
+  setPointer,
   type Catalog,
   type CatalogAction,
   type ComponentSpec,
@@ -36,7 +40,12 @@ export {
   actionButtonProps,
   asText,
   COMPONENTS,
+  getPointer,
+  INPUT_COMPONENTS,
+  isBinding,
   pressOf,
+  resolveButton,
+  setPointer,
   type CatalogAction,
   type ComponentSpec,
   type Consent,
@@ -95,7 +104,6 @@ export interface Problem {
 }
 
 const IDENT = /^[\p{XID_Start}_][\p{XID_Continue}]*$/u;
-const isBinding = (v: unknown): v is { "@path": string } => isObj(v) && typeof v["@path"] === "string" && Object.keys(v).length === 1;
 const isCall = (v: unknown) => isObj(v) && "@call" in v;
 const MESSAGE_KEYS = ["createSurface", "updateComponents", "updateDataModel", "deleteSurface", "callRendererFunction", "agentFunctionResponse"];
 
@@ -212,6 +220,9 @@ function checkComponent(w: Walk, comp: unknown, path: string, refs: Map<string, 
                 else checkDynamic(w, it[k], "string", `${at}/${i}/${k}`);
               }
           });
+        break;
+      case "path":
+        if (!isBinding(v)) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: at, message: `${key} is {"@path": "/..."}: where the person's answer goes in the data model.` });
         break;
       case "action":
         if (typeof v !== "string" || !w.cat.actions[v]) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: at, message: `${JSON.stringify(v)} is not one of the app's actions: ${Object.keys(w.cat.actions).join(", ")}.` });
@@ -344,44 +355,6 @@ interface Surface {
   data: Json;
 }
 
-/** Reads a JSON pointer (RFC 6901). A missing value is undefined. */
-export function getPointer(data: Json, pointer: string): Json | undefined {
-  if (pointer === "" || pointer === "/") return data;
-  let cur: Json | undefined = data;
-  for (const raw of pointer.replace(/^\//, "").split("/")) {
-    const key = raw.replace(/~1/g, "/").replace(/~0/g, "~");
-    if (Array.isArray(cur)) cur = /^\d+$/.test(key) ? cur[Number(key)] : undefined;
-    else if (cur && typeof cur === "object") cur = (cur as Obj)[key];
-    else return undefined;
-    if (cur === undefined) return undefined;
-  }
-  return cur;
-}
-
-/** Writes a JSON pointer, creating objects on the way; null deletes. */
-export function setPointer(data: Json, pointer: string, value: Json): Json {
-  if (pointer === "" || pointer === "/") return value === null ? {} : value;
-  const keys = pointer.replace(/^\//, "").split("/").map((k) => k.replace(/~1/g, "/").replace(/~0/g, "~"));
-  const root: Json = data && typeof data === "object" ? structuredClone(data) : {};
-  let cur = root as Obj | Json[];
-  keys.forEach((k, i) => {
-    const last = i === keys.length - 1;
-    const container = cur as Obj & Json[];
-    const index = Array.isArray(cur) && /^\d+$/.test(k) ? Number(k) : k;
-    if (last) {
-      if (value === null) {
-        if (Array.isArray(cur) && typeof index === "number") cur.splice(index, 1);
-        else delete (cur as Obj)[k];
-      } else (container as unknown as Record<string | number, Json>)[index] = value;
-      return;
-    }
-    const next = (container as unknown as Record<string | number, Json>)[index];
-    if (!next || typeof next !== "object") (container as unknown as Record<string | number, Json>)[index] = {};
-    cur = (container as unknown as Record<string | number, Json>)[index] as Obj;
-  });
-  return root;
-}
-
 /** Applies a stream to surfaces. Throws on a stream the validator would reject; validate first. */
 export function applyMessages(messages: readonly unknown[], surfaces = new Map<string, Surface>()): Map<string, Surface> {
   for (const m of messages as Record<string, Record<string, unknown>>[]) {
@@ -467,21 +440,56 @@ export function resolveSurface(catalogJson: unknown, surface: Surface, options: 
           }
           break;
         }
+        case "path":
+          props[key] = isBinding(raw) ? absolute(scoped(scope, raw["@path"])) : "";
+          break;
         case "action":
         case "input":
           break;
       }
     }
     if (name === "ActionButton") {
+      // Bindings stay bindings here; once the tree is whole, live() reads those no field writes and adds the catalog's props.
       const id = String(comp.action);
       const input: Obj = {};
-      if (!cat.actions[id]!.personOnly && isObj(comp.input)) for (const [k, v] of Object.entries(comp.input)) input[k] = resolveValue(surface.data, scope, v) ?? null;
-      Object.assign(props, actionButtonProps(cat, id, input, options));
+      if (!cat.actions[id]!.personOnly && isObj(comp.input)) for (const [k, v] of Object.entries(comp.input)) input[k] = isBinding(v) ? { "@path": absolute(scoped(scope, v["@path"])) } : ((v as Json) ?? null);
+      Object.assign(props, { action: id, input });
     }
     if (isObj(comp["@accessibility"]) && comp["@accessibility"].label !== undefined) props["@label"] = asText(resolveValue(surface.data, scope, comp["@accessibility"].label));
     return { id: String(comp.id), component: name, props, children };
   };
-  return node(root, "");
+  return live(cat, node(root, ""), surface.data, options);
+}
+
+/** A pointer that starts at the data model's root. */
+const absolute = (p: string) => (p.startsWith("/") ? p : `/${p}`);
+
+/**
+ * The tree with each button input bound to a path no field writes read from the data now, as before fields existed;
+ * one bound to a field the person fills in stays bound, so a press sends their answer (composed.mts resolveButton).
+ */
+function live(cat: Catalog, tree: Resolved, data: Json, options: ResolveOptions): Resolved {
+  const written = new Set<string>();
+  const collect = (n: Resolved): void => {
+    if (INPUT_COMPONENTS.includes(n.component) && typeof n.props.value === "string") written.add(n.props.value);
+    n.children.forEach(collect);
+  };
+  collect(tree);
+  const fix = (n: Resolved): Resolved => {
+    const children = n.children.map(fix);
+    if (n.component !== "ActionButton" || !isObj(n.props.input)) return { ...n, children };
+    const { action, input: prepared, "@label": label, ...rest } = n.props;
+    // A value read from the data is a value: one shaped like a binding is sent as its text, never followed.
+    const read = (p: string): Json => {
+      const v = getPointer(data, p) ?? null;
+      return isBinding(v) ? asText(v) : v;
+    };
+    const input: Obj = Object.fromEntries(Object.entries(prepared as Obj).map(([k, v]) => [k, isBinding(v) && !written.has(v["@path"]) ? read(v["@path"]) : v]));
+    // The catalog's props, computed once per button, so the app's label resolver is asked once per field.
+    const props: Obj = { ...rest, ...actionButtonProps(cat, String(action), input, options), ...(label !== undefined ? { "@label": label } : {}) };
+    return { ...n, props, children };
+  };
+  return fix(tree);
 }
 
 /** Every surface a stream leaves, resolved; the validator's problems instead when it has any. */

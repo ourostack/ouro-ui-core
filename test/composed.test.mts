@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readdir, readFile } from "node:fs/promises";
 import { test } from "node:test";
 import { loadCatalog, resolveMessages } from "../src/a2ui.mts";
-import { actionButtonProps, COMPONENTS, componentsFor, personPress, validateTree, type ComposedNode } from "../src/composed.mts";
+import { actionButtonProps, COMPONENTS, componentsFor, getPointer, INPUT_COMPONENTS, personPress, resolveButton, setPointer, validateTree, type ComposedNode, type Json } from "../src/composed.mts";
 import { MCP_APP_MIME, mcpAppResource, mcpAppToolMeta, mcpAppTreeResult } from "../src/mcp-app.mts";
 
 // Ouro's composed tree is the source of truth (docs/decisions/2026-11-14-composed-ui-own-tree.md): every tree the A2UI
@@ -11,7 +11,8 @@ import { MCP_APP_MIME, mcpAppResource, mcpAppToolMeta, mcpAppTreeResult } from "
 
 const root = new URL("../", import.meta.url);
 const read = async (p: string) => JSON.parse(await readFile(new URL(p, root), "utf8"));
-const app = loadCatalog(await read("standard/hx/a2ui/conformance/recipe.catalog.json"));
+const appJson = await read("standard/hx/a2ui/conformance/recipe.catalog.json");
+const app = loadCatalog(appJson);
 const hx = loadCatalog(await read("standard/hx/a2ui/catalog.json"));
 const names = (await readdir(new URL("standard/hx/a2ui/conformance/cases/", root))).filter((f) => f.endsWith(".json")).sort();
 const cases = await Promise.all(names.map(async (n) => ({ name: n, ...(await read(`standard/hx/a2ui/conformance/cases/${n}`)) })));
@@ -69,6 +70,48 @@ test("a press is the action, the prepared input and that the person pressed it; 
   assert.throws(() => personPress(share), /only after the person confirms/);
   assert.equal(personPress(share, true).confirmed, true);
   assert.throws(() => personPress(order), /person-only/);
+});
+
+test("a field writes the person's answer into the data, and a button bound to it sends that answer when they press", () => {
+  const c = cases.find((x) => x.name === "inputs.json")!;
+  const plan = (c.expect as { surfaces: Record<string, ComposedNode> }).surfaces.plan!;
+  const find = (n: ComposedNode, id: string): ComposedNode | undefined => (n.id === id ? n : n.children.map((ch) => find(ch, id)).find(Boolean));
+  for (const name of INPUT_COMPONENTS) assert.ok(JSON.stringify(plan).includes(`"component":"${name}"`), `the case covers ${name}`);
+  const shopBound = find(plan, "shop")!;
+  const shareBound = find(plan, "share")!;
+  // The person types 6 servings and an address: the data changes where each field's value points.
+  let data = (c.messages[0] as { createSurface: { dataModel: Json } }).createSurface.dataModel;
+  assert.equal(getPointer(data, find(plan, "servings")!.props.value as string), 4, "a field starts with what the data holds");
+  data = setPointer(data, "/servings", 6);
+  data = setPointer(data, "/share/with", "sam@example.com");
+  assert.deepEqual(personPress(shopBound, undefined, data).input, { recipe: "rcp_lemon_orzo", servings: 6 }, "the press sends the answer, and the unbound recipe stays as resolved");
+  const sheet = resolveButton(shareBound, data).props.confirm as { fields: Json[] };
+  assert.deepEqual(sheet.fields, [{ label: "Recipe", value: "Lemon orzo", raw: "rcp_lemon_orzo" }, { label: "Send to", value: "sam@example.com" }], "the confirm sheet shows what the person typed");
+  assert.equal(personPress(shareBound, true, data).input.with, "sam@example.com");
+  assert.equal(personPress(shareBound, true, setPointer(data, "/share/with", null)).input.with, null, "an empty answer is sent as null, and the app's tool refuses it");
+  assert.equal(resolveButton(find(plan, "title")!, data), find(plan, "title"), "a node with nothing bound comes back as it is");
+});
+
+test("a button bound to data no field writes reads it now, an object as it is, and never follows a value shaped like a binding", () => {
+  const surface = (dataModel: Json) => [{ version: "1.0", createSurface: { surfaceId: "s", catalogId: app.catalogId, dataModel, components: [{ id: "root", component: "Card", children: ["share"] }, { id: "share", component: "ActionButton", action: "share_recipe", input: { recipe: { "@path": "/recipe" }, with: "sam@example.com" }, "@accessibility": { label: "Share it" } }] } }];
+  const resolved = (dataModel: Json) => ((resolveMessages(appJson, surface(dataModel)) as { surfaces: Record<string, ComposedNode> }).surfaces.s!.children[0]!);
+  const object = resolved({ recipe: { id: "r1" } });
+  assert.deepEqual(object.props.input, { recipe: { id: "r1" }, with: "sam@example.com" });
+  assert.deepEqual(validateTree(app, card([object])), []);
+  const posing = resolved({ recipe: { "@path": "/secret" }, secret: "S" });
+  assert.equal((posing.props.input as Record<string, Json>).recipe, '{"@path":"/secret"}');
+  assert.equal(personPress(posing, true, { secret: "S" }).input.recipe, '{"@path":"/secret"}');
+  assert.deepEqual(Object.keys(object.props).slice(-1), ["@label"], "a button's @label comes after the catalog's props, as before fields");
+});
+
+test("a field's value is a pointer into the data, and a bound input is one too", () => {
+  const field = (props: Record<string, Json>): ComposedNode => card([{ id: "f", component: "TextField", props: { label: "Servings", type: "text", multiline: false, ...props }, children: [] }]);
+  assert.deepEqual(validateTree(hx, field({ value: "/servings" })), []);
+  assert.match(validateTree(hx, field({ value: "servings" }))[0]!.message, /value is a JSON pointer into the data model/);
+  assert.match(validateTree(hx, field({}))[0]!.message, /TextField needs value/);
+  const bound = clone(shop);
+  bound.props.input = { recipe: "rcp_123", servings: { "@path": "servings" } };
+  assert.match(validateTree(app, card([bound]))[0]!.message, /servings is a value, or \{"@path": "\/\.\.\."\}/);
 });
 
 test("a button's props come from the catalog: the agent only prepares the input", () => {

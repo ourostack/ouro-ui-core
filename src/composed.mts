@@ -31,7 +31,8 @@ export type PropKind =
   | { kind: "level"; default: number } // integer 1 to 3
   | { kind: "terms" } // [{ term, detail }] or a binding to one
   | { kind: "action" } // ActionButton.action
-  | { kind: "input" }; // ActionButton.input
+  | { kind: "input" } // ActionButton.input
+  | { kind: "path" }; // DataBinding: where a field writes the person's answer, a JSON pointer
 
 export interface Prop {
   description: string;
@@ -116,13 +117,43 @@ export const COMPONENTS: Readonly<Record<string, ComponentSpec>> = Object.freeze
       tone: { description: "How serious it is.", type: { kind: "enum", values: ["info", "success", "warning", "danger"], default: "info" } },
     },
   },
+  TextField: {
+    description: "A field the person types an answer into. It starts with what the data model holds at value and writes their answer there; bind an ActionButton's input to the same path, and pressing it sends what they typed.",
+    props: {
+      label: { description: "What the field asks for, in a few words, such as \"Servings\".", required: true, type: { kind: "string" } },
+      value: { description: "Where the answer goes, as a JSON pointer into the data model, such as /servings.", required: true, type: { kind: "path" } },
+      hint: { description: "One line under the field saying what to enter, when the label isn't enough.", type: { kind: "string" } },
+      type: { description: "text for words; number when the answer is a number, which the field writes as one.", type: { kind: "enum", values: ["text", "number"], default: "text" } },
+      multiline: { description: "true for a longer answer over several lines, such as a note.", type: { kind: "boolean", default: false } },
+    },
+  },
+  Checkbox: {
+    description: "A yes-or-no choice the person ticks. It starts with what the data model holds at value and writes true or false there.",
+    props: {
+      label: { description: "The choice, said so that ticking it means yes, such as \"Make it vegetarian\".", required: true, type: { kind: "string" } },
+      value: { description: "Where the answer goes, as a JSON pointer into the data model, such as /vegetarian.", required: true, type: { kind: "path" } },
+      hint: { description: "One line under the choice, when the label isn't enough.", type: { kind: "string" } },
+    },
+  },
+  Select: {
+    description: "One choice from a short list. It starts with what the data model holds at value and writes the chosen option there, as text.",
+    props: {
+      label: { description: "What the person is choosing, in a few words, such as \"Oven\".", required: true, type: { kind: "string" } },
+      value: { description: "Where the choice goes, as a JSON pointer into the data model, such as /oven.", required: true, type: { kind: "path" } },
+      options: { description: "The choices, in order, as the person reads them.", required: true, type: { kind: "strings" } },
+      hint: { description: "One line under the list, when the label isn't enough.", type: { kind: "string" } },
+    },
+  },
 });
+
+/** The components a person answers with: each writes to the data model at its `value`. */
+export const INPUT_COMPONENTS: readonly string[] = Object.freeze(["TextField", "Checkbox", "Select"]);
 
 export const ACTION_BUTTON: ComponentSpec = {
   description: "A button for one of the app's declared actions. Its label and what pressing it does come from the action, so you choose only the action, the input you prepared and its emphasis.",
   props: {
     action: { description: "The action's id.", required: true, type: { kind: "action" } },
-    input: { description: "The input you prepared, by field name; values may bind to the data model. Never give input to a person-only action.", type: { kind: "input" } },
+    input: { description: "The input you prepared, by field name; a value may bind to the data model with {\"@path\"}, and one bound to a field the person fills in is read when they press. Never give input to a person-only action.", type: { kind: "input" } },
     emphasis: { description: "primary for the one main action on a surface; secondary for the rest.", type: { kind: "enum", values: ["primary", "secondary"], default: "secondary" } },
   },
 };
@@ -182,6 +213,47 @@ export function agentPressProblem(cat: Catalog, name: unknown): { message: strin
 // The tree every renderer draws
 // ---------------------------------------------------------------------------------------------------------------
 
+/** A value bound to the data model: `{ "@path": "/servings" }`. In a tree, the path is absolute. */
+export const isBinding = (v: unknown): v is { "@path": string } => isObj(v) && typeof v["@path"] === "string" && Object.keys(v).length === 1;
+
+/** Reads a JSON pointer (RFC 6901). A missing value is undefined. */
+export function getPointer(data: Json, pointer: string): Json | undefined {
+  if (pointer === "" || pointer === "/") return data;
+  let cur: Json | undefined = data;
+  for (const raw of pointer.replace(/^\//, "").split("/")) {
+    const key = raw.replace(/~1/g, "/").replace(/~0/g, "~");
+    if (Array.isArray(cur)) cur = /^\d+$/.test(key) ? cur[Number(key)] : undefined;
+    else if (cur && typeof cur === "object") cur = (cur as Obj)[key];
+    else return undefined;
+    if (cur === undefined) return undefined;
+  }
+  return cur;
+}
+
+/** Writes a JSON pointer, creating objects on the way; null deletes. It returns a copy and leaves `data` as it was. */
+export function setPointer(data: Json, pointer: string, value: Json): Json {
+  if (pointer === "" || pointer === "/") return value === null ? {} : value;
+  const keys = pointer.replace(/^\//, "").split("/").map((k) => k.replace(/~1/g, "/").replace(/~0/g, "~"));
+  const root: Json = data && typeof data === "object" ? structuredClone(data) : {};
+  let cur = root as Obj | Json[];
+  keys.forEach((k, i) => {
+    const last = i === keys.length - 1;
+    const container = cur as Obj & Json[];
+    const index = Array.isArray(cur) && /^\d+$/.test(k) ? Number(k) : k;
+    if (last) {
+      if (value === null) {
+        if (Array.isArray(cur) && typeof index === "number") cur.splice(index, 1);
+        else delete (cur as Obj)[k];
+      } else (container as unknown as Record<string | number, Json>)[index] = value;
+      return;
+    }
+    const next = (container as unknown as Record<string | number, Json>)[index];
+    if (!next || typeof next !== "object") (container as unknown as Record<string | number, Json>)[index] = {};
+    cur = (container as unknown as Record<string | number, Json>)[index] as Obj;
+  });
+  return root;
+}
+
 /** A value as text: numbers and booleans as written, null and missing as "", others as JSON (A2UI's conversion too). */
 export function asText(v: Json | undefined): string {
   if (v === undefined || v === null) return "";
@@ -195,11 +267,14 @@ export function asText(v: Json | undefined): string {
  * else the sibling `shownAs` names, else the value itself), with the id as `raw` when the name replaced it; a name
  * field that stands in for an id has no row of its own.
  */
-function confirmFields(action: string, a: CatalogAction, input: Obj, options: ResolveOptions): { label: string; value: string; raw?: string }[] {
+function confirmFields(action: string, a: CatalogAction, input: Obj, options: ResolveOptions): { label: string; value: string; raw?: string; bind?: string }[] {
   const names = new Set(Object.entries(a.input).filter(([k, f]) => k in input && f.shownAs !== undefined && f.shownAs in a.input).map(([, f]) => f.shownAs!));
   return Object.entries(a.input)
     .filter(([k]) => k in input && !names.has(k))
     .map(([k, f]) => {
+      // The person's own answer, read when they press (resolveButton): it shows as they wrote it.
+      const bound = input[k];
+      if (isBinding(bound)) return { label: f.label, value: "", bind: bound["@path"] };
       const raw = asText(input[k]);
       const sibling = f.shownAs !== undefined ? input[f.shownAs] : undefined;
       const prepared = typeof sibling === "string" && sibling.trim() !== "" ? sibling.trim() : undefined;
@@ -280,6 +355,9 @@ function checkProp(problems: TreeProblem[], key: string, p: Prop, v: unknown, at
     case "level":
       if (v !== 1 && v !== 2 && v !== 3) bad("1, 2 or 3");
       break;
+    case "path":
+      if (typeof v !== "string" || !v.startsWith("/")) bad("a JSON pointer into the data model, such as /servings");
+      break;
     case "terms":
       if (!Array.isArray(v) || !v.every((it) => isObj(it) && typeof it.term === "string" && typeof it.detail === "string" && Object.keys(it).length === 2)) bad("a list of { term, detail } text");
       break;
@@ -329,6 +407,9 @@ export function validateTree(cat: Catalog, node: unknown, path = ""): TreeProble
         if (!isObj(input)) problems.push({ path: `${at}/props/input`, message: "input is an object of field values." });
         else if (a.personOnly && Object.keys(input).length) problems.push({ path: `${at}/props/input`, message: a.personOnly.refusal.summary, refusal: a.personOnly.refusal });
         else {
+          for (const [k, v] of Object.entries(input)) {
+            if (isObj(v) && "@path" in v && !(isBinding(v) && v["@path"].startsWith("/"))) problems.push({ path: `${at}/props/input/${k}`, message: `${k} is a value, or {"@path": "/..."} bound to the data model.` });
+          }
           const expected = actionButtonProps(cat, id, input as Obj);
           for (const key of ["label", "consent", "press", "handoff"]) {
             if (JSON.stringify(props[key]) !== JSON.stringify(expected[key])) problems.push({ path: `${at}/props/${key}`, message: `${id}'s ${key} is the catalog's ${JSON.stringify(expected[key] ?? null)}, never the sender's.` });
@@ -359,11 +440,29 @@ export interface PersonPress {
 }
 
 /**
- * What pressing a composed button asks the app to do (after confirming, for a consequential one). A person-only button
- * never asks: it hands the person to the app's own screen. An adapter wraps it in its format's message.
+ * A button as it stands when the person presses it: each input bound to the data model (`{"@path"}`) replaced by what
+ * `data` holds there now (null when nothing), and each bound row of its confirm sheet showing that value. A renderer
+ * calls it with its current data before it shows the confirm sheet or presses.
  */
-export function personPress(button: ComposedNode, confirmed?: boolean): PersonPress {
+export function resolveButton(button: ComposedNode, data: Json): ComposedNode {
   const p = button.props;
+  if (!isObj(p.input) || !Object.values(p.input).some(isBinding)) return button;
+  const input: Obj = Object.fromEntries(Object.entries(p.input).map(([k, v]) => [k, isBinding(v) ? (getPointer(data, v["@path"]) ?? null) : v]));
+  const props: Obj = { ...p, input };
+  if (isObj(p.confirm) && Array.isArray(p.confirm.fields)) {
+    const fields = p.confirm.fields.map((row) => (isObj(row) && typeof row.bind === "string" ? { label: row.label as Json, value: asText(getPointer(data, row.bind)) } : row));
+    props.confirm = { ...p.confirm, fields };
+  }
+  return { ...button, props };
+}
+
+/**
+ * What pressing a composed button asks the app to do (after confirming, for a consequential one). A person-only button
+ * never asks: it hands the person to the app's own screen. An adapter wraps it in its format's message. With `data`,
+ * an input bound to a field the person filled in is read from it (resolveButton).
+ */
+export function personPress(button: ComposedNode, confirmed?: boolean, data?: Json): PersonPress {
+  const p = (data === undefined ? button : resolveButton(button, data)).props;
   if (p.press === "handoff") throw new Error(`${String(p.action)} is person-only; its button hands the person to the app, so it sends no action.`);
   if (p.press === "confirm" && confirmed !== true) throw new Error(`${String(p.action)} is consequential; send its action only after the person confirms.`);
   return { action: p.action as string, input: p.input as Obj, consent: p.consent as Consent, label: p.label as string, by: "person", ...(p.press === "confirm" ? { confirmed: true as const } : {}) };
