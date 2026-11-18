@@ -27,7 +27,7 @@ So Android is small, cheap and honest. Nothing waits on it. The maintainer owns 
 - On the API 36 emulator image, AppFunctions were not indexed and `cmd app_function` had no shell command, so CI runs the API 37 (Android 17) image. Compose's test rule brings an Espresso that calls the `InputManager.getInstance` Android 17 removed, so the kit pins Espresso 3.7.0.
 - Touch targets are 48 dp, Android's minimum, which is above the claim's 44.
 
-## Prior art (meerkat)
+## Prior art
 
 Researched 2026-11-14.
 

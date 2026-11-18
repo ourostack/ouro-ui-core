@@ -1,6 +1,6 @@
 # Decision: Ouro's composed-UI tree is the source of truth, and A2UI and MCP Apps are adapters at the edge
 
-Status: accepted, 2026-11-14. It supersedes [Ouro HX is an A2UI catalog](2026-11-13-a2ui-catalog.md) where the two differ, and keeps everything that record decided about consent: every button is a declared action, pressing it follows the consent class, and an agent can't press a button through the screen.
+Status: accepted, 2026-11-14; item 7 superseded on 2026-11-17 by [Ouro UI leads with its composed tree](2026-11-17-composed-tree-leads.md). It supersedes [Ouro HX is an A2UI catalog](2026-11-13-a2ui-catalog.md) where the two differ, and keeps everything that record decided about consent: every button is a declared action, pressing it follows the consent class, and an agent can't press a button through the screen.
 
 ## Why
 

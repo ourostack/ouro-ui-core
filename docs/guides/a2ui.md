@@ -1,6 +1,8 @@
-# Agent-composed UI with A2UI and MCP Apps
+# Agent-composed UI: Ouro's tree, sent as itself, through MCP Apps or as A2UI
 
 For an app team whose agent should show a person a card they can read and act on. The why is [the decision record of 2026-11-13](../decisions/2026-11-13-a2ui-catalog.md), and [2026-11-14's](../decisions/2026-11-14-composed-ui-own-tree.md), which makes Ouro's composed tree the source of truth and A2UI and MCP Apps adapters to it. It builds on [the one action model](actions.md): do that first.
+
+The interface your agent composes is Ouro's own composed tree (`ouro-composed.mts`): interface as validated data, limited to your catalog, where every button is one of your declared actions with its consent class. Web's and Apple's kits draw it natively (`ComposedSurface` on each); the Windows and Android kits don't draw it yet. The agent can send the tree itself, in an MCP tool result's `structuredContent.ouro`, or send A2UI messages, which the A2UI adapter turns into the same tree; MCP Apps and A2UI are formats the tree speaks, not the format Ouro composes in ([the 2026-11-17 record](../decisions/2026-11-17-composed-tree-leads.md)). The steps below take the A2UI route, which has the most tooling today.
 
 Your agent writes [A2UI v1.0](https://github.com/a2ui-project/a2ui/blob/main/specification/v1_0/docs/a2ui_protocol.md) messages against Ouro HX's catalog. Web's `a2ui-surface` and Apple's `OuroA2UI` render them with Ouro HX. The only buttons are your declared actions, and pressing one follows its consent class: read and write run, consequential asks the person to confirm what the agent prepared, and person-only takes them to your app's own screen.
 
