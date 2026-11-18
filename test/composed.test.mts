@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import { readdir, readFile } from "node:fs/promises";
 import { test } from "node:test";
 import { loadCatalog, resolveMessages } from "../src/a2ui.mts";
-import { actionButtonProps, COMPONENTS, componentsFor, getPointer, INPUT_COMPONENTS, isDataPointer, personPress, resolveButton, setPointer, validateTree, type ComposedNode, type Json } from "../src/composed.mts";
-import { MCP_APP_MIME, mcpAppResource, mcpAppToolMeta, mcpAppTreeResult } from "../src/mcp-app.mts";
+import { actionButtonProps, applyTreeUpdate, COMPONENTS, componentsFor, getPointer, INPUT_COMPONENTS, isDataPointer, personPress, resolveButton, setPointer, treeUpdateProblems, validateTree, type ComposedNode, type Json, type TreeProblem } from "../src/composed.mts";
+import { MCP_APP_MIME, mcpAppResource, mcpAppToolMeta, mcpAppTreeResult, mcpAppTreeUpdateResult } from "../src/mcp-app.mts";
 
 // Ouro's composed tree is the source of truth (docs/decisions/2026-11-14-composed-ui-own-tree.md): every tree the A2UI
 // adapter resolves must pass the tree's own validator, and a tree that relabels a button or loosens its consent must not,
@@ -214,4 +214,117 @@ test("no doc block in the modules web vendors is followed straight by another, w
     const lines = [...source.matchAll(/\*\/\n\s*\/\*\*/g)].map((m) => source.slice(0, m.index).split("\n").length);
     assert.deepEqual(lines, [], `${file} has a doc block at line ${lines.join(", ")} that another doc block follows directly`);
   }
+});
+
+const updateNames = (await readdir(new URL("standard/hx/composed/updates/", root))).filter((f) => f.endsWith(".json")).sort();
+const updateCases = await Promise.all(updateNames.map(async (n) => ({ name: n, ...(await read(`standard/hx/composed/updates/${n}`)) })));
+const freeze = <T,>(v: T): T => {
+  if (v && typeof v === "object") for (const x of Object.values(v)) freeze(x);
+  return Object.freeze(v);
+};
+const problemsOf = (r: ReturnType<typeof applyTreeUpdate>): TreeProblem[] => ("problems" in r ? r.problems : []);
+const plan = (updateCases.find((c) => c.name === "replace-and-set.json")!.tree) as ComposedNode;
+
+test("every tree update case gives what its expect says, from frozen inputs, and an invalid one gives only problems", () => {
+  assert.ok(updateCases.length >= 5);
+  for (const c of updateCases) {
+    const result = applyTreeUpdate(catalogs[c.catalog]!, freeze(structuredClone(c.tree)), freeze(structuredClone(c.data)), freeze(structuredClone(c.update)));
+    assert.deepEqual(result, c.expect, c.name);
+    assert.equal(c.name.startsWith("invalid-"), "problems" in result, c.name);
+    if ("tree" in result) assert.deepEqual(validateTree(catalogs[c.catalog]!, result.tree), [], c.name);
+  }
+});
+
+test("an update replaces the one node with its id, in order, and refuses an id the tree lacks or a template's instances share", () => {
+  const heading = (id: string, text: string): ComposedNode => ({ id, component: "Heading", props: { text, level: 2 }, children: [] });
+  const tree = card([{ id: "box", component: "Card", props: {}, children: [heading("a", "A")] }]);
+  const nested = applyTreeUpdate(hx, tree, undefined, { nodes: [{ id: "box", component: "Card", props: {}, children: [heading("b", "B")] }, heading("b", "B2")] });
+  assert.deepEqual(nested, { tree: card([{ id: "box", component: "Card", props: {}, children: [heading("b", "B2")] }]), data: undefined }, "each node applies to the tree the ones before it left");
+  assert.deepEqual(problemsOf(applyTreeUpdate(hx, tree, undefined, { nodes: [heading("box", "Box"), heading("a", "A2")] })).map((p) => p.path), ["/nodes/1/id"], "a node the update replaced away is no longer in the tree");
+  assert.deepEqual(applyTreeUpdate(hx, tree, undefined, { nodes: [card([])] }), { tree: card([]), data: undefined }, "the root is a node like any other");
+  const shared = card([heading("day", "Monday"), heading("day", "Tuesday")]);
+  assert.match(problemsOf(applyTreeUpdate(hx, shared, undefined, { nodes: [heading("day", "Wednesday")] }))[0]!.message, /names 2 nodes, a template's instances; replace the node that holds them/);
+  assert.match(problemsOf(applyTreeUpdate(hx, tree, undefined, { nodes: [heading("c", "C")] }))[0]!.message, /"c" is not in the tree/);
+  for (const name of ["__proto__", "constructor", "toString"]) assert.match(problemsOf(applyTreeUpdate(hx, tree, undefined, { nodes: [heading(name, "X")] }))[0]!.message, /is not in the tree/, name);
+});
+
+test("an update can't relabel a button, loosen its consent or forge its confirm sheet, and a refused update applies nothing", () => {
+  const tree = card([clone(shop), clone(share)]);
+  const loosened = clone(share);
+  loosened.props.press = "run";
+  assert.ok(problemsOf(applyTreeUpdate(app, tree, {}, { nodes: [loosened] })).some((p) => p.path === "/nodes/0/props/press"));
+  const forged = clone(share);
+  ((forged.props.confirm as { fields: Json[] }).fields[1] as { value: string }).value = "friend@example.com";
+  assert.match(problemsOf(applyTreeUpdate(app, tree, {}, { nodes: [forged] }))[0]!.message, /confirm sheet shows a row/);
+  const relabeled = clone(shop);
+  relabeled.props.label = "Buy now";
+  const mixed = applyTreeUpdate(app, tree, { servings: 4 }, { nodes: [relabeled], data: [{ path: "/servings", value: 6 }] });
+  assert.deepEqual(Object.keys(mixed), ["problems"], "the valid data in a refused update doesn't apply either");
+  assert.match(problemsOf(applyTreeUpdate(app, tree, {}, { nodes: [{ id: "shop", component: "Button", props: {}, children: [] }] }))[0]!.message, /not in this catalog/);
+  assert.deepEqual(problemsOf(applyTreeUpdate(app, card([relabeled]), {}, { data: [{ path: "/x", value: 1 }] })).map((p) => p.path), ["/children/0/props/label"], "a tree that was already invalid gives no tree");
+});
+
+test("an update's data path stays in the data: never a prototype, a list only at an index, and the data model an object", () => {
+  const before = Object.getOwnPropertyNames(Object.prototype).sort();
+  for (const path of ["/__proto__/polluted", "/constructor/prototype/polluted", "/a/__proto__", "servings", ""]) {
+    assert.deepEqual(problemsOf(applyTreeUpdate(app, plan, {}, { data: [{ path, value: true }] })).map((p) => p.path), ["/data/0/path"], path);
+  }
+  assert.equal(({} as Record<string, unknown>).polluted, undefined);
+  assert.deepEqual(Object.getOwnPropertyNames(Object.prototype).sort(), before);
+  const list = { steps: ["a", "b"] };
+  assert.deepEqual(applyTreeUpdate(app, plan, list, { data: [{ path: "/steps/2", value: "c" }, { path: "/steps/0", value: null }] }), { tree: plan, data: { steps: ["b", "c"] } }, "a list grows at its length, and null takes an item out");
+  assert.match(problemsOf(applyTreeUpdate(app, plan, list, { data: [{ path: "/steps/5", value: "c" }] }))[0]!.message, /an index from 0 to 2/);
+  assert.match(problemsOf(applyTreeUpdate(app, plan, list, { data: [{ path: "/steps/first", value: "c" }] }))[0]!.message, /an index from 0 to 2/);
+  assert.deepEqual(applyTreeUpdate(app, plan, list, { data: [{ path: "/", value: { servings: 2 } }] }), { tree: plan, data: { servings: 2 } }, "/ is the whole data model");
+  assert.match(problemsOf(applyTreeUpdate(app, plan, list, { data: [{ path: "/", value: 5 }] }))[0]!.message, /The data model is an object/);
+  assert.deepEqual(applyTreeUpdate(app, plan, undefined, { data: [{ path: "/servings", value: 6 }] }), { tree: plan, data: { servings: 6 } }, "a tree with no data model starts one");
+  assert.deepEqual(problemsOf(applyTreeUpdate(app, plan, {}, { data: [{ path: "/x" }] })).map((p) => p.path), ["/data/0"]);
+});
+
+test("an update is { nodes?, data? }, and its result shares no object with the inputs", () => {
+  assert.deepEqual(problemsOf(applyTreeUpdate(app, plan, {}, { tree: plan })).map((p) => p.path), ["/tree"]);
+  assert.deepEqual(problemsOf(applyTreeUpdate(app, plan, {}, null)).map((p) => p.path), [""]);
+  assert.deepEqual(problemsOf(applyTreeUpdate(app, plan, {}, { nodes: {}, data: "x" })).map((p) => p.path), ["/nodes", "/data"]);
+  const node: ComposedNode = { id: "title", component: "Heading", props: { text: "New", level: 1 }, children: [] };
+  const data = { servings: { count: 4 } };
+  const result = applyTreeUpdate(app, plan, data, { nodes: [node] }) as { tree: ComposedNode; data: { servings: { count: number } } };
+  result.tree.children[0]!.props.text = "Changed";
+  result.tree.children[1]!.props.label = "Changed";
+  result.data.servings.count = 9;
+  assert.equal(node.props.text, "New");
+  assert.equal(plan.children[1]!.props.label, "Servings");
+  assert.equal(data.servings.count, 4);
+  const value = { count: 6 };
+  const set = applyTreeUpdate(app, plan, {}, { data: [{ path: "/servings", value }] }) as unknown as { data: { servings: { count: number } } };
+  const whole = applyTreeUpdate(app, plan, {}, { data: [{ path: "/", value }] }) as unknown as { data: { count: number } };
+  assert.notEqual(set.data.servings, value, "a value the update sets is copied, not shared");
+  assert.notEqual(whole.data, value);
+  assert.deepEqual(treeUpdateProblems(app, { nodes: [node], data: [{ path: "/servings", value: null }] }), []);
+});
+
+test("an update is JSON all the way down, and a tree given broken gives problems, never a throw", () => {
+  const cyclic: Record<string, unknown> = {};
+  cyclic.self = cyclic;
+  for (const [value, path] of [[NaN, "/data/0/value"], [Infinity, "/data/0/value"], [() => 1, "/data/0/value"], [new Date(0), "/data/0/value"], [[1, , 3], "/data/0/value/1"], [cyclic, "/data/0/value/self"], [{ "a/b": undefined }, "/data/0/value/a~1b"]] as const) {
+    assert.deepEqual(problemsOf(applyTreeUpdate(app, plan, {}, { data: [{ path: "/x", value }, { path: "/y", value: 1 }] })).map((p) => p.path), [path], String(path));
+  }
+  const fn = clone(shop);
+  (fn.props.input as Record<string, unknown>).recipe = () => "rcp";
+  assert.deepEqual(problemsOf(applyTreeUpdate(app, plan, {}, { nodes: [fn] })).map((p) => p.path), ["/nodes/0/props/input/recipe"]);
+  const heading: ComposedNode = { id: "root", component: "Heading", props: { text: "X", level: 1 }, children: [] };
+  for (const broken of [{ id: "root", component: "Card", props: {} }, card([null as unknown as ComposedNode])]) {
+    assert.ok(problemsOf(applyTreeUpdate(app, broken as ComposedNode, undefined, { nodes: [heading] })).length > 0);
+  }
+});
+
+test("MCP Apps carries an update to the tree the view draws, checked at the sender", () => {
+  const update = { nodes: [{ id: "title", component: "Heading", props: { text: "Lemon orzo for six", level: 1 }, children: [] }], data: [{ path: "/servings", value: 6 }] };
+  const result = mcpAppTreeUpdateResult({ text: "Six servings", catalog: app, update });
+  assert.deepEqual(result.structuredContent, { ouro: { version: "1", catalogId: app.catalogId, update } });
+  assert.deepEqual(result.content, [{ type: "text", text: "Six servings" }]);
+  const relabeled = clone(shop);
+  relabeled.props.label = "Buy now";
+  assert.throws(() => mcpAppTreeUpdateResult({ text: "x", catalog: app, update: { nodes: [relabeled] } }), /doesn't validate: \/nodes\/0\/props\/label/);
+  assert.throws(() => mcpAppTreeUpdateResult({ text: "x", catalog: app, update: { data: [{ path: "/__proto__/x", value: 1 }] } }), /\/data\/0\/path/);
+  assert.throws(() => mcpAppTreeUpdateResult({ text: "x", catalog: app, update: { data: [{ path: "/servings", value: NaN }] } }), /\/data\/0\/value An update is JSON/, "NaN would arrive as null, a delete");
 });
