@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readdir, readFile } from "node:fs/promises";
 import { test } from "node:test";
 import { loadCatalog, resolveMessages } from "../src/a2ui.mts";
-import { actionButtonProps, COMPONENTS, componentsFor, getPointer, INPUT_COMPONENTS, personPress, resolveButton, setPointer, validateTree, type ComposedNode, type Json } from "../src/composed.mts";
+import { actionButtonProps, COMPONENTS, componentsFor, getPointer, INPUT_COMPONENTS, isDataPointer, personPress, resolveButton, setPointer, validateTree, type ComposedNode, type Json } from "../src/composed.mts";
 import { MCP_APP_MIME, mcpAppResource, mcpAppToolMeta, mcpAppTreeResult } from "../src/mcp-app.mts";
 
 // Ouro's composed tree is the source of truth (docs/decisions/2026-11-14-composed-ui-own-tree.md): every tree the A2UI
@@ -89,6 +89,24 @@ test("a name a sender chooses is the catalog's only when the catalog itself has 
     button.props.action = name;
     assert.match(validateTree(app, card([button]))[0]!.message, /not one of the app's actions/, `action ${name}`);
   }
+});
+
+test("a pointer never reaches an object's prototype: reads find nothing, writes write nothing, and the validators refuse it", () => {
+  const before = Object.getOwnPropertyNames(Object.prototype).sort();
+  for (const p of ["/__proto__/polluted", "/constructor/prototype/polluted", "/a/__proto__/toString"]) {
+    assert.deepEqual(setPointer({ a: {} }, p, "yes"), { a: {} });
+    assert.deepEqual(setPointer({ a: {} }, p, null), { a: {} });
+    assert.equal(isDataPointer(p), false);
+  }
+  assert.equal(({} as Record<string, unknown>).polluted, undefined);
+  assert.deepEqual(Object.getOwnPropertyNames(Object.prototype).sort(), before);
+  assert.equal(getPointer({ a: 1 }, "/toString"), undefined, "an inherited member is no data");
+  assert.equal(getPointer({ a: 1 }, "/__proto__"), undefined);
+  const field = card([{ id: "f", component: "TextField", props: { label: "X", value: "/__proto__/x", type: "text", multiline: false }, children: [] }]);
+  assert.match(validateTree(hx, field)[0]!.message, /JSON pointer into the data model/);
+  const bound = clone(shop);
+  bound.props.input = { recipe: "rcp_123", servings: { "@path": "/__proto__/servings" } };
+  assert.ok(validateTree(app, card([bound])).length > 0);
 });
 
 test("a tree names only the catalog's components and their props, resolved", () => {

@@ -90,6 +90,14 @@ test("the validator takes a component, action or input name from the catalog onl
   }
 });
 
+test("a stream can't write to an object's prototype through updateDataModel, and a catalog can't name a built-in as a component (ouro-ui-core#91)", () => {
+  const stream = [...create([{ id: "root", component: "Text", text: "hi" }]), { version: "1.0", updateDataModel: { surfaceId: "s", path: "/__proto__/polluted", value: "yes" } }];
+  assert.ok(validateMessages(app, stream).some((p) => p.path.endsWith("/updateDataModel/path")));
+  applyMessages(stream);
+  assert.equal(({} as Record<string, unknown>).polluted, undefined);
+  assert.throws(() => loadCatalog({ catalogId: "x", components: { Text: {}, toString: {} } }), /component toString is not Ouro HX's/);
+});
+
 test("an agent can't press a button through the screen", () => {
   const cat = loadCatalog(app);
   assert.match(functionCallProblem(cat, "share_recipe").message, /through their own tool \(MCP share_recipe\)/);

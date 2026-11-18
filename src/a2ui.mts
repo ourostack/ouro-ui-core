@@ -22,6 +22,7 @@ import {
   getPointer,
   INPUT_COMPONENTS,
   isBinding,
+  isDataPointer,
   isObj,
   own,
   personPress,
@@ -82,7 +83,7 @@ export function loadCatalog(cat: unknown): LoadedCatalog {
   const actions = c.metadata?.extensions?.[EXTENSION]?.actions ?? {};
   const components: Record<string, ComponentSpec> = {};
   for (const name of Object.keys(c.components)) {
-    const spec = name === "ActionButton" ? ACTION_BUTTON : COMPONENTS[name];
+    const spec = name === "ActionButton" ? ACTION_BUTTON : own(COMPONENTS, name);
     if (!spec) throw new Error(`catalog ${c.catalogId}: component ${name} is not Ouro HX's. Fix: regenerate it with ouro-a2ui catalog.`);
     components[name] = spec;
   }
@@ -292,7 +293,7 @@ export function validateMessages(catalogJson: unknown, messages: unknown): Probl
       return;
     }
     if (key === "updateDataModel") {
-      if (body.path !== undefined && (typeof body.path !== "string" || (body.path !== "" && !body.path.startsWith("/")))) problems.push({ code: "VALIDATION_FAILED", surfaceId, path: `${at}/updateDataModel/path`, message: "path is a JSON pointer starting with /." });
+      if (body.path !== undefined && (typeof body.path !== "string" || (body.path !== "" && !isDataPointer(body.path)))) problems.push({ code: "VALIDATION_FAILED", surfaceId, path: `${at}/updateDataModel/path`, message: "path is a JSON pointer starting with /." });
       if (!("value" in body)) problems.push({ code: "VALIDATION_FAILED", surfaceId, path: `${at}/updateDataModel/value`, message: "updateDataModel needs value (null deletes)." });
       return;
     }
