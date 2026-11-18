@@ -231,7 +231,7 @@ test("the app's own resolver names an id from its own data, and wins over what t
     { label: "Recipe", value: "Lemon orzo (yours)", raw: "rcp_lemon_orzo" },
     { label: "Send to", value: "sam@example.com" },
   ]);
-  assert.deepEqual(seen, [["share_recipe", "recipe", "rcp_lemon_orzo"], ["share_recipe", "with", "sam@example.com"]]);
+  assert.deepEqual(seen, [["share_recipe", "recipe", "rcp_lemon_orzo"]], "only an id field, one with shownAs, is named; every other row shows what will be sent");
 });
 
 test("a run button has no confirm sheet, so nothing asks the resolver", () => {

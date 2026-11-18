@@ -267,10 +267,15 @@ export function asText(v: Json | undefined): string {
  * else the sibling `shownAs` names, else the value itself), with the id as `raw` when the name replaced it; a name
  * field that stands in for an id has no row of its own.
  */
-function confirmFields(action: string, a: CatalogAction, input: Obj, options: ResolveOptions): { label: string; value: string; raw?: string; bind?: string }[] {
+/** The input fields a confirm sheet has a row for, in order: each prepared one, less a name that stands in for an id. */
+function confirmKeys(a: CatalogAction, input: Obj): string[] {
   const names = new Set(Object.entries(a.input).filter(([k, f]) => k in input && f.shownAs !== undefined && f.shownAs in a.input).map(([, f]) => f.shownAs!));
-  return Object.entries(a.input)
-    .filter(([k]) => k in input && !names.has(k))
+  return Object.keys(a.input).filter((k) => k in input && !names.has(k));
+}
+
+function confirmFields(action: string, a: CatalogAction, input: Obj, options: ResolveOptions): { label: string; value: string; raw?: string; bind?: string }[] {
+  return confirmKeys(a, input)
+    .map((k) => [k, a.input[k]!] as const)
     .map(([k, f]) => {
       // The person's own answer, read when they press (resolveButton): it shows as they wrote it.
       const bound = input[k];
@@ -278,7 +283,8 @@ function confirmFields(action: string, a: CatalogAction, input: Obj, options: Re
       const raw = asText(input[k]);
       const sibling = f.shownAs !== undefined ? input[f.shownAs] : undefined;
       const prepared = typeof sibling === "string" && sibling.trim() !== "" ? sibling.trim() : undefined;
-      const value = options.label?.({ action, field: k, value: raw, input }) ?? prepared ?? raw;
+      // Only an id field (one with shownAs) shows a name; every other row shows exactly what will be sent.
+      const value = (f.shownAs !== undefined ? (options.label?.({ action, field: k, value: raw, input }) ?? prepared) : undefined) ?? raw;
       return value === raw ? { label: f.label, value } : { label: f.label, value, raw };
     });
 }
@@ -296,8 +302,9 @@ export interface LabelContext {
 export interface ResolveOptions {
   /**
    * The app's own word for an id, from its own data, such as a recipe's title for `rcp_lemon_orzo`; undefined to leave it
-   * to the field's `shownAs`, then to the value itself. It is asked for each field a confirm sheet shows, and wins over
-   * what the agent prepared, since the agent's text is the one thing the person can't check.
+   * to the field's `shownAs`, then to the value itself. It is asked for each id field a confirm sheet shows (one whose
+   * catalog input has `shownAs`), and wins over what the agent prepared, since the agent's text is the one thing the
+   * person can't check. Every other row shows exactly what will be sent.
    */
   label?: (context: LabelContext) => string | undefined;
 }
@@ -373,7 +380,9 @@ function checkProp(problems: TreeProblem[], key: string, p: Prop, v: unknown, at
  * catalog's labels, and each row showing what will be sent (its `raw`, or its `value` when it has none) or, for a bound
  * input, the same binding. Only the words shown for an id may differ, since the app's own resolver names it.
  */
-function confirmRowProblems(problems: TreeProblem[], id: string, expected: { label: string; value: string; raw?: string; bind?: string }[], rows: unknown[], at: string): void {
+function confirmRowProblems(problems: TreeProblem[], id: string, a: CatalogAction, input: Obj, rows: unknown[], at: string): void {
+  const expected = confirmFields(id, a, input, {});
+  const keys = confirmKeys(a, input);
   const bad = () => problems.push({ path: at, message: `${id}'s confirm sheet shows a row for each prepared input, with its label and the value that will be sent; the catalog's rows are ${JSON.stringify(expected)}.` });
   if (rows.length !== expected.length) return void bad();
   rows.forEach((row, i) => {
@@ -381,7 +390,9 @@ function confirmRowProblems(problems: TreeProblem[], id: string, expected: { lab
     if (!isObj(row) || row.label !== want.label) return void bad();
     if (want.bind !== undefined) {
       if (row.bind !== want.bind || row.raw !== undefined) bad();
-    } else if (row.bind !== undefined || (row.raw ?? row.value) !== (want.raw ?? want.value) || typeof row.value !== "string") bad();
+    } else if (row.bind !== undefined || typeof row.value !== "string") bad();
+    // An id field may show a name, with the id beside it; any other row shows exactly what will be sent.
+    else if (a.input[keys[i]!]!.shownAs !== undefined ? (row.raw ?? row.value) !== (want.raw ?? want.value) : row.value !== want.value || row.raw !== undefined) bad();
   });
 }
 
@@ -434,7 +445,7 @@ export function validateTree(cat: Catalog, node: unknown, path = ""): TreeProble
           if (a.press === "confirm") {
             const c = props.confirm;
             if (!isObj(c) || c.title !== a.label || c.description !== a.description || !Array.isArray(c.fields)) problems.push({ path: `${at}/props/confirm`, message: `${id} confirms, with the catalog's title and description and a row per prepared input.` });
-            else confirmRowProblems(problems, id, confirmFields(id, a, input as Obj, {}), c.fields, `${at}/props/confirm/fields`);
+            else confirmRowProblems(problems, id, a, input as Obj, c.fields, `${at}/props/confirm/fields`);
           } else if (props.confirm !== undefined) problems.push({ path: `${at}/props/confirm`, message: `${id} doesn't confirm; only a consequential action does.` });
         }
       }

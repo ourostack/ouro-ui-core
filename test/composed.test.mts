@@ -69,6 +69,11 @@ test("a confirm sheet can't show the person one value and send another (ouro-ui-
   first.raw = first.value;
   first.value = "My lemon orzo";
   assert.deepEqual(validateTree(app, card([named])), [], "the app's own words for an id may differ, beside the id itself");
+  const hidden = clone(share);
+  const sendTo = (hidden.props.confirm as { fields: Json[] }).fields[1] as { value: string; raw?: string };
+  sendTo.raw = sendTo.value;
+  sendTo.value = "friend@example.com";
+  assert.match(validateTree(app, card([hidden]))[0]!.message, /confirm sheet shows a row/, "a field that is no id can't show other words with the real value small beside them");
 });
 
 test("a tree names only the catalog's components and their props, resolved", () => {
