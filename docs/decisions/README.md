@@ -24,3 +24,4 @@ New decision records go here. Each has a "Prior art" section linking every find 
 | 2026-11-15 | [CI that finishes in under ten minutes, merge queue removed](2026-11-15-ci-under-ten-minutes.md) |
 | 2026-11-17 | [Ouro UI leads with its composed tree, beside the one action](2026-11-17-composed-tree-leads.md) |
 | 2026-11-17 | [Native kits, no cross-platform frameworks](2026-11-17-native-kits-no-cross-platform.md) |
+| 2026-11-17 | [Fields in the composed tree, bound to a data model by JSON Pointer](2026-11-17-composed-fields.md) |

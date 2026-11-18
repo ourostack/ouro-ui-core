@@ -41,6 +41,7 @@ const INSTRUCTIONS = [
   "- Component ids are identifiers: letters, digits and _, starting with a letter (recipe_name, not recipe-name). The root's id is root.",
   "- Put content in the data model and bind to it with {\"@path\": \"/...\"}; repeat a template over a list with children: {\"componentId\", \"path\"}.",
   "- Every Image needs a description of what it shows.",
+  "- To ask the person for an answer, use TextField, Checkbox or Select with value: {\"@path\": \"/answer\"}, and bind the ActionButton's input to the same path; pressing the button sends what they entered.",
   "- ActionButton is the only button. Name one of the app's actions; its label is the action's. Prepare its input from what the person said; when an id field has a name field (shownAs in the catalog), prepare the name too, since the person confirms by the name, not the id. For a consequential action the person sees and confirms what you prepared; a person-only action takes the person to the app's own screen, so give it no input.",
   "- This catalog has no functions. To act for the person, call the action's own tool (MCP, CLI); never try to press a button.",
 ].join("\n");
@@ -60,6 +61,8 @@ function propSchema(p: Prop, set: ActionSet | undefined): Obj {
       return { $ref: `${CT}DynamicBoolean`, ...d };
     case "level":
       return { type: "integer", minimum: 1, maximum: 3, default: p.type.default, ...d };
+    case "path":
+      return { $ref: `${CT}DataBinding`, ...d };
     case "terms":
       return { $ref: "#/$defs/TermList", ...d };
     case "action":
