@@ -74,6 +74,9 @@ test("a confirm sheet can't show the person one value and send another (ouro-ui-
   sendTo.raw = sendTo.value;
   sendTo.value = "friend@example.com";
   assert.match(validateTree(app, card([hidden]))[0]!.message, /confirm sheet shows a row/, "a field that is no id can't show other words with the real value small beside them");
+  const extra = clone(share);
+  (extra.props.input as Record<string, Json>).everyone = true;
+  assert.match(validateTree(app, card([extra]))[0]!.message, /share_recipe has no input everyone/, "an input the catalog doesn't carry would be sent with no row");
 });
 
 test("a tree names only the catalog's components and their props, resolved", () => {

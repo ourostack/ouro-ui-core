@@ -436,6 +436,8 @@ export function validateTree(cat: Catalog, node: unknown, path = ""): TreeProble
         else if (a.personOnly && Object.keys(input).length) problems.push({ path: `${at}/props/input`, message: a.personOnly.refusal.summary, refusal: a.personOnly.refusal });
         else {
           for (const [k, v] of Object.entries(input)) {
+            // A field the catalog doesn't carry would be sent without a row on the confirm sheet.
+            if (!(k in a.input)) problems.push({ path: `${at}/props/input/${k}`, message: `${id} has no input ${k}; its fields are ${Object.keys(a.input).join(", ") || "none"}.` });
             if (isObj(v) && "@path" in v && !(isBinding(v) && v["@path"].startsWith("/"))) problems.push({ path: `${at}/props/input/${k}`, message: `${k} is a value, or {"@path": "/..."} bound to the data model.` });
           }
           const expected = actionButtonProps(cat, id, input as Obj);
