@@ -53,6 +53,32 @@ test("a tree can't relabel a button, loosen its consent or drop its confirm shee
   assert.match(validateTree(app, card([unknown]))[0]!.message, /not one of the app's actions/);
 });
 
+test("a confirm sheet can't show the person one value and send another (ouro-ui-core#88)", () => {
+  const forged = clone(share);
+  const fields = (forged.props.confirm as { fields: Json[] }).fields as { label: string; value: string; raw?: string }[];
+  fields[fields.length - 1]!.value = "friend@example.com";
+  assert.match(validateTree(app, card([forged]))[0]!.message, /confirm sheet shows a row for each prepared input/);
+  const dropped = clone(share);
+  (dropped.props.confirm as { fields: Json[] }).fields.pop();
+  assert.match(validateTree(app, card([dropped]))[0]!.message, /confirm sheet shows a row/);
+  const relabeled = clone(share);
+  ((relabeled.props.confirm as { fields: Json[] }).fields[0] as { label: string }).label = "Dinner";
+  assert.match(validateTree(app, card([relabeled]))[0]!.message, /confirm sheet shows a row/);
+  const named = clone(share);
+  const first = (named.props.confirm as { fields: Json[] }).fields[0] as { value: string; raw?: string };
+  first.raw = first.value;
+  first.value = "My lemon orzo";
+  assert.deepEqual(validateTree(app, card([named])), [], "the app's own words for an id may differ, beside the id itself");
+  const hidden = clone(share);
+  const sendTo = (hidden.props.confirm as { fields: Json[] }).fields[1] as { value: string; raw?: string };
+  sendTo.raw = sendTo.value;
+  sendTo.value = "friend@example.com";
+  assert.match(validateTree(app, card([hidden]))[0]!.message, /confirm sheet shows a row/, "a field that is no id can't show other words with the real value small beside them");
+  const extra = clone(share);
+  (extra.props.input as Record<string, Json>).everyone = true;
+  assert.match(validateTree(app, card([extra]))[0]!.message, /share_recipe has no input everyone/, "an input the catalog doesn't carry would be sent with no row");
+});
+
 test("a tree names only the catalog's components and their props, resolved", () => {
   assert.match(validateTree(hx, { id: "root", component: "Button", props: {}, children: [] })[0]!.message, /not in this catalog/);
   assert.match(validateTree(hx, { id: "root", component: "Text", props: { text: { "@path": "/x" }, tone: "default" }, children: [] })[0]!.message, /text is text/);
