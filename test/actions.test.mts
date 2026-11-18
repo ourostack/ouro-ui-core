@@ -204,11 +204,11 @@ test("arg is refused on a number, boolean, output, nullable word, or a structure
 
 test("the fixture's optional words are optional on the CLI, MCP and WebMCP, and an enum word keeps its values", () => {
   assert.deepEqual(toCommand(getShoppingList).args, [
-    { name: "sort", description: "How to order the items: the order they were added when left out.", values: ["added", "name"] },
+    { name: "sort", description: "How to order the items.", values: ["added", "name"], default: "added" },
     { name: "store", description: "Only the items for this store, by its name; every store when left out." },
   ]);
   assert.deepEqual(inputSchema(getShoppingList).required, []);
-  assert.deepEqual(inputSchema(getShoppingList).properties.sort, { type: "string", description: "How to order the items: the order they were added when left out.", enum: ["added", "name"] });
+  assert.deepEqual(inputSchema(getShoppingList).properties.sort, { type: "string", description: "How to order the items.", enum: ["added", "name"], default: "added" });
   assert.deepEqual(toWebMcpTool(getShoppingList).inputSchema.properties.store, { type: "string", description: "Only the items for this store, by its name; every store when left out." });
   assert.equal(JSON.parse(renderActions(shopping).get("commands.json")!).commands[0].args.every((a: { required?: boolean }) => a.required === undefined), true);
 });
@@ -992,4 +992,106 @@ test("check accepts projections an older ouro-actions stamped, so updating the g
   assert.deepEqual(checkGenerated(shopping, found), []);
   const edited = new Map(found).set("mcp.json", found.get("mcp.json")!.replace("shopping", "shoping"));
   assert.match(checkGenerated(shopping, edited)[0]!, /^mcp\.json:\d+: drifted from its declaration/);
+});
+
+test("a default appears typed in commands.json, MCP and WebMCP, and only where it is declared", () => {
+  const defaultOf = (property: unknown) => (property as { default?: unknown }).default;
+  const commands = JSON.parse(renderActions(shopping).get("commands.json")!);
+  const list = commands.commands.find((c: { name: string }) => c.name === "list show");
+  assert.deepEqual(list.args[0], { name: "sort", description: "How to order the items.", values: ["added", "name"], default: "added" });
+  assert.equal("default" in list.args[1], false);
+  assert.deepEqual(list.flags.limit, { type: "number", description: "The most items to list.", min: 1, max: 100, default: 50 });
+  assert.equal(typeof list.flags.limit.default, "number");
+  assert.deepEqual(inputSchema(getShoppingList).properties.limit, { type: "number", description: "The most items to list.", minimum: 1, maximum: 100, default: 50 });
+  assert.equal(defaultOf(toMcpTool(getShoppingList).inputSchema.properties.sort), "added");
+  assert.equal(defaultOf(toWebMcpTool(getShoppingList).inputSchema.properties.limit), 50);
+  assert.equal(defaultOf(inputSchema(addShoppingListItem).properties.quantity), undefined);
+});
+
+test("an optional word with a default shows it in the usage line, bracketed as [<name>=<default>]", () => {
+  assert.match(renderActions(shopping).get("web.ts")!, /"get-shopping-list": "shop list show \[<sort>=added\] \[<store>\]"/);
+});
+
+test("a default on a required field is refused, with the fix", () => {
+  assert.throws(
+    () => defineAction({ ...base, input: { recipe: field.string({ label: "Recipe", description: "The recipe's id.", arg: true, default: "rcp_lemon" }) } }),
+    /input "recipe": a default on a required field, which every call sends\. Fix: make it optional: true, or drop the default\./,
+  );
+});
+
+test("a default is refused where no value stands for left out: output, list, group, one-of, entity, protocol-only, a list item, a one-of option", () => {
+  const at = (input: Record<string, unknown>) => () => defineAction({ ...base, input: input as never });
+  assert.throws(() => defineAction({ ...base, output: { id: field.string({ label: "ID", description: "The id.", default: "x" }) } }), /output "id": default is for an input field.*Fix: drop default\./);
+  assert.throws(
+    at({ ids: field.list({ label: "Ids", description: "Ids.", of: field.string({ label: "Id", description: "An id." }), optional: true, protocolOnly: true, default: [] } as never) }),
+    /"ids": a list field takes no default.*Fix: drop default\./,
+  );
+  assert.throws(
+    at({ g: field.group({ label: "G", description: "g", fields: {}, optional: true, protocolOnly: true, default: {} } as never) }),
+    /"g": a group field takes no default/,
+  );
+  assert.throws(
+    at({ o: field.oneOf({ label: "O", description: "o", options: [field.integer({ label: "Days", description: "Days." }), field.boolean({ label: "Yes", description: "Yes." })], optional: true, protocolOnly: true, default: 3 } as never) }),
+    /"o": a one-of field takes no default/,
+  );
+  assert.throws(
+    at({ store: field.string({ label: "Store", description: "A store.", optional: true, entity: "StoreEntity", default: "corner" }) }),
+    /"store": an entity takes no default, since the person picks it\. Fix: drop default, or drop entity\./,
+  );
+  assert.throws(
+    at({ note: field.string({ label: "Note", description: "A note.", optional: true, protocolOnly: true, default: "" }) }),
+    /"note": a protocol-only field takes no default/,
+  );
+  assert.throws(
+    at({ ids: field.list({ label: "Ids", description: "Ids.", optional: true, protocolOnly: true, of: field.string({ label: "Id", description: "An id.", default: "x" }) }) }),
+    /"ids" item: an item takes no default, since each value is sent\. Fix: drop default from of\./,
+  );
+  assert.throws(
+    at({ o: field.oneOf({ label: "O", description: "o", optional: true, protocolOnly: true, options: [field.integer({ label: "Days", description: "Days.", default: 3 }), field.boolean({ label: "Yes", description: "Yes." })] }) }),
+    /"o" option 1: an option takes no default, since the value itself picks the option\. Fix: drop default from the option\./,
+  );
+});
+
+test("a default must fit its field: its type, enum values, min and max, maxLength, pattern and const are checked, with the fix", () => {
+  const at = (input: Record<string, unknown>) => () => defineAction({ ...base, input: input as never });
+  assert.throws(at({ s: field.string({ label: "S", description: "s", optional: true, default: 3 as never }) }), /"s": default 3 is not a string\. Fix: a string, or drop default\./);
+  assert.throws(at({ n: field.number({ label: "N", description: "n", optional: true, default: "3" as never }) }), /"n": default "3" is not a number\. Fix:/);
+  assert.throws(at({ i: field.integer({ label: "I", description: "i", optional: true, default: 2.5 }) }), /"i": default 2\.5 is not a whole number\. Fix:/);
+  assert.throws(at({ n: field.number({ label: "N", description: "n", min: 1, max: 100, optional: true, default: 500 }) }), /"n": default 500 is above max 100\. Fix: a default of 100 or less, or a higher max\./);
+  assert.throws(at({ n: field.number({ label: "N", description: "n", min: 1, optional: true, default: 0 }) }), /"n": default 0 is below min 1\. Fix: a default of 1 or more, or a lower min\./);
+  assert.throws(at({ b: field.boolean({ label: "B", description: "b", optional: true, default: "yes" as never }) }), /"b": default "yes" is not a boolean\. Fix:/);
+  assert.throws(at({ c: field.boolean({ label: "C", description: "c", const: true, optional: true, default: false }) }), /"c": default false is not the one value const allows, true\. Fix: default: true, or drop default\./);
+  assert.throws(at({ e: field.enum({ label: "E", description: "e", values: ["small", "large"], optional: true, default: "medium" as never }) }), /"e": default "medium" is not one of its values\. Fix: one of "small", "large", or drop default\./);
+  assert.throws(at({ s: field.string({ label: "S", description: "s", maxLength: 3, optional: true, default: "oat milk" }) }), /"s": default is 8 characters, over maxLength 3\. Fix:/);
+  assert.throws(at({ s: field.string({ label: "S", description: "s", pattern: "^[a-z]+$", optional: true, default: "Oat" }) }), /"s": default "Oat" doesn't match pattern \^\[a-z\]\+\$\. Fix:/);
+});
+
+test("a default that fits is accepted for each kind, a nullable one too", () => {
+  const at = (input: Record<string, unknown>) => () => defineAction({ ...base, input: input as never });
+  assert.doesNotThrow(
+    at({
+      s: field.string({ label: "S", description: "s", optional: true, maxLength: 8, pattern: "^[a-z]+$", default: "oat" }),
+      ns: field.string({ label: "NS", description: "ns", optional: true, nullable: true, default: "x" }),
+      n: field.number({ label: "N", description: "n", optional: true, min: 0, max: 10, default: 2.5 }),
+      i: field.integer({ label: "I", description: "i", optional: true, default: 0 }),
+      b: field.boolean({ label: "B", description: "b", optional: true, default: false }),
+      c: field.boolean({ label: "C", description: "c", const: true, optional: true, default: true }),
+      e: field.enum({ label: "E", description: "e", values: ["small", "large"], optional: true, default: "large" }),
+    }),
+  );
+});
+
+test("a default is typed as its field's value: an enum's is one of its values, a number's a number, and a list takes none", () => {
+  assert.equal(field.enum({ label: "Size", description: "The size.", values: ["small", "large"], optional: true, default: "small" }).default, "small");
+  assert.equal(field.number({ label: "Count", description: "How many.", optional: true, default: 3 }).default, 3);
+  // Type-only checks: tsc refuses each marked line; the function is never called.
+  const refused = () => {
+    // @ts-expect-error a default is one of the enum's values
+    field.enum({ label: "Size", description: "The size.", values: ["small", "large"], optional: true, default: "medium" });
+    // @ts-expect-error a number's default is a number
+    field.number({ label: "Count", description: "How many.", optional: true, default: "3" });
+    // @ts-expect-error a list takes no default
+    field.list({ label: "Ids", description: "Ids.", of: field.string({ label: "Id", description: "An id." }), optional: true, default: [] });
+  };
+  assert.equal(typeof refused, "function");
 });

@@ -1,5 +1,5 @@
 {
-  "generator": "ouro-actions 0.19.0",
+  "generator": "ouro-actions 0.20.0",
   "set": "shopping",
   "tool": "shop",
   "actions": [
@@ -22,13 +22,14 @@
         },
         "sort": {
           "label": "Sort",
-          "description": "How to order the items: the order they were added when left out.",
+          "description": "How to order the items.",
           "values": [
             "added",
             "name"
           ],
           "optional": true,
           "arg": true,
+          "default": "added",
           "kind": "enum"
         },
         "store": {
@@ -37,6 +38,15 @@
           "optional": true,
           "arg": true,
           "kind": "string"
+        },
+        "limit": {
+          "label": "Limit",
+          "description": "The most items to list.",
+          "optional": true,
+          "min": 1,
+          "max": 100,
+          "default": 50,
+          "kind": "number"
         }
       },
       "output": {
