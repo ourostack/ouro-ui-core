@@ -207,3 +207,11 @@ test("the composed tree, its MCP Apps helpers and the A2UI adapter declare no na
     }
   }
 });
+
+test("no doc block in the modules web vendors is followed straight by another, which web's lint refuses as describing nothing", async () => {
+  for (const file of ["src/composed.mts", "src/mcp-app.mts", "src/a2ui.mts"]) {
+    const source = await readFile(new URL(file, root), "utf8");
+    const lines = [...source.matchAll(/\*\/\n\s*\/\*\*/g)].map((m) => source.slice(0, m.index).split("\n").length);
+    assert.deepEqual(lines, [], `${file} has a doc block at line ${lines.join(", ")} that another doc block follows directly`);
+  }
+});
