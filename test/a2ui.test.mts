@@ -82,6 +82,14 @@ test("every conformance case resolves to its expect", () => {
   for (const c of cases) assert.deepEqual(resolveMessages(catalogs[c.catalog], c.messages), c.expect, c.name);
 });
 
+test("the validator takes a component, action or input name from the catalog only when the catalog itself has it (ouro-ui-core#91)", () => {
+  for (const name of ["constructor", "toString"]) {
+    assert.ok(validateMessages(app, create([{ id: "root", component: name }])).some((p) => p.message.includes("is not in this catalog")), `component ${name}`);
+    assert.ok(validateMessages(app, create([{ id: "root", component: "ActionButton", action: name }])).some((p) => p.message.includes("not one of the app's actions")), `action ${name}`);
+    assert.ok(validateMessages(app, create([{ id: "root", component: "ActionButton", action: "share_recipe", input: JSON.parse(`{"recipe":"r","with":"s@e.com",${JSON.stringify(name)}:true}`) }])).some((p) => p.message.includes(`share_recipe has no input ${name}`)), `input ${name}`);
+  }
+});
+
 test("an agent can't press a button through the screen", () => {
   const cat = loadCatalog(app);
   assert.match(functionCallProblem(cat, "share_recipe").message, /through their own tool \(MCP share_recipe\)/);

@@ -203,7 +203,7 @@ export const componentsFor = (actions: Readonly<Record<string, CatalogAction>>):
 
 /** Why an agent can't press a button through the screen, whatever the format asked: agents use their own doors. */
 export function agentPressProblem(cat: Catalog, name: unknown): { message: string; refusal?: Refusal } {
-  const a = typeof name === "string" ? cat.actions[name] : undefined;
+  const a = typeof name === "string" ? own(cat.actions, name) : undefined;
   if (a?.personOnly) return { message: a.personOnly.refusal.summary, refusal: a.personOnly.refusal };
   if (a) return { message: `${name} is an action, and agents run actions through their own tool (MCP ${name}), not through the person's screen.` };
   return { message: `This catalog has no functions an agent may call${typeof name === "string" ? `, so ${name} is not one` : ""}.` };
@@ -269,8 +269,8 @@ export function asText(v: Json | undefined): string {
  */
 /** The input fields a confirm sheet has a row for, in order: each prepared one, less a name that stands in for an id. */
 function confirmKeys(a: CatalogAction, input: Obj): string[] {
-  const names = new Set(Object.entries(a.input).filter(([k, f]) => k in input && f.shownAs !== undefined && f.shownAs in a.input).map(([, f]) => f.shownAs!));
-  return Object.keys(a.input).filter((k) => k in input && !names.has(k));
+  const names = new Set(Object.entries(a.input).filter(([k, f]) => Object.hasOwn(input, k) && f.shownAs !== undefined && Object.hasOwn(a.input, f.shownAs)).map(([, f]) => f.shownAs!));
+  return Object.keys(a.input).filter((k) => Object.hasOwn(input, k) && !names.has(k));
 }
 
 function confirmFields(action: string, a: CatalogAction, input: Obj, options: ResolveOptions): { label: string; value: string; raw?: string; bind?: string }[] {
@@ -341,6 +341,12 @@ export interface TreeProblem {
 
 /** A JSON object (not null, not an array). The A2UI adapter uses it too, so the modules declare no name twice. */
 export const isObj = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
+
+/**
+ * A catalog entry by a name a sender chose, only when the catalog itself has it: `constructor` or `toString` is never a
+ * component, an action or an input field (ouro-ui-core#91).
+ */
+export const own = <T,>(record: Readonly<Record<string, T>>, key: string): T | undefined => (Object.hasOwn(record, key) ? record[key] : undefined);
 const BUTTON_PROPS = ["action", "label", "consent", "press", "input", "confirm", "handoff", "emphasis", "@label"];
 
 function checkProp(problems: TreeProblem[], key: string, p: Prop, v: unknown, at: string): void {
@@ -408,7 +414,7 @@ export function validateTree(cat: Catalog, node: unknown, path = ""): TreeProble
       problems.push({ path: at, message: "A node is { id, component, props, children }." });
       return;
     }
-    const spec = cat.components[n.component];
+    const spec = own(cat.components, n.component);
     if (!spec) {
       problems.push({ path: `${at}/component`, message: `${JSON.stringify(n.component)} is not in this catalog; use one of ${Object.keys(cat.components).join(", ")}.` });
       return;
@@ -428,7 +434,7 @@ export function validateTree(cat: Catalog, node: unknown, path = ""): TreeProble
     }
     if (n.component === "ActionButton") {
       const id = props.action;
-      const a = typeof id === "string" ? cat.actions[id] : undefined;
+      const a = typeof id === "string" ? own(cat.actions, id) : undefined;
       if (!a || typeof id !== "string") problems.push({ path: `${at}/props/action`, message: `${JSON.stringify(id)} is not one of the app's actions: ${Object.keys(cat.actions).join(", ")}.` });
       else {
         const input = props.input;
@@ -437,7 +443,7 @@ export function validateTree(cat: Catalog, node: unknown, path = ""): TreeProble
         else {
           for (const [k, v] of Object.entries(input)) {
             // A field the catalog doesn't carry would be sent without a row on the confirm sheet.
-            if (!(k in a.input)) problems.push({ path: `${at}/props/input/${k}`, message: `${id} has no input ${k}; its fields are ${Object.keys(a.input).join(", ") || "none"}.` });
+            if (own(a.input, k) === undefined) problems.push({ path: `${at}/props/input/${k}`, message: `${id} has no input ${k}; its fields are ${Object.keys(a.input).join(", ") || "none"}.` });
             if (isObj(v) && "@path" in v && !(isBinding(v) && v["@path"].startsWith("/"))) problems.push({ path: `${at}/props/input/${k}`, message: `${k} is a value, or {"@path": "/..."} bound to the data model.` });
           }
           const expected = actionButtonProps(cat, id, input as Obj);

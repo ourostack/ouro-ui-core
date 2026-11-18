@@ -79,6 +79,18 @@ test("a confirm sheet can't show the person one value and send another (ouro-ui-
   assert.match(validateTree(app, card([extra]))[0]!.message, /share_recipe has no input everyone/, "an input the catalog doesn't carry would be sent with no row");
 });
 
+test("a name a sender chooses is the catalog's only when the catalog itself has it, never an object's built-in (ouro-ui-core#91)", () => {
+  for (const name of ["constructor", "toString", "__proto__", "hasOwnProperty"]) {
+    const extra = clone(share);
+    (extra.props.input as Record<string, Json>) = JSON.parse(`{"recipe":"rcp_123","with":"sam@example.com",${JSON.stringify(name)}:true}`);
+    assert.ok(validateTree(app, card([extra])).some((p) => p.message.includes(`share_recipe has no input ${name}`)), `input ${name}`);
+    assert.match(validateTree(app, card([{ id: "x", component: name, props: {}, children: [] }]))[0]!.message, /is not in this catalog/, `component ${name}`);
+    const button = clone(open);
+    button.props.action = name;
+    assert.match(validateTree(app, card([button]))[0]!.message, /not one of the app's actions/, `action ${name}`);
+  }
+});
+
 test("a tree names only the catalog's components and their props, resolved", () => {
   assert.match(validateTree(hx, { id: "root", component: "Button", props: {}, children: [] })[0]!.message, /not in this catalog/);
   assert.match(validateTree(hx, { id: "root", component: "Text", props: { text: { "@path": "/x" }, tone: "default" }, children: [] })[0]!.message, /text is text/);

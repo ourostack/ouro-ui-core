@@ -23,6 +23,7 @@ import {
   INPUT_COMPONENTS,
   isBinding,
   isObj,
+  own,
   personPress,
   setPointer,
   type Catalog,
@@ -143,7 +144,7 @@ function checkInput(w: Walk, action: CatalogAction, id: string, input: unknown, 
   }
   const given = (input ?? {}) as Record<string, unknown>;
   for (const [name, v] of Object.entries(given)) {
-    const f = action.input[name];
+    const f = own(action.input, name);
     const at = `${path}/${name}`;
     if (!f) {
       w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: at, message: `${id} has no input ${name}; its fields are ${Object.keys(action.input).join(", ") || "none"}.` });
@@ -167,7 +168,7 @@ function checkComponent(w: Walk, comp: unknown, path: string, refs: Map<string, 
   const { id, component } = comp;
   if (typeof id !== "string" || !IDENT.test(id)) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: `${path}/id`, message: `id ${JSON.stringify(id)} is not an identifier: letters, digits and _, not starting with a digit (user_card, not user-card).` });
   else ids.add(id);
-  const spec = typeof component === "string" ? w.cat.components[component] : undefined;
+  const spec = typeof component === "string" ? own(w.cat.components, component) : undefined;
   if (!spec) {
     w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: `${path}/component`, message: `${JSON.stringify(component)} is not in this catalog; use one of ${Object.keys(w.cat.components).join(", ")}.` });
     return;
@@ -175,7 +176,7 @@ function checkComponent(w: Walk, comp: unknown, path: string, refs: Map<string, 
   if ("@catalogId" in comp && comp["@catalogId"] !== w.cat.catalogId) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: `${path}/@catalogId`, message: `This renderer has only the catalog ${w.cat.catalogId}.` });
   for (const key of Object.keys(comp)) {
     if (key === "id" || key === "component" || key === "@catalogId" || key === "@metadata" || key === "@accessibility") continue;
-    if (!(key in spec.props)) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: `${path}/${key}`, message: `${component} has no ${key}${Object.keys(spec.props).length ? `; its props are ${Object.keys(spec.props).join(", ")}` : ""}.` });
+    if (!Object.hasOwn(spec.props, key)) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: `${path}/${key}`, message: `${component} has no ${key}${Object.keys(spec.props).length ? `; its props are ${Object.keys(spec.props).join(", ")}` : ""}.` });
   }
   if (isObj(comp["@accessibility"])) {
     for (const [k, v] of Object.entries(comp["@accessibility"])) {
@@ -225,13 +226,13 @@ function checkComponent(w: Walk, comp: unknown, path: string, refs: Map<string, 
         if (!isBinding(v)) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: at, message: `${key} is {"@path": "/..."}: where the person's answer goes in the data model.` });
         break;
       case "action":
-        if (typeof v !== "string" || !w.cat.actions[v]) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: at, message: `${JSON.stringify(v)} is not one of the app's actions: ${Object.keys(w.cat.actions).join(", ")}.` });
+        if (typeof v !== "string" || !own(w.cat.actions, v)) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path: at, message: `${JSON.stringify(v)} is not one of the app's actions: ${Object.keys(w.cat.actions).join(", ")}.` });
         break;
       case "input":
         break;
     }
   }
-  if (component === "ActionButton" && typeof comp.action === "string" && w.cat.actions[comp.action]) checkInput(w, w.cat.actions[comp.action]!, comp.action, comp.input, `${path}/input`);
+  if (component === "ActionButton" && typeof comp.action === "string" && own(w.cat.actions, comp.action)) checkInput(w, own(w.cat.actions, comp.action)!, comp.action, comp.input, `${path}/input`);
 }
 
 /**
