@@ -369,6 +369,23 @@ function checkProp(problems: TreeProblem[], key: string, p: Prop, v: unknown, at
 }
 
 /**
+ * A confirm sheet's rows against the rows the catalog gives for the prepared input: the same fields, in order, with the
+ * catalog's labels, and each row showing what will be sent (its `raw`, or its `value` when it has none) or, for a bound
+ * input, the same binding. Only the words shown for an id may differ, since the app's own resolver names it.
+ */
+function confirmRowProblems(problems: TreeProblem[], id: string, expected: { label: string; value: string; raw?: string; bind?: string }[], rows: unknown[], at: string): void {
+  const bad = () => problems.push({ path: at, message: `${id}'s confirm sheet shows a row for each prepared input, with its label and the value that will be sent; the catalog's rows are ${JSON.stringify(expected)}.` });
+  if (rows.length !== expected.length) return void bad();
+  rows.forEach((row, i) => {
+    const want = expected[i]!;
+    if (!isObj(row) || row.label !== want.label) return void bad();
+    if (want.bind !== undefined) {
+      if (row.bind !== want.bind || row.raw !== undefined) bad();
+    } else if (row.bind !== undefined || (row.raw ?? row.value) !== (want.raw ?? want.value) || typeof row.value !== "string") bad();
+  });
+}
+
+/**
  * Every problem in a composed tree against a catalog: each component is the catalog's, each prop is resolved and of its
  * kind, and each ActionButton is exactly what the catalog says its action's button is, so no adapter and no sender can
  * relabel a button or loosen its consent. An empty list means it renders.
@@ -417,6 +434,7 @@ export function validateTree(cat: Catalog, node: unknown, path = ""): TreeProble
           if (a.press === "confirm") {
             const c = props.confirm;
             if (!isObj(c) || c.title !== a.label || c.description !== a.description || !Array.isArray(c.fields)) problems.push({ path: `${at}/props/confirm`, message: `${id} confirms, with the catalog's title and description and a row per prepared input.` });
+            else confirmRowProblems(problems, id, confirmFields(id, a, input as Obj, {}), c.fields, `${at}/props/confirm/fields`);
           } else if (props.confirm !== undefined) problems.push({ path: `${at}/props/confirm`, message: `${id} doesn't confirm; only a consequential action does.` });
         }
       }
