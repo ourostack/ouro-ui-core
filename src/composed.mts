@@ -220,8 +220,11 @@ export const isBinding = (v: unknown): v is { "@path": string } => isObj(v) && t
 const UNSAFE_KEYS = new Set(["__proto__", "constructor", "prototype"]);
 const segments = (pointer: string) => pointer.replace(/^\//, "").split("/").map((k) => k.replace(/~1/g, "/").replace(/~0/g, "~"));
 
-/** Whether a pointer stays in the data: absolute, and no segment names an object's prototype (ouro-ui-core#91). */
-export const isDataPointer = (pointer: string): boolean => pointer.startsWith("/") && !segments(pointer).some((k) => UNSAFE_KEYS.has(k));
+/** Whether no segment of a pointer, absolute or relative, names an object's prototype (ouro-ui-core#91). */
+export const isSafePointer = (pointer: string): boolean => !segments(pointer).some((k) => UNSAFE_KEYS.has(k));
+
+/** Whether a pointer stays in the data: absolute, and safe. */
+export const isDataPointer = (pointer: string): boolean => pointer.startsWith("/") && isSafePointer(pointer);
 
 /** Reads a JSON pointer (RFC 6901). A missing value is undefined, and so is anything the data doesn't itself hold. */
 export function getPointer(data: Json, pointer: string): Json | undefined {

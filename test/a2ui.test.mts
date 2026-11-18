@@ -96,6 +96,12 @@ test("a stream can't write to an object's prototype through updateDataModel, and
   applyMessages(stream);
   assert.equal(({} as Record<string, unknown>).polluted, undefined);
   assert.throws(() => loadCatalog({ catalogId: "x", components: { Text: {}, toString: {} } }), /component toString is not Ouro HX's/);
+  for (const pointer of ["/__proto__/x", "constructor", "items/__proto__"]) {
+    const bound = create([{ id: "root", component: "Card", children: ["f", "b"] }, { id: "f", component: "Text", text: { "@path": pointer } }, { id: "b", component: "ActionButton", action: "share_recipe", input: { recipe: { "@path": pointer }, with: "s@e.com" } }]);
+    assert.ok(validateMessages(app, bound).filter((p) => p.message.includes("never through __proto__")).length >= 2, pointer);
+  }
+  const template = create([{ id: "root", component: "Stack", children: { componentId: "t", path: "/__proto__" } }, { id: "t", component: "Text", text: "x" }]);
+  assert.ok(validateMessages(app, template).some((p) => p.message.includes("never through __proto__")));
 });
 
 test("an agent can't press a button through the screen", () => {

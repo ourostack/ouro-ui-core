@@ -24,6 +24,7 @@ import {
   isBinding,
   isDataPointer,
   isObj,
+  isSafePointer,
   own,
   personPress,
   setPointer,
@@ -161,7 +162,17 @@ function checkInput(w: Walk, action: CatalogAction, id: string, input: unknown, 
   }
 }
 
+/** Every pointer a component names (a binding or a template's path) that would reach an object's prototype. */
+function unsafePointers(w: Walk, v: unknown, path: string): void {
+  if (Array.isArray(v)) return v.forEach((x, i) => unsafePointers(w, x, `${path}/${i}`));
+  if (!isObj(v)) return;
+  const pointer = isBinding(v) ? v["@path"] : typeof v.componentId === "string" && typeof v.path === "string" ? v.path : undefined;
+  if (pointer !== undefined && !isSafePointer(pointer)) w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path, message: `${JSON.stringify(pointer)} points into the data model, never through __proto__, constructor or prototype.` });
+  for (const [k, x] of Object.entries(v)) unsafePointers(w, x, `${path}/${k}`);
+}
+
 function checkComponent(w: Walk, comp: unknown, path: string, refs: Map<string, string>, ids: Set<string>): void {
+  unsafePointers(w, comp, path);
   if (!isObj(comp)) {
     w.problems.push({ code: "VALIDATION_FAILED", surfaceId: w.surfaceId, path, message: "A component is an object with id and component." });
     return;
