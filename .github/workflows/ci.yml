@@ -83,6 +83,8 @@ jobs:
 
   apple:
     name: apple (swiftc)
+    # Not on a pull request: macOS runners are scarce, so a PR never waits for one. It runs on main after the merge, and a red run on main is the red-main alarm.
+    if: github.event_name != 'pull_request'
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
