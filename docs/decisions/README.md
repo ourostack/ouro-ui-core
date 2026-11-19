@@ -26,4 +26,5 @@ New decision records go here. Each has a "Prior art" section linking every find 
 | 2026-11-17 | [Native kits, no cross-platform frameworks](2026-11-17-native-kits-no-cross-platform.md) |
 | 2026-11-17 | [Fields in the composed tree, bound to a data model by JSON Pointer](2026-11-17-composed-fields.md) |
 | 2026-11-18 | [An agent updates a composed tree by id and by JSON Pointer, instead of resending it](2026-11-18-composed-tree-updates.md) |
+| 2026-11-18 | [A group chat is drawn from its members, not as a channel](2026-11-18-group-chat-avatar.md) |
 | 2026-11-19 | [Ask models what they'd build with as customer interviews, and register the questions before any run](2026-11-19-model-interviews.md) |
