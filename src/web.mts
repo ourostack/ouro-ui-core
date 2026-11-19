@@ -50,5 +50,6 @@ export async function renderWeb(): Promise<Map<string, string>> {
     const template = await readFile(new URL(path, templatesRoot), "utf8");
     out.set(`web/${path}`, render(template, await layered(theme), `templates/web/${path}`));
   }
+  out.set("web/presets.json", await readFile(new URL("../tokens/presets.json", import.meta.url), "utf8"));
   return out;
 }

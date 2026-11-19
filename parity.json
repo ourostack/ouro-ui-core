@@ -1,7 +1,7 @@
 {
   "$comment": "tokens:parity compares each generated file with web's file at webTag, byte for byte. Bump webTag when web releases a token change.",
   "webRepo": "ourostack/ouro-ui",
-  "webTag": "v1.3.24",
+  "webTag": "v1.3.42",
   "files": {
     "dist/web/ouro-theme.css": "registry/ouro/theme/ouro-theme.css",
     "dist/web/ouro-base.css": "registry/ouro/theme/ouro-base.css",
@@ -12,6 +12,7 @@
     "dist/web/themes/brass.css": "site/public/css/themes/brass.css",
     "dist/web/themes/chart.css": "site/public/css/themes/chart.css",
     "dist/web/themes/cookbook.css": "site/public/css/themes/cookbook.css",
-    "dist/web/themes/coral.css": "site/public/css/themes/coral.css"
+    "dist/web/themes/coral.css": "site/public/css/themes/coral.css",
+    "dist/web/presets.json": "site/src/themes/presets.json"
   }
 }
