@@ -92,6 +92,7 @@ Every web app that loads these stylesheets looks the way their bytes say. `token
 A platform repository takes core's outputs from a GitHub release, never from `main`:
 
 1. Download the assets of a release tag, such as `v0.1.0`, from `https://github.com/ourostack/ouro-ui-core/releases`. `dist-manifest.json` lists every file in `dist/` with its SHA-256.
+   From v0.21.0 on, [the release workflow](.github/workflows/release.yml) gives each file it attaches a GitHub build attestation, so you can check that a file was built from its tag: `gh attestation verify ouro-theme.css --repo ourostack/ouro-ui-core`.
 2. Copy the files you use into your repository.
 3. Record them in `core-provenance.json` at your repository's root:
 

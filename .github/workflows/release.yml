@@ -8,6 +8,9 @@ on:
 
 permissions:
   contents: write
+  # Build provenance: GitHub signs which workflow run built each file attached to the release.
+  id-token: write
+  attestations: write
 
 jobs:
   release:
@@ -32,6 +35,30 @@ jobs:
         run: |
           cd dist && zip -qr "../ouro-ui-core-$GITHUB_REF_NAME-dist.zip" . && cd ..
           cp dist/hx/a2ui/catalog.json ouro-hx-a2ui-catalog.json && cp dist/web/ouro-theme.css dist/web/ouro-base.css dist/apple/OuroTokens.swift dist/android/OuroTokens.kt dist/windows/OuroTokens.cs dist/windows/OuroTokens.xaml dist/ax/apple.claims.json dist/hx/components.claims.json dist/actions/ouro-actions.mts dist/actions/ouro-actions-windows.mts dist/actions/ouro-actions-android.mts dist/ax/actions.claims.json dist/composed/ouro-composed.mts dist/composed/ouro-mcp-app.mts dist/a2ui/ouro-a2ui.mts dist/a2ui/ouro-a2ui-catalog.mts dist/swatches.html dist/dist-manifest.json .
+      - name: Attest the release's files
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: |
+            ouro-ui-core-${{ github.ref_name }}-dist.zip
+            ouro-theme.css
+            ouro-base.css
+            OuroTokens.swift
+            OuroTokens.kt
+            OuroTokens.cs
+            OuroTokens.xaml
+            apple.claims.json
+            components.claims.json
+            ouro-actions.mts
+            ouro-actions-windows.mts
+            ouro-actions-android.mts
+            actions.claims.json
+            ouro-composed.mts
+            ouro-mcp-app.mts
+            ouro-a2ui.mts
+            ouro-a2ui-catalog.mts
+            ouro-hx-a2ui-catalog.json
+            swatches.html
+            dist-manifest.json
       - name: Create the release
         env:
           GH_TOKEN: ${{ github.token }}
