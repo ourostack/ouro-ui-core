@@ -23,6 +23,8 @@ const DECLARATION = /^(\s*)(--[\w-]+): (.*?);(?: \/\* (.*) \*\/)?$/;
 
 function modeOf(stack: string[]): Mode | typeof RULE | null {
   const selector = stack.at(-1);
+  // A `:root` rule under `@supports` overrides a token where the engine lacks a feature (web's --ouro-corner-fallback: 0.7); the token's own value is the one outside it.
+  if (stack.length === 2 && stack[0]!.startsWith("@supports ") && selector === ":root") return RULE;
   if (selector === "@theme inline" || selector === ":root, .dark") return "both";
   if (selector === ":root") return "light";
   if (selector === ".dark") return "dark";

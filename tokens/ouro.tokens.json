@@ -1,5 +1,5 @@
 {
-  "$description": "Ouro UI's tokens: the default colours (Pearl) and what every Ouro component needs. DTCG 2025.10. Derived from ourostack/ouro-ui@v1.3.24.",
+  "$description": "Ouro UI's tokens: the default colours (Pearl) and what every Ouro component needs. DTCG 2025.10. Derived from ourostack/ouro-ui@v1.3.331.",
   "radius": {
     "$type": "dimension",
     "$value": {
@@ -543,33 +543,61 @@
       }
     }
   },
+  "radius-ouro-sm": {
+    "$type": "string",
+    "$value": "calc(var(--radius) * var(--ouro-radius-scale, 1) * var(--ouro-corner-fallback, 1) * 0.6)"
+  },
+  "radius-ouro-md": {
+    "$type": "string",
+    "$value": "calc(var(--radius) * var(--ouro-radius-scale, 1) * var(--ouro-corner-fallback, 1) * 0.8)"
+  },
+  "radius-ouro-lg": {
+    "$type": "string",
+    "$value": "calc(var(--radius) * var(--ouro-radius-scale, 1) * var(--ouro-corner-fallback, 1))"
+  },
+  "radius-ouro-xl": {
+    "$type": "string",
+    "$value": "calc(var(--radius) * var(--ouro-radius-scale, 1) * var(--ouro-corner-fallback, 1) * 1.4)"
+  },
+  "radius-ouro-2xl": {
+    "$type": "string",
+    "$value": "calc(var(--radius) * var(--ouro-radius-scale, 1) * var(--ouro-corner-fallback, 1) * 1.8)"
+  },
+  "radius-ouro-3xl": {
+    "$type": "string",
+    "$value": "calc(var(--radius) * var(--ouro-radius-scale, 1) * var(--ouro-corner-fallback, 1) * 2.2)"
+  },
+  "radius-ouro-4xl": {
+    "$type": "string",
+    "$value": "calc(var(--radius) * var(--ouro-radius-scale, 1) * var(--ouro-corner-fallback, 1) * 2.6)"
+  },
   "radius-sm": {
     "$type": "string",
-    "$value": "calc(var(--radius) * 0.6)"
+    "$value": "calc(var(--radius) * var(--ouro-radius-scale, 1) * var(--ouro-corner-fallback, 1) * 0.6)"
   },
   "radius-md": {
     "$type": "string",
-    "$value": "calc(var(--radius) * 0.8)"
+    "$value": "calc(var(--radius) * var(--ouro-radius-scale, 1) * var(--ouro-corner-fallback, 1) * 0.8)"
   },
   "radius-lg": {
-    "$type": "dimension",
-    "$value": "{radius}"
+    "$type": "string",
+    "$value": "calc(var(--radius) * var(--ouro-radius-scale, 1) * var(--ouro-corner-fallback, 1))"
   },
   "radius-xl": {
     "$type": "string",
-    "$value": "calc(var(--radius) * 1.4)"
+    "$value": "calc(var(--radius) * var(--ouro-radius-scale, 1) * var(--ouro-corner-fallback, 1) * 1.4)"
   },
   "radius-2xl": {
     "$type": "string",
-    "$value": "calc(var(--radius) * 1.8)"
+    "$value": "calc(var(--radius) * var(--ouro-radius-scale, 1) * var(--ouro-corner-fallback, 1) * 1.8)"
   },
   "radius-3xl": {
     "$type": "string",
-    "$value": "calc(var(--radius) * 2.2)"
+    "$value": "calc(var(--radius) * var(--ouro-radius-scale, 1) * var(--ouro-corner-fallback, 1) * 2.2)"
   },
   "radius-4xl": {
     "$type": "string",
-    "$value": "calc(var(--radius) * 2.6)"
+    "$value": "calc(var(--radius) * var(--ouro-radius-scale, 1) * var(--ouro-corner-fallback, 1) * 2.6)"
   },
   "color-destructive-foreground": {
     "$type": "color",
@@ -648,6 +676,14 @@
     "corner-shape": {
       "$type": "string",
       "$value": "squircle"
+    },
+    "radius-scale": {
+      "$type": "number",
+      "$value": 1
+    },
+    "corner-fallback": {
+      "$type": "number",
+      "$value": 1
     },
     "spring": {
       "duration": {
@@ -784,19 +820,19 @@
     "shadow": {
       "sheet-bottom": {
         "$type": "string",
-        "$value": "0 -1px 0 color-mix(in oklab, var(--border) 60%, transparent), 0 -8px 32px rgb(0 0 0 / 0.12)"
+        "$value": "0 -1px 0 var(--border), 0 -8px 32px rgb(0 0 0 / 0.12)"
       },
       "sheet-top": {
         "$type": "string",
-        "$value": "0 1px 0 color-mix(in oklab, var(--border) 60%, transparent), 0 8px 32px rgb(0 0 0 / 0.12)"
+        "$value": "0 1px 0 var(--border), 0 8px 32px rgb(0 0 0 / 0.12)"
       },
       "sheet-left": {
         "$type": "string",
-        "$value": "8px 0 32px rgb(0 0 0 / 0.12)"
+        "$value": "1px 0 0 var(--border), 8px 0 32px rgb(0 0 0 / 0.12)"
       },
       "sheet-right": {
         "$type": "string",
-        "$value": "-8px 0 32px rgb(0 0 0 / 0.12)"
+        "$value": "-1px 0 0 var(--border), -8px 0 32px rgb(0 0 0 / 0.12)"
       }
     },
     "layer": {
@@ -818,13 +854,6 @@
         "mode": {
           "dark": "12%"
         }
-      }
-    },
-    "glass-blur": {
-      "$type": "dimension",
-      "$value": {
-        "value": 6,
-        "unit": "px"
       }
     },
     "glass-rim": {

@@ -48,3 +48,8 @@ test("a comment that spans lines is prose, though a wrapped line begins with a p
   const css = [":root {", "  /* shadcn init writes shadcn's own", "     --radius-* steps into an app's theme, and shadcn add never replaces a variable the app has, so", "     Ouro's corners use their own steps. */", "  --ouro-x: 1px;", "  /* one line */", "  --ouro-y: 2px;", "}"].join("\n");
   assert.deepEqual(readDeclarations(css).declarations.map((d) => d.name), ["--ouro-x", "--ouro-y"]);
 });
+
+test("a :root rule under @supports overrides a token for an engine and is not a second value of it (web's --ouro-corner-fallback)", () => {
+  const css = [":root {", "  --ouro-corner-fallback: 1;", "}", "@supports not (corner-shape: squircle) {", "  :root {", "    --ouro-corner-fallback: 0.7;", "  }", "}"].join("\n");
+  assert.deepEqual(readDeclarations(css).declarations.map((d) => d.value), ["1"]);
+});
