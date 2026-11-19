@@ -83,7 +83,7 @@ test("every web token appears in a template, and every placeholder names a token
 
 test("parity.json compares every web template, and only those", async () => {
   const parity = JSON.parse(await readFile(new URL("../parity.json", import.meta.url), "utf8")) as { files: Record<string, string> };
-  const templates = (await webTemplates()).map(({ path }) => `dist/web/${path}`).sort();
+  const templates = [...(await webTemplates()).map(({ path }) => `dist/web/${path}`), "dist/web/presets.json"].sort();
   assert.deepEqual(Object.keys(parity.files).sort(), templates);
 });
 

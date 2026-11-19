@@ -12,6 +12,7 @@
     "dist/web/themes/brass.css": "site/public/css/themes/brass.css",
     "dist/web/themes/chart.css": "site/public/css/themes/chart.css",
     "dist/web/themes/cookbook.css": "site/public/css/themes/cookbook.css",
-    "dist/web/themes/coral.css": "site/public/css/themes/coral.css"
+    "dist/web/themes/coral.css": "site/public/css/themes/coral.css",
+    "dist/web/presets.json": "site/src/themes/presets.json"
   }
 }
