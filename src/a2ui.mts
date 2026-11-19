@@ -24,6 +24,7 @@ import {
   isBinding,
   isDataPointer,
   isObj,
+  localComponentProblems,
   isSafePointer,
   own,
   personPress,
@@ -46,6 +47,7 @@ export {
   getPointer,
   INPUT_COMPONENTS,
   isBinding,
+  localComponentProblems,
   pressOf,
   resolveButton,
   setPointer,
@@ -77,15 +79,19 @@ export const ACTION_EXTENSION = "bot_ouroboros_action";
 /** An A2UI catalog read back: Ouro's own catalog (composed.mts). */
 export type LoadedCatalog = Catalog;
 
-/** Reads a catalog this file wrote. Its component specs are HX's, so a hand-edited catalog can't widen them. */
+/** Reads a catalog this file wrote. Its component specs are HX's, or the app's own that the catalog declares and `localComponentProblems` accepts, so a hand-edited catalog can't widen HX's. */
 export function loadCatalog(cat: unknown): LoadedCatalog {
-  const c = cat as { catalogId?: unknown; components?: Record<string, unknown>; metadata?: { extensions?: Record<string, { actions?: Record<string, CatalogAction> }> } };
+  const c = cat as { catalogId?: unknown; components?: Record<string, unknown>; metadata?: { extensions?: Record<string, { actions?: Record<string, CatalogAction>; components?: Record<string, ComponentSpec> }> } };
   if (!c || typeof c.catalogId !== "string" || !c.components) throw new Error("not an A2UI catalog: it has no catalogId or components. Fix: pass a catalog ouro-a2ui wrote.");
-  const actions = c.metadata?.extensions?.[EXTENSION]?.actions ?? {};
+  const ext = c.metadata?.extensions?.[EXTENSION];
+  const actions = ext?.actions ?? {};
+  const local = ext?.components ?? {};
+  const bad = localComponentProblems(local);
+  if (bad.length) throw new Error(`catalog ${c.catalogId}: ${bad.join(" ")} Fix: regenerate it with ouro-a2ui catalog.`);
   const components: Record<string, ComponentSpec> = {};
   for (const name of Object.keys(c.components)) {
-    const spec = name === "ActionButton" ? ACTION_BUTTON : own(COMPONENTS, name);
-    if (!spec) throw new Error(`catalog ${c.catalogId}: component ${name} is not Ouro HX's. Fix: regenerate it with ouro-a2ui catalog.`);
+    const spec = name === "ActionButton" ? ACTION_BUTTON : (own(COMPONENTS, name) ?? own(local, name));
+    if (!spec) throw new Error(`catalog ${c.catalogId}: component ${name} is not Ouro HX's, and the catalog doesn't declare it as the app's own. Fix: regenerate it with ouro-a2ui catalog.`);
     components[name] = spec;
   }
   return { catalogId: c.catalogId, components, actions };

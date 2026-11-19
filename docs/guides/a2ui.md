@@ -23,6 +23,21 @@ node tools/ouro-actions/ouro-a2ui-catalog.mts check actions/kitchen.actions.mts 
 
 The catalog is HX's components plus `ActionButton`, whose `action` is exactly your action ids. Without `--id` its `catalogId` is `https://ui.ouroboros.bot/a2ui/v1/apps/<set>/catalog.json`. Give the catalog file to your agent: its `instructions` are written for the model.
 
+### Your own components
+
+When HX's catalog lacks a card your app needs, declare it beside your actions: a named export `components` from the actions file. Each is a name, a line for the agent and typed props.
+
+```ts
+export const components = {
+  WineCard: {
+    description: "A wine with its vintage.",
+    props: { name: { description: "Its name.", type: { kind: "string" }, required: true } },
+  },
+};
+```
+
+The catalog lists it, validation checks an agent's use of it as it checks HX's, and the app draws it with a renderer it registers. A local component's props are string, strings, boolean, enum, level, terms and children. It can't hold an action, an input or a path, because those carry consent and data, and it can't take HX's name or `ActionButton`. A catalog that names any other component is refused.
+
 ## 3. Validate what the agent wrote, before anything renders
 
 ```sh
