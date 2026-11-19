@@ -10,7 +10,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { ACTIONS_VERSION, refusal, type Action, type ActionSet } from "./actions.mts";
-import { A2UI_VERSION, ACTION_BUTTON, COMPONENTS, EXTENSION, HX_CATALOG_ID, pressOf, validateMessages, type CatalogAction, type ComponentSpec, type Json, type Obj, type Prop, type Refusal } from "./a2ui.mts";
+import { A2UI_VERSION, ACTION_BUTTON, COMPONENTS, EXTENSION, HX_CATALOG_ID, localComponentProblems, pressOf, validateMessages, type CatalogAction, type ComponentSpec, type Json, type Obj, type Prop, type Refusal } from "./a2ui.mts";
 
 const CT = "common_types.json#/$defs/";
 
@@ -85,20 +85,28 @@ function componentSchema(name: string, c: ComponentSpec, set: ActionSet | undefi
   };
 }
 
-/** The components a catalog has: HX's, plus ActionButton when it has actions. */
-export function componentsOf(set?: ActionSet): Record<string, ComponentSpec> {
-  return set && set.actions.length ? { ...COMPONENTS, ActionButton: ACTION_BUTTON } : { ...COMPONENTS };
+/** The components a catalog has: HX's, plus ActionButton when it has actions, plus the app's own. */
+export function componentsOf(set?: ActionSet, local: Readonly<Record<string, ComponentSpec>> = {}): Record<string, ComponentSpec> {
+  return { ...COMPONENTS, ...(set && set.actions.length ? { ActionButton: ACTION_BUTTON } : {}), ...local };
 }
 
 export interface CatalogOptions {
   /** The app's catalog id, under a domain the app owns. Default: HX's id, or for a set a placeholder under ui.ouroboros.bot/a2ui/v1/apps/. */
   catalogId?: string;
+  /**
+   * The app's own components, beyond HX's: a name, a line for the agent and typed props (`localComponentProblems`).
+   * The app draws each with a renderer it registers; no local component can hold an action, an input or a binding.
+   */
+  components?: Readonly<Record<string, ComponentSpec>>;
 }
 
 /** Ouro HX's A2UI v1.0 catalog; with an action set, the app's catalog, whose ActionButton names exactly its actions. */
 export function catalog(set?: ActionSet, options: CatalogOptions = {}): Obj {
   const id = options.catalogId ?? (set ? `https://ui.ouroboros.bot/a2ui/v1/apps/${set.name}/catalog.json` : HX_CATALOG_ID);
-  const comps = componentsOf(set);
+  const local = options.components ?? {};
+  const bad = localComponentProblems(local);
+  if (bad.length) throw new Error(`The app's own components: ${bad.join(" ")}`);
+  const comps = componentsOf(set, local);
   const components: Obj = {};
   for (const [name, c] of Object.entries(comps)) components[name] = componentSchema(name, c, set);
   const actions: Obj = {};
@@ -111,7 +119,7 @@ export function catalog(set?: ActionSet, options: CatalogOptions = {}): Obj {
     description: set ? `Ouro HX's components, and a button for each of the ${set.name} actions.` : "Ouro HX's components for UI an agent composes for a person.",
     catalogId: id,
     instructions: INSTRUCTIONS,
-    metadata: { extensions: { [EXTENSION]: { generator: `ouro-a2ui ${ACTIONS_VERSION}`, ...(set ? { set: set.name, actions } : {}) } } },
+    metadata: { extensions: { [EXTENSION]: { generator: `ouro-a2ui ${ACTIONS_VERSION}`, ...(set ? { set: set.name, actions } : {}), ...(Object.keys(local).length ? { components: local as unknown as Json } : {}) } } },
     components,
     functions: {},
     $defs: {
@@ -144,10 +152,11 @@ export const renderCatalog = (set?: ActionSet, options?: CatalogOptions) => json
 // The command line
 // ---------------------------------------------------------------------------------------------------------------
 
-async function loadSet(path: string): Promise<ActionSet> {
-  const mod = (await import(pathToFileURL(resolve(path)).href)) as { default?: ActionSet };
+/** The actions file's set, and its optional named export `components`: the app's own components (`localComponentProblems`). */
+async function loadSet(path: string): Promise<{ set: ActionSet; components: Record<string, ComponentSpec> }> {
+  const mod = (await import(pathToFileURL(resolve(path)).href)) as { default?: ActionSet; components?: Record<string, ComponentSpec> };
   if (!mod.default || !Array.isArray(mod.default.actions)) throw new Error(`${path}: has no default export from defineActions. Fix: export default defineActions("<name>", [ ... ]).`);
-  return mod.default;
+  return { set: mod.default, components: mod.components ?? {} };
 }
 
 const USAGE = "usage: node ouro-a2ui-catalog.mts catalog|check [<actions.mts>] <catalog.json> [--id <catalogId>] | validate <catalog.json> <messages.json>";
@@ -169,9 +178,10 @@ export async function main(argv: readonly string[], io: { out(s: string): void; 
     return 0;
   }
   if ((cmd === "catalog" || cmd === "check") && (rest.length === 1 || rest.length === 2)) {
-    const set = rest.length === 2 ? await loadSet(rest[0]!) : undefined;
+    const loaded = rest.length === 2 ? await loadSet(rest[0]!) : undefined;
+    const set = loaded?.set;
     const target = rest[rest.length - 1]!;
-    const text = renderCatalog(set, catalogId ? { catalogId } : {});
+    const text = renderCatalog(set, { ...(catalogId ? { catalogId } : {}), ...(loaded ? { components: loaded.components } : {}) });
     if (cmd === "catalog") {
       await writeFile(target, text);
       io.out(`ouro-a2ui-catalog: wrote the catalog to ${target}.\n`);

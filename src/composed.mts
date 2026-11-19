@@ -197,9 +197,48 @@ export interface Catalog {
   actions: Record<string, CatalogAction>;
 }
 
-/** HX's components, plus ActionButton when the catalog has actions. A catalog can't widen HX's specs. */
-export const componentsFor = (actions: Readonly<Record<string, CatalogAction>>): Record<string, ComponentSpec> =>
-  Object.keys(actions).length ? { ...COMPONENTS, ActionButton: ACTION_BUTTON } : { ...COMPONENTS };
+/**
+ * HX's components, plus ActionButton when the catalog has actions, plus the app's own `local` components. A catalog
+ * can't widen or replace HX's specs: a local component has a name HX doesn't (`localComponentProblems`).
+ */
+export const componentsFor = (actions: Readonly<Record<string, CatalogAction>>, local: Readonly<Record<string, ComponentSpec>> = {}): Record<string, ComponentSpec> => ({
+  ...COMPONENTS,
+  ...(Object.keys(actions).length ? { ActionButton: ACTION_BUTTON } : {}),
+  ...local,
+});
+
+const LOCAL_KINDS = ["string", "strings", "children", "enum", "boolean", "level", "terms"];
+
+/**
+ * Why an app's own components can't join its catalog, or an empty list when they can. A local component is data, a
+ * name, a line for the agent and typed props; it draws with a renderer the app registers, so it can't hold an action,
+ * an input or a data binding, which are what carry consent, and it can't take HX's name.
+ */
+export function localComponentProblems(local: unknown): string[] {
+  if (!isObj(local)) return ["components is an object of { name: spec }."];
+  const problems: string[] = [];
+  for (const [name, spec] of Object.entries(local)) {
+    const at = `component ${name}`;
+    if (!/^[A-Z][A-Za-z0-9]*$/.test(name)) problems.push(`${at}: a name starts with a capital letter and holds letters and digits.`);
+    if (Object.hasOwn(COMPONENTS, name) || name === "ActionButton") problems.push(`${at}: ${name} is Ouro HX's. Fix: give your own component another name, such as App${name}.`);
+    if (!isObj(spec) || typeof spec.description !== "string" || !spec.description || !isObj(spec.props)) {
+      problems.push(`${at}: is { description, props }.`);
+      continue;
+    }
+    for (const [key, prop] of Object.entries(spec.props)) {
+      if (!/^[a-z][A-Za-z0-9]*$/.test(key) || key in Object.prototype) {
+        problems.push(`${at}: prop ${key} starts with a lower-case letter, holds letters and digits, and isn't a built-in such as constructor or toString.`);
+        continue;
+      }
+      const t = isObj(prop) && isObj(prop.type) ? prop.type : undefined;
+      if (!isObj(prop) || typeof prop.description !== "string" || !t || typeof t.kind !== "string") problems.push(`${at}: prop ${key} is { description, type: { kind } }.`);
+      else if (!LOCAL_KINDS.includes(t.kind)) problems.push(`${at}: prop ${key} is ${t.kind}; a local component's props are ${LOCAL_KINDS.join(", ")}.`);
+      else if (t.kind === "enum" && !(Array.isArray(t.values) && t.values.length > 0 && t.values.every((v) => typeof v === "string") && t.values.includes(t.default as string))) problems.push(`${at}: prop ${key} is an enum with values and a default among them.`);
+      else if ((t.kind === "boolean" && typeof t.default !== "boolean") || (t.kind === "level" && ![1, 2, 3].includes(t.default as number))) problems.push(`${at}: prop ${key} needs its default.`);
+    }
+  }
+  return problems;
+}
 
 /** Why an agent can't press a button through the screen, whatever the format asked: agents use their own doors. */
 export function agentPressProblem(cat: Catalog, name: unknown): { message: string; refusal?: Refusal } {

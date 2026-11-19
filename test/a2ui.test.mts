@@ -11,6 +11,7 @@ import {
   functionCallProblem,
   HX_CATALOG_ID,
   loadCatalog,
+  localComponentProblems,
   MCP_APP_MIME,
   mcpAppResource,
   mcpAppToolMeta,
@@ -260,4 +261,34 @@ test("a run button has no confirm sheet, so nothing asks the resolver", () => {
   const stream = create([{ id: "root", component: "ActionButton", action: "get_recipe", input: { recipe: "rcp_1" } }]);
   const out = resolveMessages(app, stream, { label: () => { throw new Error("asked"); } }) as { surfaces: Record<string, Resolved> };
   assert.equal((out.surfaces.s!.props as { confirm?: unknown }).confirm, undefined);
+});
+
+const wine = { WineCard: { description: "A wine with its vintage.", props: { name: { description: "Its name.", type: { kind: "string" }, required: true }, tone: { description: "Its mood.", type: { kind: "enum", values: ["red", "white"], default: "red" } } } } };
+
+test("an app's own components join its catalog, validate as HX's do, and a hand-edited catalog still can't widen HX's", () => {
+  const own = JSON.parse(renderCatalog(recipe, { components: wine as never }));
+  assert.ok(own.components.WineCard);
+  assert.equal(loadCatalog(own).components.WineCard!.description, wine.WineCard.description);
+  const messages = [{ version: "1.0", createSurface: { surfaceId: "s", catalogId: own.catalogId, components: [{ id: "root", component: "WineCard", name: "Syrah", tone: "white" }] } }];
+  assert.deepEqual(validateMessages(own, messages), []);
+  const bad = [{ ...messages[0]!, createSurface: { ...messages[0]!.createSurface, components: [{ id: "root", component: "WineCard", name: "Syrah", tone: "pink" }] } }];
+  assert.ok(validateMessages(own, bad).length > 0);
+  const resolved = resolveMessages(own, messages) as { surfaces: Record<string, Resolved | null> };
+  assert.equal(resolved.surfaces.s!.component, "WineCard");
+  const forged = structuredClone(own);
+  forged.components.Evil = {};
+  assert.throws(() => loadCatalog(forged), /component Evil is not Ouro HX's, and the catalog doesn't declare it/);
+});
+
+test("a local component can't take HX's name, hold an action, an input or a path, or lack a description", () => {
+  assert.match(localComponentProblems({ Card: wine.WineCard }).join(), /Card is Ouro HX's/);
+  assert.match(localComponentProblems({ ActionButton: wine.WineCard }).join(), /ActionButton is Ouro HX's/);
+  assert.match(localComponentProblems({ wine: wine.WineCard }).join(), /starts with a capital/);
+  const withKind = (kind: string) => ({ X: { description: "d", props: { p: { description: "d", type: { kind } } } } });
+  for (const kind of ["action", "input", "path"]) assert.match(localComponentProblems(withKind(kind)).join(), new RegExp(`prop p is ${kind}`));
+  assert.match(localComponentProblems({ X: { props: {} } }).join(), /is \{ description, props \}/);
+  assert.match(localComponentProblems({ X: { description: "d", props: { p: { description: "d", type: { kind: "enum", values: ["a"], default: "b" } } } } }).join(), /enum with values and a default/);
+  for (const key of ["constructor", "toString", "__proto__", "Name"]) assert.match(localComponentProblems({ X: { description: "d", props: JSON.parse(`{"${key}":{"description":"d","type":{"kind":"string"}}}`) } }).join(), /starts with a lower-case letter/);
+  assert.throws(() => renderCatalog(recipe, { components: { Card: wine.WineCard } as never }), /Card is Ouro HX's/);
+  assert.deepEqual(localComponentProblems(wine), []);
 });
