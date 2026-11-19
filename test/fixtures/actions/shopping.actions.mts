@@ -10,8 +10,9 @@ export const getShoppingList = defineAction({
   agent: "Read the person's shopping list: each item's id, name, quantity, unit and whether it is checked.",
   input: {
     show: field.enum({ label: "Show", description: "Which items to list; all of them when left out.", values: ["all", "unchecked"], optional: true }),
-    sort: field.enum({ label: "Sort", description: "How to order the items: the order they were added when left out.", values: ["added", "name"], optional: true, arg: true }),
+    sort: field.enum({ label: "Sort", description: "How to order the items.", values: ["added", "name"], optional: true, arg: true, default: "added" }),
     store: field.string({ label: "Store", description: "Only the items for this store, by its name; every store when left out.", optional: true, arg: true }),
+    limit: field.number({ label: "Limit", description: "The most items to list.", optional: true, min: 1, max: 100, default: 50 }),
   },
   output: {
     items: field.string({ label: "Items", description: "The list's items, as JSON.", returned: true }),
