@@ -1,0 +1,73 @@
+[
+  {
+    "name": "pearl",
+    "label": "Pearl",
+    "mood": "Clean white, soft glass and one clear blue",
+    "heading": "Geist",
+    "radius": "1.125rem",
+    "fonts": [
+      "Geist",
+      "Geist Mono"
+    ]
+  },
+  {
+    "name": "abyss",
+    "label": "Abyss",
+    "mood": "Pale aqua, then a cyan glow in the dark",
+    "heading": "Space Grotesk",
+    "radius": "1rem",
+    "fonts": [
+      "Geist",
+      "Geist Mono",
+      "Space Grotesk"
+    ]
+  },
+  {
+    "name": "brass",
+    "label": "Brass",
+    "mood": "Ivory, walnut and polished brass",
+    "heading": "Cormorant Garamond",
+    "radius": "0.25rem",
+    "fonts": [
+      "Geist",
+      "Geist Mono",
+      "Cormorant Garamond"
+    ]
+  },
+  {
+    "name": "chart",
+    "label": "Chart",
+    "mood": "Parchment and ink, like a sea chart",
+    "heading": "Chart Fell",
+    "radius": "0.125rem",
+    "fonts": [
+      "Geist",
+      "Geist Mono",
+      "Chart Fell"
+    ]
+  },
+  {
+    "name": "coral",
+    "label": "Coral",
+    "mood": "Warm sand, kelp and coral",
+    "heading": "Nunito",
+    "radius": "1.25rem",
+    "fonts": [
+      "Geist",
+      "Geist Mono",
+      "Nunito"
+    ]
+  },
+  {
+    "name": "cookbook",
+    "label": "Cookbook",
+    "mood": "Spoonjoy's own look, synced from the app",
+    "heading": "Fraunces",
+    "radius": "0.375rem",
+    "fonts": [
+      "Geist",
+      "Geist Mono",
+      "Fraunces"
+    ]
+  }
+]
