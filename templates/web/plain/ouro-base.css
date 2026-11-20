@@ -31,8 +31,8 @@
   --color-success-foreground: {{color-success-foreground}};
   --color-warning: {{color-warning}};
   --color-warning-foreground: {{color-warning-foreground}};
-  --input: {{shadcn.input}};
-  --radius: {{shadcn.radius}};
+  --input: {{defaults.shadcn.input}};
+  --radius: {{defaults.shadcn.radius}};
   --ouro-corner-shape: {{ouro.corner-shape}};
   --ouro-radius-scale: {{ouro.radius-scale}};
   --ouro-corner-fallback: {{ouro.corner-fallback}};
@@ -73,10 +73,28 @@
   --ouro-glass-rim: {{ouro.glass-rim}};
   --ouro-glass-edge: {{ouro.glass-edge}};
   --ouro-glass-solid: {{ouro.glass-solid}};
+  --ouro-row-radius: {{ouro.row-radius}};
+  --ouro-row-hover: {{defaults.ouro.row-hover}};
+  --ouro-row-pressed: {{defaults.ouro.row-pressed}};
+  --ouro-row-selected: {{defaults.ouro.row-selected}};
+  --ouro-row-selected-hover: {{defaults.ouro.row-selected-hover}};
+  --ouro-row-selected-pressed: {{defaults.ouro.row-selected-pressed}};
+  --ouro-row-hover-shadow: {{defaults.ouro.row-hover-shadow}};
+  --ouro-state-hover: {{ouro.state-hover}};
+  --ouro-state-pressed: {{ouro.state-pressed}};
 }
 
 .dark {
-  --input: {{shadcn.input@dark}};
+  --ouro-row-radius: {{ouro.row-radius@dark}};
+  --ouro-row-hover: {{defaults.ouro.row-hover@dark}};
+  --ouro-row-pressed: {{defaults.ouro.row-pressed@dark}};
+  --ouro-row-selected: {{defaults.ouro.row-selected@dark}};
+  --ouro-row-selected-hover: {{defaults.ouro.row-selected-hover@dark}};
+  --ouro-row-selected-pressed: {{defaults.ouro.row-selected-pressed@dark}};
+  --ouro-row-hover-shadow: {{defaults.ouro.row-hover-shadow@dark}};
+  --ouro-state-hover: {{ouro.state-hover@dark}};
+  --ouro-state-pressed: {{ouro.state-pressed@dark}};
+  --input: {{defaults.shadcn.input@dark}};
   --destructive-foreground: {{destructive-foreground@dark}};
   --success: {{success@dark}};
   --success-foreground: {{success-foreground@dark}};
@@ -99,7 +117,16 @@
 
 @media (prefers-color-scheme: dark) {
   :root:where(:not(.light, .dark)) {
-    --input: {{shadcn.input@dark}};
+    --ouro-row-radius: {{ouro.row-radius@dark}};
+    --ouro-row-hover: {{defaults.ouro.row-hover@dark}};
+    --ouro-row-pressed: {{defaults.ouro.row-pressed@dark}};
+    --ouro-row-selected: {{defaults.ouro.row-selected@dark}};
+    --ouro-row-selected-hover: {{defaults.ouro.row-selected-hover@dark}};
+    --ouro-row-selected-pressed: {{defaults.ouro.row-selected-pressed@dark}};
+    --ouro-row-hover-shadow: {{defaults.ouro.row-hover-shadow@dark}};
+    --ouro-state-hover: {{ouro.state-hover@dark}};
+    --ouro-state-pressed: {{ouro.state-pressed@dark}};
+    --input: {{defaults.shadcn.input@dark}};
     --destructive-foreground: {{destructive-foreground@dark}};
     --success: {{success@dark}};
     --success-foreground: {{success-foreground@dark}};
