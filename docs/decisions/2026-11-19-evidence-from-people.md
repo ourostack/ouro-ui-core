@@ -1,6 +1,6 @@
 # Proposal: what Ouro's checks prove, and how an agent gets evidence from people
 
-Status: proposed, 2026-11-19, for Ari's decision. Nothing here is built until he decides. It answers two findings of the [model interviews](2026-11-19-model-interviews.md): [ourostack/ouro-ui#2289](https://github.com/ourostack/ouro-ui/issues/2289) and [ourostack/ouro-ui#2290](https://github.com/ourostack/ouro-ui/issues/2290).
+Status: decided 2026-11-19. The coordinator made the three calls below; layers 1 and 2 ship first, then layer 3. It answers two findings of the [model interviews](2026-11-19-model-interviews.md): [ourostack/ouro-ui#2289](https://github.com/ourostack/ouro-ui/issues/2289) and [ourostack/ouro-ui#2290](https://github.com/ourostack/ouro-ui/issues/2290).
 
 ## Why
 
@@ -39,18 +39,20 @@ Ouro components know their meaning, so they can count the moments that mean a pe
 - **Off by default.** The app turns it on, and sends the counts where it chooses: its own endpoint, or OpenTelemetry. Ouro runs no collector.
 - **An agent reads them to rank what to fix,** and Ouro check shows the screen's counts beside its findings.
 
-This layer is a product and privacy call, and it is Ari's.
+This layer is a product and privacy call, decided 2026-11-19 as written here.
 
 ### What Ouro won't do
 
 - **Agents standing in for people.** Every model said it knows its own labels too well to judge them; a panel of agents is a review, not evidence from people.
 - **Recording what people see or type.** Session replay captures content. A counts-only record answers the same "where did they get lost" question without it.
 
-## What Ari decides
+## Decided 2026-11-19
 
-1. Whether layer 3 exists at all, and its privacy stance: counts only, off by default, no Ouro collector, as proposed.
-2. Whether the handoff (layer 2) is part of Ouro check or a kit of its own.
-3. Whether "the floor" is the word Ouro uses for what its checks prove.
+The coordinator's calls, as decided:
+
+1. **The word is "floor".** Ouro says its checks prove the mechanical floor, and names what they can't see.
+2. **The handoff is part of Ouro check.** It is `ouro check --handoff`, not a kit of its own.
+3. **Layer 3 exists exactly as proposed.** Counts only, off by default, no Ouro collector, no content, no identifiers. It is built after layers 1 and 2 ship.
 
 ## How we'll know
 
