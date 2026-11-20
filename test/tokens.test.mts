@@ -50,7 +50,8 @@ test("each colour's CSS text and its DTCG value agree, per theme and mode", asyn
     // --input means Ouro's `input`; shadcn's stock value only fills in for an app with no theme.
     const byCss = new Map([...tokens.keys()].filter((id) => !id.startsWith("shadcn.")).map((id) => [pathToCssName(id.split(".")), id]));
     for (const [id, token] of tokens) {
-      if (token.$type !== "color") continue;
+      // A default mixes the app's own variables, so its value is whatever the theme in use makes of them.
+      if (token.$type !== "color" || id.startsWith("defaults.")) continue;
       for (const mode of ["light", "dark"] as const) {
         const lookup = (name: string) => (byCss.has(name) ? cssText(tokens, byCss.get(name)!, mode) : undefined);
         const fromCss = evaluateColor(cssText(tokens, id, mode), lookup);

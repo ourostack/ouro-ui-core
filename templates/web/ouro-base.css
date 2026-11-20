@@ -19,6 +19,9 @@
  *   theme sets them to give its controls their own shape, such as capsules (9999px and round) on a
  *   page of square cards. --ouro-check-radius and --ouro-check-corner-shape do the same for the
  *   checkbox's box (Checkbox and Checklist), such as circles (9999px and round).
+ * - --ouro-bubble-user and --ouro-bubble-user-foreground: the fill and text of the user's own chat
+ *   bubble (Message), which read them before --ouro-action and the primary color. Unset by default,
+ *   so the bubble follows the action color; set both as a pair that passes 4.5:1.
  * - --ouro-layer: the z-index of sheet and dialog portals.
  * - The root type on a very wide screen: 112.5% from 150rem and 125% from 200rem, so a 4K display
  *   at 1x reads at a laptop's size.
@@ -71,8 +74,8 @@
 }
 
 :root {
-  --input: {{shadcn.input}};
-  --radius: {{shadcn.radius}};
+  --input: {{defaults.shadcn.input}};
+  --radius: {{defaults.shadcn.radius}};
   --ouro-corner-shape: {{ouro.corner-shape}};
   --ouro-radius-scale: {{ouro.radius-scale}};
   --ouro-corner-fallback: {{ouro.corner-fallback}};
@@ -123,10 +126,28 @@
   --ouro-glass-rim: {{ouro.glass-rim}};
   --ouro-glass-edge: {{ouro.glass-edge}};
   --ouro-glass-solid: {{ouro.glass-solid}};
+  --ouro-row-radius: {{ouro.row-radius}};
+  --ouro-row-hover: {{defaults.ouro.row-hover}};
+  --ouro-row-pressed: {{defaults.ouro.row-pressed}};
+  --ouro-row-selected: {{defaults.ouro.row-selected}};
+  --ouro-row-selected-hover: {{defaults.ouro.row-selected-hover}};
+  --ouro-row-selected-pressed: {{defaults.ouro.row-selected-pressed}};
+  --ouro-row-hover-shadow: {{defaults.ouro.row-hover-shadow}};
+  --ouro-state-hover: {{ouro.state-hover}};
+  --ouro-state-pressed: {{ouro.state-pressed}};
 }
 
 .dark {
-  --input: {{shadcn.input@dark}};
+  --ouro-row-radius: {{ouro.row-radius@dark}};
+  --ouro-row-hover: {{defaults.ouro.row-hover@dark}};
+  --ouro-row-pressed: {{defaults.ouro.row-pressed@dark}};
+  --ouro-row-selected: {{defaults.ouro.row-selected@dark}};
+  --ouro-row-selected-hover: {{defaults.ouro.row-selected-hover@dark}};
+  --ouro-row-selected-pressed: {{defaults.ouro.row-selected-pressed@dark}};
+  --ouro-row-hover-shadow: {{defaults.ouro.row-hover-shadow@dark}};
+  --ouro-state-hover: {{ouro.state-hover@dark}};
+  --ouro-state-pressed: {{ouro.state-pressed@dark}};
+  --input: {{defaults.shadcn.input@dark}};
   --destructive-foreground: {{destructive-foreground@dark}};
   --success: {{success@dark}};
   --success-foreground: {{success-foreground@dark}};

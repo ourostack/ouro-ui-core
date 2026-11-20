@@ -38,6 +38,15 @@
   --sidebar-accent-foreground: {{sidebar-accent-foreground}};
   --sidebar-border: {{sidebar-border}};
   --sidebar-ring: {{sidebar-ring}};
+  --ouro-row-radius: {{ouro.row-radius}};
+  --ouro-row-hover: {{ouro.row-hover}};
+  --ouro-row-pressed: {{ouro.row-pressed}};
+  --ouro-row-selected: {{ouro.row-selected}};
+  --ouro-row-selected-hover: {{ouro.row-selected-hover}};
+  --ouro-row-selected-pressed: {{ouro.row-selected-pressed}};
+  --ouro-row-hover-shadow: {{ouro.row-hover-shadow}};
+  --ouro-state-hover: {{ouro.state-hover}};
+  --ouro-state-pressed: {{ouro.state-pressed}};
 }
 
 .dark {
@@ -72,4 +81,12 @@
   --sidebar-accent-foreground: {{sidebar-accent-foreground@dark}};
   --sidebar-border: {{sidebar-border@dark}};
   --sidebar-ring: {{sidebar-ring@dark}};
+  --ouro-row-hover: {{ouro.row-hover@dark}};
+  --ouro-row-pressed: {{ouro.row-pressed@dark}};
+  --ouro-row-selected: {{ouro.row-selected@dark}};
+  --ouro-row-selected-hover: {{ouro.row-selected-hover@dark}};
+  --ouro-row-selected-pressed: {{ouro.row-selected-pressed@dark}};
+  --ouro-row-hover-shadow: {{ouro.row-hover-shadow@dark}};
+  --ouro-state-hover: {{ouro.state-hover@dark}};
+  --ouro-state-pressed: {{ouro.state-pressed@dark}};
 }

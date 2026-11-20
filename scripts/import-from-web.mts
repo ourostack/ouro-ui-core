@@ -58,8 +58,30 @@ for (const [dist, webPath] of Object.entries(parity.files)) {
 }
 
 /** ouro-base.css writes shadcn's stock --input and --radius, which are not Ouro's own. */
-const idFor = (source: Source, name: string) =>
-  cssNameToPath(name, { shadcn: !source.theme && /ouro-base\.css$/.test(source.webPath) && (name === "--input" || name === "--radius") }).join(".");
+const isBaseFile = (source: Source) => !source.theme && /ouro-base\.css$/.test(source.webPath);
+
+// ouro-base.css writes a default, derived from shadcn's variables, for a token ouro-theme.css then
+// sets to Ouro's own value (the hover and selected tokens). Core keeps both: the theme's value is the
+// token and the base's is the same name under `defaults`, so each file still renders byte for byte.
+const themeValues = new Map<string, string>();
+for (const source of sources) {
+  if (source.theme || isBaseFile(source)) continue;
+  for (const d of readDeclarations(source.css).declarations) themeValues.set(`${d.mode}:${d.name}`, d.value);
+}
+const hasDefault = (name: string, mode: string, value: string) => {
+  const theirs = themeValues.get(`${mode}:${name}`);
+  return theirs !== undefined && theirs !== value;
+};
+const defaulted = new Set<string>();
+for (const source of sources) {
+  if (!isBaseFile(source)) continue;
+  for (const d of readDeclarations(source.css).declarations) if (hasDefault(d.name, d.mode, d.value)) defaulted.add(d.name);
+}
+
+const idFor = (source: Source, name: string) => {
+  const id = cssNameToPath(name, { shadcn: isBaseFile(source) && (name === "--input" || name === "--radius") }).join(".");
+  return isBaseFile(source) && defaulted.has(name) ? `defaults.${id}` : id;
+};
 
 // 1. Every declaration, per context: the base set (ouro-theme and ouro-base, both spellings) and each theme.
 const base: State = new Map();
