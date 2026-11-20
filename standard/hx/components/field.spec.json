@@ -1,0 +1,134 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "field",
+  "version": "1.0.0",
+  "summary": "A form control with its label, description and error wired to it, in that order.",
+  "role": "group",
+  "properties": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "What the control is for, shown above it and its spoken name."
+    },
+    {
+      "name": "hideLabel",
+      "type": "boolean",
+      "default": false,
+      "description": "Hides the label's words; the control keeps it as its name."
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "description": "Supporting words under the label, read after the name."
+    },
+    {
+      "name": "error",
+      "type": "string",
+      "description": "What is wrong, shown under the control in the destructive colour; the control is invalid while it has one."
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "The control must be filled; the label gets a marker and the control's name says required."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "description": "The control can't be used, and the field fades."
+    }
+  ],
+  "slots": [
+    {
+      "name": "control",
+      "description": "The one control the field names: a text field, a select or any other focusable control."
+    }
+  ],
+  "events": [],
+  "states": [
+    {
+      "name": "rest",
+      "description": "Label, description, control and error in that order, 8 points apart."
+    },
+    {
+      "name": "disabled",
+      "description": "Faded."
+    }
+  ],
+  "tokens": {
+    "label": "foreground",
+    "description": "muted-foreground",
+    "marker": "destructive",
+    "error": "destructive"
+  },
+  "metrics": {
+    "gap": 8
+  },
+  "claims": [
+    "contrast.text",
+    "name.spoken",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "The label names the control, with required when it is; the error, then the description, are the control's help text.",
+    "keyboard": "Adds no tab stop: focus goes to the control, and pressing the label focuses it.",
+    "web": "A <label> for the control, aria-describedby for the description and error, aria-invalid with an error, aria-required with required.",
+    "apple": "The control is named by the label (\", required\") with the error and description as its hint; the words drawn around it are hidden so nothing is read twice.",
+    "windows": "The control's LabeledBy is the label, HelpText its error then its description, IsRequiredForForm with required; the field adds no element of its own.",
+    "android": "The control's semantics carry the label as its name (\", required\"), and its error then its description as its state description; the words drawn around it are cleared so nothing is read twice."
+  },
+  "cases": [
+    {
+      "id": "email",
+      "props": {
+        "label": "Email",
+        "required": true,
+        "description": "We never share it."
+      },
+      "slots": {
+        "control": "A text box"
+      },
+      "person": "An Email label with a red marker, the line \"We never share it.\" under it and an empty box.",
+      "agent": {
+        "role": "textbox",
+        "name": "Email, required",
+        "focusable": true
+      }
+    },
+    {
+      "id": "with-error",
+      "props": {
+        "label": "Email",
+        "error": "Enter an email address."
+      },
+      "slots": {
+        "control": "A text box"
+      },
+      "person": "An Email label, a box with a red edge and the error under it.",
+      "agent": {
+        "role": "textbox",
+        "name": "Email",
+        "focusable": true
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "Field (registry/ouro/components/ouro/field)",
+      "deviations": [
+        "Inside a Form a field with a name shows the form's error for it; native kits have no Form. FieldDescription after the control and Fieldset for a group of controls are web parts."
+      ]
+    },
+    "apple": {
+      "type": "OuroField (not yet built)"
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroField (not yet built)"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroField (not yet built)"
+    }
+  }
+}

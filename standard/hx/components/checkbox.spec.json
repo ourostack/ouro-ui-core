@@ -1,7 +1,7 @@
 {
   "$schema": "./component.schema.json",
   "name": "checkbox",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "summary": "A box and what checking it means: checked, not checked, or mixed.",
   "role": "control",
   "properties": [
@@ -104,7 +104,8 @@
     "keyboard": "One tab stop; Space toggles it.",
     "web": "A role=\"checkbox\" with aria-checked (true, false or mixed), named by its label, aria-describedby for the description and error.",
     "apple": "One element with the toggle trait, named by its label (\", required\"), its value Checked, Not checked or Mixed, its hint the error then the description.",
-    "windows": "UI Automation ControlType.CheckBox with the Toggle pattern (On, Off, Indeterminate), named by its label."
+    "windows": "UI Automation ControlType.CheckBox with the Toggle pattern (On, Off, Indeterminate), named by its label.",
+    "android": "Role.Checkbox with the toggleable state (On, Off, Indeterminate) and a click action, named by its label (\", required\"); its error is the error semantics and its description is read after the state, which stays Checked, Not checked or Mixed."
   },
   "cases": [
     {
@@ -149,6 +150,12 @@
     },
     "windows": {
       "type": "Ouro.UI.Windows.OuroCheckbox (not yet built)"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroCheckbox (not yet built)",
+      "deviations": [
+        "No readOnly, form name or value, or group yet."
+      ]
     }
   }
 }

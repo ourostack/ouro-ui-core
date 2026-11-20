@@ -1,0 +1,181 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "select",
+  "version": "1.0.0",
+  "summary": "A labelled list of choices of which one is chosen, opened from a button that shows the choice.",
+  "role": "control",
+  "properties": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "What the choice is for, shown above it and its spoken name."
+    },
+    {
+      "name": "hideLabel",
+      "type": "boolean",
+      "default": false,
+      "description": "Hides the label's words; the select keeps it as its name."
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "description": "The value of the chosen option; none until one is chosen."
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "description": "Shown in the button while nothing is chosen. It is never the name."
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "description": "Supporting words under the label, read after the name."
+    },
+    {
+      "name": "error",
+      "type": "string",
+      "description": "What is wrong; the button's edge turns destructive."
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "A choice is required; the label gets a marker and the name says required."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "description": "Can't be opened, and fades."
+    }
+  ],
+  "slots": [
+    {
+      "name": "options",
+      "description": "The choices, each a value and the words that name it."
+    }
+  ],
+  "events": [
+    {
+      "name": "press",
+      "description": "The button is pressed and the list opens."
+    },
+    {
+      "name": "change",
+      "description": "An option was chosen."
+    }
+  ],
+  "states": [
+    {
+      "name": "rest",
+      "description": "An edge at 3:1 on the page, the chosen words or the placeholder, and a chevron."
+    },
+    {
+      "name": "pressed",
+      "description": "The button takes the accent fill while pressed; it never scales."
+    },
+    {
+      "name": "focused",
+      "description": "The ring colour, twice as thick."
+    },
+    {
+      "name": "disabled",
+      "description": "Faded."
+    }
+  ],
+  "tokens": {
+    "label": "foreground",
+    "text": "foreground",
+    "placeholder": "muted-foreground",
+    "description": "muted-foreground",
+    "error": "destructive",
+    "edge": "input",
+    "focus": "ring",
+    "list": "popover",
+    "listText": "popover-foreground",
+    "highlight": "accent"
+  },
+  "metrics": {
+    "minHeight": 44,
+    "optionMinHeightTouch": 44,
+    "paddingX": 12,
+    "edgeContrast": 3
+  },
+  "claims": [
+    "contrast.text",
+    "motion.reduced",
+    "name.spoken",
+    "target.touch",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "Its label, with required when it is; its value, the chosen words or none; then its error and description.",
+    "keyboard": "One tab stop for the button; Space, Enter or Down opens the list, arrows move through it, Enter chooses and Escape closes it and returns focus to the button.",
+    "web": "A <div> trigger with role=\"combobox\", aria-haspopup=\"listbox\", aria-expanded and aria-labelledby the label, whose list is a role=\"listbox\" of role=\"option\" elements with aria-selected; aria-describedby for the description and error. The cases say button only because a case's agent role has no combobox.",
+    "apple": "A Menu or Picker named by its label (\", required\"), its value the chosen words, its hint the error then the description.",
+    "windows": "UI Automation ControlType.ComboBox with the ExpandCollapse and Value patterns, named by its label, help text its error then its description; the list items are ControlType.ListItem with SelectionItem.",
+    "android": "Role.DropdownList with an expand action, named by its label (\", required\"), its state description the chosen words, its error then its description after it; the options are menu items with the selected state."
+  },
+  "cases": [
+    {
+      "id": "course",
+      "props": {
+        "label": "Course",
+        "placeholder": "Choose a course",
+        "required": true
+      },
+      "slots": {
+        "options": "Starter, Main"
+      },
+      "person": "A Course label with a red marker and a button that says \"Choose a course\" with a chevron.",
+      "agent": {
+        "role": "button",
+        "name": "Course, required",
+        "focusable": true
+      }
+    },
+    {
+      "id": "chosen-with-error",
+      "props": {
+        "label": "Course",
+        "value": "main",
+        "error": "Main is full."
+      },
+      "slots": {
+        "options": "Starter, Main"
+      },
+      "person": "A button that says \"Main\" with a red edge and the error under it.",
+      "agent": {
+        "role": "button",
+        "name": "Course",
+        "focusable": true
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "Select (registry/ouro/components/ouro/select)",
+      "deviations": [
+        "multiple, option groups, readOnly, name and form for forms, and a bottom sheet for the list on a phone."
+      ]
+    },
+    "apple": {
+      "type": "OuroSelect (not yet built)"
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroSelect (not yet built)",
+      "deviations": [
+        "The list opens as a flyout over the button on every device; there is no bottom sheet on Windows.",
+        "No multiple or option groups yet."
+      ]
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroSelect (not yet built)",
+      "deviations": [
+        "The list opens as a dropdown menu from the button, as Material's exposed dropdown does, not as a bottom sheet.",
+        "No multiple or option groups yet."
+      ]
+    }
+  }
+}

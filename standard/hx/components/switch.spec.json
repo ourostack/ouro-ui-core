@@ -1,0 +1,150 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "switch",
+  "version": "1.0.0",
+  "summary": "A labelled on/off setting that takes effect at once, with its label beside it.",
+  "role": "control",
+  "properties": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "The setting it turns on, beside the switch and its spoken name."
+    },
+    {
+      "name": "hideLabel",
+      "type": "boolean",
+      "default": false,
+      "description": "Hides the label's words; the switch keeps it as its name."
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "description": "Supporting words under the label, read after the name."
+    },
+    {
+      "name": "error",
+      "type": "string",
+      "description": "What is wrong; the switch is invalid while it has one."
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "The switch must be on; the label gets a marker and the name says required."
+    },
+    {
+      "name": "checked",
+      "type": "boolean",
+      "default": false,
+      "description": "Whether it is on."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "description": "Can't be changed, and fades."
+    }
+  ],
+  "slots": [],
+  "events": [
+    {
+      "name": "press",
+      "description": "The row is pressed."
+    },
+    {
+      "name": "change",
+      "description": "The switch was turned on or off."
+    }
+  ],
+  "states": [
+    {
+      "name": "rest",
+      "description": "Off: the muted track inside an edge at 3:1. On: the track filled in the primary colour, so on and off differ by fill and not only by hue."
+    },
+    {
+      "name": "pressed",
+      "description": "The thumb stretches, never under reduced motion."
+    },
+    {
+      "name": "disabled",
+      "description": "Faded."
+    }
+  ],
+  "tokens": {
+    "edge": "muted-foreground",
+    "trackOff": "muted",
+    "trackOn": "primary",
+    "label": "foreground",
+    "description": "muted-foreground",
+    "error": "destructive"
+  },
+  "metrics": {
+    "trackWidthTouch": 40,
+    "trackHeightTouch": 24,
+    "rowMinHeightTouch": 44,
+    "gap": 12,
+    "graphicContrast": 3
+  },
+  "claims": [
+    "contrast.text",
+    "motion.reduced",
+    "name.spoken",
+    "target.touch",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "Its label, with required when it is; its state on or off; then its error and description.",
+    "keyboard": "One tab stop; Space toggles it.",
+    "web": "A role=\"switch\" button with aria-checked, named by its label, aria-describedby for the description and error.",
+    "apple": "One element with the toggle trait, named by its label (\", required\"), its value On or Off, its hint the error then the description.",
+    "windows": "UI Automation ControlType.Button with the Toggle pattern (On, Off), named by its label; WinUI's ToggleSwitch is the same pattern.",
+    "android": "Role.Switch with the toggleable state (On, Off) and a click action, named by its label (\", required\"); its error is the error semantics and its description is read after the state, which stays On or Off."
+  },
+  "cases": [
+    {
+      "id": "wifi",
+      "props": {
+        "label": "Wi-Fi",
+        "checked": true
+      },
+      "person": "A filled track with the thumb at its end, beside \"Wi-Fi\".",
+      "agent": {
+        "role": "checkbox",
+        "name": "Wi-Fi",
+        "focusable": true
+      }
+    },
+    {
+      "id": "backups",
+      "props": {
+        "label": "Nightly backups",
+        "description": "At 2 a.m.",
+        "required": true
+      },
+      "person": "An off switch beside \"Nightly backups\" with a red marker and the line \"At 2 a.m.\" under it.",
+      "agent": {
+        "role": "checkbox",
+        "name": "Nightly backups, required",
+        "focusable": true
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "Switch (registry/ouro/components/ouro/switch)",
+      "deviations": [
+        "readOnly, name and value for forms, and SwitchGroup."
+      ]
+    },
+    "apple": {
+      "type": "OuroSwitch (not yet built)"
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroSwitch (not yet built)"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroSwitch (not yet built)"
+    }
+  }
+}
