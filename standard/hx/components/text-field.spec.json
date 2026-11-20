@@ -1,7 +1,7 @@
 {
   "$schema": "./component.schema.json",
   "name": "text-field",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "summary": "A labelled field for a line of text, such as an email address, a password or a search.",
   "role": "control",
   "properties": [
@@ -146,7 +146,8 @@
     "keyboard": "One tab stop for the input; Clear and Show password are their own.",
     "web": "An <input> with a <label>, aria-describedby for the description and error, aria-invalid with an error.",
     "apple": "SwiftUI's TextField or SecureField, named by its label (\", required\"), with its error and description as its hint; the words drawn around it are hidden so nothing is read twice.",
-    "windows": "UI Automation ControlType.Edit with the Value pattern, named by its label, help text its error then its description."
+    "windows": "UI Automation ControlType.Edit with the Value pattern, named by its label, help text its error then its description.",
+    "android": "A Compose text field with an editable-text role, named by its label (\", required\"), its error then its description as its state description; Clear and Show password are their own buttons."
   },
   "cases": [
     {
@@ -214,6 +215,12 @@
     },
     "windows": {
       "type": "Ouro.UI.Windows.OuroTextField (not yet built)"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroTextField (not yet built)",
+      "deviations": [
+        "No date or time type: Material's date and time pickers are the controls for those."
+      ]
     }
   }
 }

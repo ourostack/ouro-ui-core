@@ -18,7 +18,9 @@
         "tab-bar",
         "sidebar",
         "dialog",
-        "confirm-dialog"
+        "confirm-dialog",
+        "select",
+        "switch"
       ],
       "rule": "On a touch screen, every control a component draws (its button, action, dismiss or close control) can be pressed anywhere in a target at least 44 by 44 points (CSS pixels on web).",
       "why": "A smaller target is missed by people with a tremor or limited dexterity, and by everyone on the move.",
@@ -49,7 +51,9 @@
         "tabs",
         "tab-bar",
         "dialog",
-        "confirm-dialog"
+        "confirm-dialog",
+        "select",
+        "switch"
       ],
       "rule": "With Reduce Motion on, a component animates no movement: no slide, scale, spring or bounce. What would move crossfades instead, over `ouro.duration.base`, and a press does not scale. A drag may still follow the finger, since the person is moving it.",
       "why": "Movement across the screen can make people with vestibular disorders dizzy or sick.",
@@ -92,7 +96,10 @@
         "tab-bar",
         "sidebar",
         "dialog",
-        "confirm-dialog"
+        "confirm-dialog",
+        "select",
+        "switch",
+        "field"
       ],
       "rule": "Every control has a name a screen reader speaks and the role it plays (button, heading); a component's title is a heading; decorative icons are hidden from the screen reader.",
       "why": "A control without a name is announced as \"button\" or skipped, so a blind person cannot tell what it does.",
@@ -130,7 +137,10 @@
         "tab-bar",
         "sidebar",
         "dialog",
-        "confirm-dialog"
+        "confirm-dialog",
+        "select",
+        "switch",
+        "field"
       ],
       "rule": "At the largest text size the platform offers (Apple's accessibility sizes, 200% text on web), titles, messages and action labels wrap onto more lines; none is truncated or clipped.",
       "why": "People who need large text lose the words that tell them what an action does when a label is cut off.",
@@ -170,7 +180,10 @@
         "tab-bar",
         "sidebar",
         "dialog",
-        "confirm-dialog"
+        "confirm-dialog",
+        "select",
+        "switch",
+        "field"
       ],
       "rule": "Text and icons that carry meaning reach 4.5:1 against what is behind them in every theme, light and dark, and 7:1 when the platform's increased-contrast setting is on.",
       "why": "Low-contrast text cannot be read by people with low vision, or by anyone in sunlight.",
