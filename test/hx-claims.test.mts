@@ -53,7 +53,7 @@ test("checkHxClaimSet names each problem with its fix", () => {
     version: "1",
     claims: [
       { ...good, id: "a.one", appliesTo: [] },
-      { ...good, id: "a.two", appliesTo: ["dialog"] },
+      { ...good, id: "a.two", appliesTo: ["carousel"] },
       { ...good, id: "a.three", checks: {} },
       { ...good, id: "a.four", checks: { gtk: "x" } },
       { ...good, id: "a.five", evidence: { basis: "principle", source: "https://x", finding: "" } },
@@ -65,7 +65,7 @@ test("checkHxClaimSet names each problem with its fix", () => {
   const expect = [
     'version is "1". Fix:',
     "a.one: appliesTo is empty. Fix:",
-    'a.two: appliesTo names "dialog". Fix:',
+    'a.two: appliesTo names "carousel". Fix:',
     "a.three: checks is empty. Fix:",
     'a.four: checks names "gtk". Fix:',
     "a.five: a must claim needs an evaluation that shows the failure, or a stated hazard. Fix:",
