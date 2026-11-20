@@ -22,7 +22,7 @@
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { ACTIONS_VERSION, inputSchema, refusal, toMcpTool, type Action, type ActionSet, type Field } from "./actions.mts";
+import { ACTIONS_VERSION, actionText, inputSchema, refusal, toMcpTool, type Action, type ActionSet, type Field } from "./actions.mts";
 
 const GENERATOR = `ouro-actions-windows ${ACTIONS_VERSION}`;
 
@@ -187,7 +187,7 @@ export function renderWindows(set: ActionSet, options: WindowsOptions): Map<stri
   const files = new Map<string, string>();
   const appActions = set.actions.filter((a) => doorsOf(a).appAction.carries).map((a) => toAppAction(a, o));
   files.set("app-actions.json", json({ version: 3, actions: appActions }));
-  files.set("doors.json", json({ generator: GENERATOR, set: set.name, actions: Object.fromEntries(set.actions.map((a) => [a.id, doorsOf(a)])) }));
+  files.set("doors.json", json({ generator: GENERATOR, set: set.name, actions: Object.fromEntries(set.actions.map((a) => [a.id, { ...doorsOf(a), text: actionText(a) }])) }));
   files.set("mcpb.manifest.json", json(renderMcpb(set, o)));
   files.set("OuroActions.g.cs", renderCSharp(set, o));
   return files;

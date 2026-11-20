@@ -20,7 +20,7 @@
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { ACTIONS_VERSION, names, refusal, type Action, type ActionSet, type Field } from "./actions.mts";
+import { ACTIONS_VERSION, actionText, names, refusal, type Action, type ActionSet, type Field } from "./actions.mts";
 
 const GENERATOR = `ouro-actions-android ${ACTIONS_VERSION}`;
 
@@ -185,7 +185,7 @@ const json = (v: unknown) => `${JSON.stringify(v, null, 2)}\n`;
 export function renderAndroid(set: ActionSet, options: AndroidOptions): Map<string, string> {
   const o = checkOptions(options);
   const files = new Map<string, string>();
-  files.set("doors.json", json({ generator: GENERATOR, set: set.name, actions: Object.fromEntries(set.actions.map((a) => [a.id, doorsOf(a)])) }));
+  files.set("doors.json", json({ generator: GENERATOR, set: set.name, actions: Object.fromEntries(set.actions.map((a) => [a.id, { ...doorsOf(a), text: actionText(a) }])) }));
   files.set("OuroActions.kt", renderKotlin(set, o));
   return files;
 }

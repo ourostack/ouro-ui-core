@@ -185,6 +185,8 @@ export interface CatalogAction {
   press: Press;
   label: string;
   description: string;
+  /** For a consequential action: the question its confirm card asks, word for word (`actionText`); the description when absent. */
+  confirm?: string;
   input: Record<string, { label: string; kind: "string" | "number" | "integer" | "boolean" | "enum"; optional: boolean; values?: string[]; shownAs?: string }>;
   /** For a person-only action: where the person does it, and the refusal every agent door answers. */
   personOnly?: { how: string; refusal: Refusal };
@@ -381,7 +383,7 @@ export function actionButtonProps(cat: Catalog, action: string, prepared: Obj, o
   const a = cat.actions[action]!;
   const input: Obj = a.personOnly ? {} : prepared;
   const props: Obj = { action, label: a.label, consent: a.consent, press: a.press, input };
-  if (a.press === "confirm") props.confirm = { title: a.label, description: a.description, fields: confirmFields(action, a, input, options) };
+  if (a.press === "confirm") props.confirm = { title: a.label, description: a.confirm ?? a.description, fields: confirmFields(action, a, input, options) };
   if (a.personOnly) props.handoff = a.personOnly.how;
   return props;
 }
@@ -506,7 +508,7 @@ export function validateTree(cat: Catalog, node: unknown, path = ""): TreeProble
           }
           if (a.press === "confirm") {
             const c = props.confirm;
-            if (!isObj(c) || c.title !== a.label || c.description !== a.description || !Array.isArray(c.fields)) problems.push({ path: `${at}/props/confirm`, message: `${id} confirms, with the catalog's title and description and a row per prepared input.` });
+            if (!isObj(c) || c.title !== a.label || c.description !== (a.confirm ?? a.description) || !Array.isArray(c.fields)) problems.push({ path: `${at}/props/confirm`, message: `${id} confirms, with the catalog's title and description and a row per prepared input.` });
             else confirmRowProblems(problems, id, a, input as Obj, c.fields, `${at}/props/confirm/fields`);
           } else if (props.confirm !== undefined) problems.push({ path: `${at}/props/confirm`, message: `${id} doesn't confirm; only a consequential action does.` });
         }

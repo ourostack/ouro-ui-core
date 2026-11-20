@@ -30,7 +30,7 @@ export const controls = {
   "get-shopping-list": { label: "Shopping list", description: "See what's on your shopping list.", consent: "read", props: { "data-ax-action": "get-shopping-list" } },
   "add-shopping-list-item": { label: "Add to list", description: "Add an item to your shopping list.", consent: "write", props: { "data-ax-action": "add-shopping-list-item" } },
   "remove-shopping-list-item": { label: "Remove", description: "Take an item off your shopping list.", consent: "write", props: { "data-ax-action": "remove-shopping-list-item" } },
-  "share-shopping-list": { label: "Share list", description: "Share your shopping list with someone in your household.", consent: "consequential", props: { "data-ax-action": "share-shopping-list" } },
+  "share-shopping-list": { label: "Share list", description: "Share your shopping list with someone in your household.", consent: "consequential", confirm: "Share your list with this person? They will be able to see it and change it.", props: { "data-ax-action": "share-shopping-list" } },
   "place-grocery-order": { label: "Place order", description: "Order everything on your list and pay for it.", consent: "person-only", props: { "data-ax-action": "place-grocery-order" } },
 } as const;
 

@@ -109,7 +109,7 @@ public enum GetShoppingListAction {
 
 public struct GetShoppingListIntent: AppIntent {
     public static let title: LocalizedStringResource = "Shopping list"
-    public static let description = IntentDescription("Read the person's shopping list: each item's id, name, quantity, unit and whether it is checked.")
+    public static let description = IntentDescription("See what's on your shopping list.")
 
     public static let openAppWhenRun = true
 
@@ -212,7 +212,7 @@ public enum AddShoppingListItemAction {
 
 public struct AddShoppingListItemIntent: AppIntent {
     public static let title: LocalizedStringResource = "Add to list"
-    public static let description = IntentDescription("Add one item to the person's shopping list. Give the name as the person said it; leave quantity and unit out when they gave none.")
+    public static let description = IntentDescription("Add an item to your shopping list.")
 
     @Parameter(title: "Item", description: "What to buy, as the person said it, such as \"oat milk\".", requestValueDialog: "What should I add to your list?")
     public var name: String
@@ -301,7 +301,7 @@ public enum RemoveShoppingListItemAction {
 
 public struct RemoveShoppingListItemIntent: AppIntent {
     public static let title: LocalizedStringResource = "Remove"
-    public static let description = IntentDescription("Remove one item from the person's shopping list by its id. Removing an item that is already gone changes nothing.")
+    public static let description = IntentDescription("Take an item off your shopping list.")
 
     @Parameter(title: "Item", description: "The item's id, from get_shopping_list.")
     public var id: String
@@ -376,7 +376,9 @@ public enum ShareShoppingListAction {
     public static let id = "share_shopping_list"
     /// The app's handler; every door calls it.
     public static var perform: (@MainActor @Sendable (ShareShoppingListInput) async throws -> ShareShoppingListOutput)?
-    /// How the intent asks the person before it acts. Unset, the system asks. A test sets it: return to
+    /// The question the person is asked, the declaration's confirm: the same words as the confirm sheet and the card.
+    public static let confirmation: LocalizedStringResource = "Share your list with this person? They will be able to see it and change it."
+    /// How the intent asks the person before it acts. Unset, it asks `confirmation`. A test sets it: return to
     /// confirm, or throw to cancel, and the handler never runs. The app can also set it to ask in its own way.
     public static var confirm: (@MainActor @Sendable (ShareShoppingListInput) async throws -> Void)?
     /// What Siri and Shortcuts say when the App Intent finishes or fails: the result in words, or an error turned into
@@ -391,7 +393,7 @@ public enum ShareShoppingListAction {
 
 public struct ShareShoppingListIntent: AppIntent {
     public static let title: LocalizedStringResource = "Share list"
-    public static let description = IntentDescription("Share the person's shopping list with another person, who can then see and change it.")
+    public static let description = IntentDescription("Share your shopping list with someone in your household.")
 
     @Parameter(title: "With", description: "The email address of the person to share with.")
     public var with: HouseholdMemberEntity
@@ -416,7 +418,7 @@ public struct ShareShoppingListIntent: AppIntent {
     @MainActor
     public func perform() async throws -> some IntentResult & ProvidesDialog {
         // Consequential: the person says yes before it acts.
-        if let confirm = ShareShoppingListAction.confirm { try await confirm(self.input) } else { try await requestConfirmation() }
+        if let confirm = ShareShoppingListAction.confirm { try await confirm(self.input) } else { try await requestConfirmation(result: .result(dialog: IntentDialog(ShareShoppingListAction.confirmation))) }
         let input = self.input
         let result: Result<ShareShoppingListOutput, any Error>
         do { result = .success(try await ShareShoppingListAction.run(input)) } catch { result = .failure(error) }
