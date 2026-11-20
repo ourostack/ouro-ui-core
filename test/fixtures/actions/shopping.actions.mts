@@ -68,6 +68,7 @@ export const shareShoppingList = defineAction({
   label: "Share list",
   description: "Share your shopping list with someone in your household.",
   agent: "Share the person's shopping list with another person, who can then see and change it.",
+  confirm: "Share your list with this person? They will be able to see it and change it.",
   input: {
     with: field.string({ label: "With", description: "The email address of the person to share with.", arg: true, entity: "HouseholdMemberEntity" }),
     canEdit: field.boolean({ label: "Can edit", description: "Whether they may change the list, not only see it.", optional: true }),

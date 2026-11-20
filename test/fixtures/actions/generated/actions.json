@@ -146,6 +146,7 @@
       "label": "Share list",
       "description": "Share your shopping list with someone in your household.",
       "agent": "Share the person's shopping list with another person, who can then see and change it.",
+      "confirm": "Share your list with this person? They will be able to see it and change it.",
       "input": {
         "with": {
           "label": "With",

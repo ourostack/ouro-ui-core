@@ -19,7 +19,9 @@ test("every action has a person door, and a person-only one has no agent door, w
 
 test("an action whose required input App Actions can't carry is MCP-only, and doors.json says why", () => {
   const doors = parsed("doors.json").actions;
-  assert.deepEqual(doors["add_shopping_list_item"], { person: { carries: true }, mcp: { carries: true }, appAction: { carries: true } });
+  const { text, ...add } = doors["add_shopping_list_item"];
+  assert.deepEqual(add, { person: { carries: true }, mcp: { carries: true }, appAction: { carries: true } });
+  assert.equal(text.label, "Add to list", "each action also carries its declared words");
   assert.deepEqual(doors["get_shopping_list"].appAction, { carries: true }, "an optional enum is left out, not a reason to skip");
   assert.deepEqual(Object.keys(doors), shopping.actions.map((a) => a.id), "doors.json names every action: no silent skip");
 });

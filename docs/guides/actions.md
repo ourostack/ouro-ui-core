@@ -41,7 +41,7 @@ Choosing the consent class:
 
 - **read** changes nothing.
 - **write** changes only the person's own things (their list, their recipes).
-- **consequential** reaches other people or can't be undone (sharing, publishing, deleting someone's access). Agents prepare it; the person says yes: the CLI needs `--why` and previews with `--dry-run`, MCP marks it destructive, WebMCP consequential, and the App Intent asks the system's `requestConfirmation()`, or your `confirm` hook (section 4).
+- **consequential** reaches other people or can't be undone (sharing, publishing, deleting someone's access). Agents prepare it; the person says yes: the CLI needs `--why` and previews with `--dry-run`, MCP marks it destructive, WebMCP consequential, and the App Intent asks its question with `requestConfirmation`, or your `confirm` hook (section 4). Declare the question once with `confirm: "…"` (one line, at most 200 characters; left out, it is the `description`): the control, the A2UI and MCP Apps card, the App Intent's prompt, MCP's `_meta["ouro.bot/confirm"]` and WebMCP's carry those words, and `doors.json` beside the Windows and Android doors records them until those runtimes ask them. `label` and `description` read the same everywhere; `agent` is the one sentence that is for a model, and the MCP, WebMCP and CLI doors use it.
 - **person-only** is what only the person may start (paying, ordering, turning on their microphone). Add `personOnly: { reason, how }`, one line each, said to the agent. No agent door offers it; each answers with the typed refusal, which is exactly web's refused outcome: `state` `refused`, error code `person-only`, exit 2, and a message that gives the reason and how the person does it.
 
 Two field options shape the doors a field reaches:
@@ -131,7 +131,7 @@ AddShoppingListItemAction.dialog = { input, result in
 }
 ```
 
-A consequential action's intent asks the person through `<Action>Action.confirm` (core 0.9.0), so a test can run it. Unset, the system asks with `requestConfirmation()`, as before. Set it to return and the intent confirms; throw and it cancels, and the handler never runs:
+A consequential action's intent asks the person through `<Action>Action.confirm` (core 0.9.0), so a test can run it. Unset, the intent asks the declared `confirmation` through `requestConfirmation`. Set it to return and the intent confirms; throw and it cancels, and the handler never runs:
 
 ```swift
 struct Declined: Error {}

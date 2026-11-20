@@ -25,6 +25,7 @@ function catalogAction(a: Action): CatalogAction {
     press: pressOf(a.consent),
     label: a.label,
     description: a.description,
+    ...(a.confirm !== undefined ? { confirm: a.confirm } : {}),
     input,
     ...(a.consent === "person-only" ? { personOnly: { how: a.personOnly!.how, refusal: refusal(a) as unknown as Refusal } } : {}),
   };

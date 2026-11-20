@@ -224,6 +224,9 @@
                 "readOnlyHint": false,
                 "destructiveHint": true,
                 "openWorldHint": true
+              },
+              "_meta": {
+                "ouro.bot/confirm": "Share your list with this person? They will be able to see it and change it."
               }
             }
           ]

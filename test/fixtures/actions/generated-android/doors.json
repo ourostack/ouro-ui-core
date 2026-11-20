@@ -8,6 +8,11 @@
       },
       "appFunction": {
         "carries": true
+      },
+      "text": {
+        "label": "Shopping list",
+        "description": "See what's on your shopping list.",
+        "agent": "Read the person's shopping list: each item's id, name, quantity, unit and whether it is checked."
       }
     },
     "add_shopping_list_item": {
@@ -16,6 +21,11 @@
       },
       "appFunction": {
         "carries": true
+      },
+      "text": {
+        "label": "Add to list",
+        "description": "Add an item to your shopping list.",
+        "agent": "Add one item to the person's shopping list. Give the name as the person said it; leave quantity and unit out when they gave none."
       }
     },
     "remove_shopping_list_item": {
@@ -24,6 +34,11 @@
       },
       "appFunction": {
         "carries": true
+      },
+      "text": {
+        "label": "Remove",
+        "description": "Take an item off your shopping list.",
+        "agent": "Remove one item from the person's shopping list by its id. Removing an item that is already gone changes nothing."
       }
     },
     "share_shopping_list": {
@@ -32,6 +47,12 @@
       },
       "appFunction": {
         "carries": true
+      },
+      "text": {
+        "label": "Share list",
+        "description": "Share your shopping list with someone in your household.",
+        "agent": "Share the person's shopping list with another person, who can then see and change it.",
+        "confirm": "Share your list with this person? They will be able to see it and change it."
       }
     },
     "place_grocery_order": {
@@ -41,6 +62,11 @@
       "appFunction": {
         "carries": false,
         "why": "person-only: only the person starts it, so it has no AppFunction, and a bridge that relays a call to it answers core's typed refusal"
+      },
+      "text": {
+        "label": "Place order",
+        "description": "Order everything on your list and pay for it.",
+        "agent": "Order the shopping list's items for delivery and pay for them."
       }
     }
   }
