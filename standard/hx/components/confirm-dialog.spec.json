@@ -1,0 +1,183 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "confirm-dialog",
+  "version": "1.0.0",
+  "summary": "A centered question that asks the person to confirm an action before it runs, with Cancel focused first.",
+  "role": "group",
+  "properties": [
+    {
+      "name": "title",
+      "type": "string",
+      "required": true,
+      "description": "Names the panel for assistive technology and shows at its top. Always required; hideTitle hides it visually."
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "description": "A short line under the title, read out when the panel opens."
+    },
+    {
+      "name": "confirmLabel",
+      "type": "string",
+      "required": true,
+      "description": "The confirm button's label: the action, never OK."
+    },
+    {
+      "name": "cancelLabel",
+      "type": "string",
+      "default": "Cancel",
+      "description": "The cancel button's label."
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": [
+        "primary",
+        "destructive"
+      ],
+      "default": "primary",
+      "description": "The confirm button's colour role; destructive for what can't be undone."
+    },
+    {
+      "name": "action",
+      "type": "action",
+      "description": "The Ouro AX action this confirms. When set, the description is actionText(action).confirm, the same words the consent sheet and an agent's confirm prompt use."
+    }
+  ],
+  "slots": [],
+  "events": [
+    {
+      "name": "confirm",
+      "description": "The person confirmed."
+    },
+    {
+      "name": "close",
+      "description": "Cancel or Escape; an outside press never closes it."
+    }
+  ],
+  "states": [
+    {
+      "name": "rest",
+      "description": "Open, with focus inside."
+    },
+    {
+      "name": "pressed",
+      "description": "Cancel and the confirm button scale to the press scale, never under reduced motion."
+    },
+    {
+      "name": "busy",
+      "description": "The confirmed action is running: the confirm button keeps its width and can't be pressed again; Cancel still closes."
+    }
+  ],
+  "tokens": {
+    "surface": "background",
+    "title": "foreground",
+    "description": "muted-foreground",
+    "edge": "border",
+    "confirm": "{tone}",
+    "confirmLabel": "{tone}-foreground"
+  },
+  "metrics": {
+    "cornerRadius": 16,
+    "buttonTarget": 44
+  },
+  "claims": [
+    "contrast.text",
+    "motion.reduced",
+    "name.spoken",
+    "target.touch",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "Its title.",
+    "keyboard": "Focus starts on Cancel; Escape cancels; Enter on the confirm button confirms.",
+    "web": "A role=\"alertdialog\" named by its title and described by its description.",
+    "apple": "A confirmation dialog with a cancel role button and, for destructive, the destructive role.",
+    "windows": "A ContentDialog with Cancel as the default button: UI Automation ControlType.Window named by the title.",
+    "android": "A Compose AlertDialog: a node with a pane title from the title, a heading for it, and Cancel and confirm buttons, Cancel focused."
+  },
+  "cases": [
+    {
+      "id": "delete-recipe",
+      "props": {
+        "title": "Delete recipe?",
+        "description": "This can't be undone.",
+        "confirmLabel": "Delete",
+        "tone": "destructive"
+      },
+      "person": "A centered question with Cancel and a red Delete button.",
+      "agent": {
+        "role": "group",
+        "name": "Delete recipe?",
+        "focusable": true,
+        "children": [
+          {
+            "role": "heading",
+            "name": "Delete recipe?"
+          },
+          {
+            "role": "text",
+            "name": "This can't be undone."
+          },
+          {
+            "role": "button",
+            "name": "Cancel"
+          },
+          {
+            "role": "button",
+            "name": "Delete"
+          }
+        ]
+      }
+    },
+    {
+      "id": "consequential-action",
+      "props": {
+        "title": "Share list?",
+        "action": "share_shopping_list",
+        "confirmLabel": "Share"
+      },
+      "person": "The question reads the action's own confirm text, as its consent sheet does.",
+      "agent": {
+        "role": "group",
+        "name": "Share list?",
+        "focusable": true,
+        "children": [
+          {
+            "role": "heading",
+            "name": "Share list?"
+          },
+          {
+            "role": "text",
+            "name": "Share your list with this person? They will be able to see it and change it."
+          },
+          {
+            "role": "button",
+            "name": "Cancel"
+          },
+          {
+            "role": "button",
+            "name": "Share"
+          }
+        ]
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "ConfirmDialog (registry/ouro/components/ouro/dialog/confirm-dialog)",
+      "deviations": [
+        "onConfirm may return a promise, which keeps the dialog open and busy until it settles."
+      ]
+    },
+    "apple": {
+      "type": "OuroConfirmDialog (not yet built)"
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroConfirmDialog (not yet built)"
+    },
+    "android": {
+      "type": "OuroConfirmDialog (not yet built)"
+    }
+  }
+}

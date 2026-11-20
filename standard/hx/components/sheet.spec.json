@@ -1,0 +1,183 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "sheet",
+  "version": "1.0.0",
+  "summary": "A panel that slides in from an edge and is dragged back to dismiss, the touch form of a dialog.",
+  "role": "group",
+  "properties": [
+    {
+      "name": "title",
+      "type": "string",
+      "required": true,
+      "description": "Names the panel for assistive technology and shows at its top. Always required; hideTitle hides it visually."
+    },
+    {
+      "name": "hideTitle",
+      "type": "boolean",
+      "default": false,
+      "description": "Hides the title visually; it still names the panel."
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "description": "A short line under the title, read out when the panel opens."
+    },
+    {
+      "name": "closeLabel",
+      "type": "string",
+      "default": "Close",
+      "description": "The close button's label and spoken name."
+    },
+    {
+      "name": "closeOnOutsidePress",
+      "type": "boolean",
+      "default": true,
+      "description": "Whether a press outside the sheet closes it. With modal false the default is false."
+    },
+    {
+      "name": "side",
+      "type": "enum",
+      "values": [
+        "top",
+        "bottom",
+        "left",
+        "right"
+      ],
+      "default": "bottom",
+      "description": "The edge the sheet slides in from and is dragged back to."
+    },
+    {
+      "name": "modal",
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the sheet shuts off the rest of the page. false makes a panel beside a page the person keeps using: no backdrop and no focus trap."
+    }
+  ],
+  "slots": [
+    {
+      "name": "content",
+      "description": "The body; it scrolls when taller than the sheet."
+    },
+    {
+      "name": "footer",
+      "description": "The actions row, stacked full width on phones; primary action last."
+    }
+  ],
+  "events": [
+    {
+      "name": "close",
+      "description": "The sheet closed: dragged away, by Escape, the close button or an outside press."
+    }
+  ],
+  "states": [
+    {
+      "name": "rest",
+      "description": "Open, with focus inside."
+    },
+    {
+      "name": "pressed",
+      "description": "The close button and each footer action scale to the press scale, never under reduced motion."
+    }
+  ],
+  "tokens": {
+    "surface": "background",
+    "title": "foreground",
+    "description": "muted-foreground",
+    "edge": "border",
+    "close": "muted-foreground"
+  },
+  "metrics": {
+    "cornerRadius": 16,
+    "closeTarget": 44,
+    "dragHandleWidth": 36
+  },
+  "claims": [
+    "contrast.text",
+    "dismiss.reachable",
+    "motion.reduced",
+    "name.spoken",
+    "target.touch",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "Its title.",
+    "keyboard": "A modal sheet keeps focus inside and Escape closes it; a non-modal one leaves focus where it was.",
+    "web": "A role=\"dialog\" named by its title; aria-modal only when modal.",
+    "apple": "A presented sheet with detents, named by its title.",
+    "windows": "A flyout panel from the edge: UI Automation ControlType.Pane named by the title, with a Close button.",
+    "android": "A Compose ModalBottomSheet (or a side sheet for left and right): a node with a pane title from the title, a heading for it, and a Close button with the dismiss action."
+  },
+  "cases": [
+    {
+      "id": "save-to-cookbook",
+      "props": {
+        "title": "Save to cookbook",
+        "side": "bottom"
+      },
+      "slots": {
+        "content": "Cookbook list",
+        "footer": "Save"
+      },
+      "person": "A sheet rising from the bottom with its title, a close button and a Save action.",
+      "agent": {
+        "role": "group",
+        "name": "Save to cookbook",
+        "focusable": true,
+        "children": [
+          {
+            "role": "heading",
+            "name": "Save to cookbook"
+          },
+          {
+            "role": "button",
+            "name": "Close"
+          }
+        ]
+      }
+    },
+    {
+      "id": "beside-page",
+      "props": {
+        "title": "Preview",
+        "side": "right",
+        "modal": false
+      },
+      "person": "A panel at the right edge; the page behind it stays usable.",
+      "agent": {
+        "role": "group",
+        "name": "Preview",
+        "focusable": false,
+        "children": [
+          {
+            "role": "heading",
+            "name": "Preview"
+          },
+          {
+            "role": "button",
+            "name": "Close"
+          }
+        ]
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "Sheet (registry/ouro/components/ouro/sheet)",
+      "deviations": [
+        "snapPoints (resting heights) is web's and Apple's detents; not yet in the spec."
+      ]
+    },
+    "apple": {
+      "type": "OuroSheet (not yet built)"
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroSheet (not yet built)",
+      "deviations": [
+        "No drag to dismiss with a mouse; a touch screen drags it, and the close button and Escape always close it."
+      ]
+    },
+    "android": {
+      "type": "OuroSheet (not yet built)"
+    }
+  }
+}

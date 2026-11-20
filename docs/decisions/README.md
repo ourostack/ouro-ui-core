@@ -33,3 +33,4 @@ New decision records go here. Each has a "Prior art" section linking every find 
 | 2026-11-20 | [An app extends the composed-UI catalog with its own validated components](2026-11-20-local-composed-components.md) |
 | 2026-11-20 | [Hover is a quiet raised row, derived from the theme, and never the selected colour](2026-11-20-hover-and-selected-states.md) |
 | 2026-11-20 | [Focus rings for keyboard focus, and a border tone on a pressed text field](2026-11-20-keyboard-focus-rings.md) |
+| 2026-11-20 | [Dialog, Sheet and ConfirmDialog are specs in core, one file each, before any kit builds them](2026-11-20-dialog-sheet-confirm-specs.md) |

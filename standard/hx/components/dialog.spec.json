@@ -1,0 +1,193 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "dialog",
+  "version": "1.0.0",
+  "summary": "A centered panel over the page that asks for the person's attention for a task, and becomes a bottom sheet on a phone.",
+  "role": "group",
+  "properties": [
+    {
+      "name": "title",
+      "type": "string",
+      "required": true,
+      "description": "Names the panel for assistive technology and shows at its top. Always required; hideTitle hides it visually."
+    },
+    {
+      "name": "hideTitle",
+      "type": "boolean",
+      "default": false,
+      "description": "Hides the title visually; it still names the panel."
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "description": "A short line under the title, read out when the panel opens."
+    },
+    {
+      "name": "closeLabel",
+      "type": "string",
+      "default": "Close",
+      "description": "The close button's label and spoken name."
+    },
+    {
+      "name": "closeOnOutsidePress",
+      "type": "boolean",
+      "default": true,
+      "description": "Whether a press outside the panel, on its backdrop, closes it. Escape and the close button always close it."
+    },
+    {
+      "name": "presentation",
+      "type": "enum",
+      "values": [
+        "auto",
+        "dialog",
+        "sheet"
+      ],
+      "default": "auto",
+      "description": "auto centers the panel from 640 points up and slides it from the bottom below; dialog and sheet force one form."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md",
+        "lg",
+        "xl",
+        "auto",
+        "full"
+      ],
+      "default": "auto",
+      "description": "The centered panel's width."
+    }
+  ],
+  "slots": [
+    {
+      "name": "content",
+      "description": "The body; it scrolls when taller than the screen."
+    },
+    {
+      "name": "footer",
+      "description": "The actions row, primary action last."
+    }
+  ],
+  "events": [
+    {
+      "name": "close",
+      "description": "The panel closed: by Escape, the close button or an outside press, with the reason."
+    }
+  ],
+  "states": [
+    {
+      "name": "rest",
+      "description": "Open, with focus inside."
+    },
+    {
+      "name": "pressed",
+      "description": "The close button and each footer action scale to the press scale, never under reduced motion."
+    }
+  ],
+  "tokens": {
+    "surface": "background",
+    "title": "foreground",
+    "description": "muted-foreground",
+    "edge": "border",
+    "close": "muted-foreground"
+  },
+  "metrics": {
+    "cornerRadius": 16,
+    "closeTarget": 44,
+    "maxWidthPoints": 512
+  },
+  "claims": [
+    "contrast.text",
+    "dismiss.reachable",
+    "motion.reduced",
+    "name.spoken",
+    "target.touch",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "Its title.",
+    "keyboard": "Focus moves in when it opens and stays inside; Escape closes it; focus returns to what opened it.",
+    "web": "A role=\"dialog\" with aria-modal, named by its title and described by its description.",
+    "apple": "A presented sheet or panel named by its title, with the close button reachable.",
+    "windows": "A ContentDialog: UI Automation ControlType.Window named by the title, with a Close button.",
+    "android": "A Compose Dialog: a node with a pane title from the title, a heading for it, and a Close button with the dismiss action."
+  },
+  "cases": [
+    {
+      "id": "edit-recipe",
+      "props": {
+        "title": "Edit recipe",
+        "description": "Change the name or steps.",
+        "closeLabel": "Close"
+      },
+      "slots": {
+        "content": "Name field",
+        "footer": "Save"
+      },
+      "person": "A centered panel with the title, the line under it, a close button in the top corner and a Save action at the foot.",
+      "agent": {
+        "role": "group",
+        "name": "Edit recipe",
+        "focusable": true,
+        "children": [
+          {
+            "role": "heading",
+            "name": "Edit recipe"
+          },
+          {
+            "role": "text",
+            "name": "Change the name or steps."
+          },
+          {
+            "role": "button",
+            "name": "Close"
+          }
+        ]
+      }
+    },
+    {
+      "id": "hidden-title",
+      "props": {
+        "title": "Filters",
+        "hideTitle": true
+      },
+      "person": "A panel with no visible title.",
+      "agent": {
+        "role": "group",
+        "name": "Filters",
+        "focusable": true,
+        "children": [
+          {
+            "role": "button",
+            "name": "Close"
+          }
+        ]
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "Dialog (registry/ouro/components/ouro/dialog)",
+      "deviations": [
+        "size also takes 2xl, which a phone has no use for."
+      ]
+    },
+    "apple": {
+      "type": "OuroDialog (not yet built)"
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroDialog (not yet built)",
+      "deviations": [
+        "presentation auto never shows a bottom sheet: Windows has no phone form, so auto is the centered dialog."
+      ]
+    },
+    "android": {
+      "type": "OuroDialog (not yet built)",
+      "deviations": [
+        "presentation auto is a bottom sheet on a compact width and a centered dialog from 640dp."
+      ]
+    }
+  }
+}
