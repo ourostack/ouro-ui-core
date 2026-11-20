@@ -1,0 +1,173 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "swipe-actions",
+  "version": "1.0.0",
+  "summary": "A list row whose actions a swipe reveals; the same actions are always one press away in a menu, so a swipe is never the only way.",
+  "role": "group",
+  "properties": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "What the row is, such as a message's subject. It names the row and the actions button."
+    },
+    {
+      "name": "actionsLabel",
+      "type": "string",
+      "description": "The name of the button that opens the actions menu. Default \"Actions for {label}\"."
+    },
+    {
+      "name": "leading",
+      "type": "string",
+      "description": "The actions a swipe toward the end reveals, by label; the first is the primary one."
+    },
+    {
+      "name": "trailing",
+      "type": "string",
+      "description": "The actions a swipe toward the start reveals, by label; the first is the primary one."
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": [
+        "primary",
+        "secondary",
+        "destructive",
+        "success",
+        "warning"
+      ],
+      "default": "secondary",
+      "description": "The colour behind each side's first action, the one a long swipe commits, such as destructive for Delete. The other actions are secondary."
+    }
+  ],
+  "slots": [
+    {
+      "name": "content",
+      "description": "The row the person sees at rest, usually an Item."
+    }
+  ],
+  "events": [
+    {
+      "name": "menu",
+      "description": "The actions menu opened, from the actions button or by a long press on the row. It holds the same actions as the swipe."
+    },
+    {
+      "name": "action",
+      "description": "An action was chosen, by a swipe past 60% of the row's width on its primary action, by a press on a revealed action, or from the menu."
+    }
+  ],
+  "states": [
+    {
+      "name": "rest",
+      "description": "The row alone. Its actions button shows at the end for a pointer and is hidden from sight on a touch screen, where a long press opens the menu; assistive technology reaches it on any device."
+    },
+    {
+      "name": "pressed",
+      "description": "Swiped part way: the actions of that side show behind the row, which stays where the finger left it."
+    },
+    {
+      "name": "focused",
+      "description": "The menu button with keyboard focus: the platform's focus ring."
+    }
+  ],
+  "tokens": {
+    "actionText": "primary-foreground",
+    "actionFill": "primary",
+    "destructiveFill": "destructive",
+    "menuIcon": "muted-foreground",
+    "focus": "ring"
+  },
+  "metrics": {
+    "commitFraction": 0.6,
+    "actionWidth": 80,
+    "menuTarget": 44
+  },
+  "claims": [
+    "contrast.text",
+    "motion.reduced",
+    "name.spoken",
+    "target.touch",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "The row is named by its label; the menu button \"Actions for {label}\".",
+    "keyboard": "The menu button is a tab stop; Enter or Space opens the menu, the arrow keys move through its actions, Enter chooses one and Escape closes it. A chosen action that removes the row moves focus to the next row (the one before, when it was last).",
+    "web": "The row's content plus a menu button; the swipe is a pointer gesture and is hidden from assistive technology.",
+    "apple": "Row content with accessibility custom actions for each action, plus the menu.",
+    "windows": "UI Automation ControlType.Group named by its label, with a ControlType.Button (\"Actions for {label}\") that opens a MenuFlyout; the swipe is a touch gesture only.",
+    "android": "One merged node named by its label with a custom accessibility action per action, plus a menu button; the swipe is a touch gesture only."
+  },
+  "cases": [
+    {
+      "id": "trailing-delete",
+      "props": {
+        "label": "Lunch plans",
+        "trailing": "Delete, Archive",
+        "tone": "destructive"
+      },
+      "slots": {
+        "content": "Lunch plans"
+      },
+      "person": "A row of text; a pointer also sees a small more button at its end. Swiped left, a red Delete and an Archive show behind it.",
+      "agent": {
+        "role": "group",
+        "name": "Lunch plans",
+        "focusable": false,
+        "children": [
+          {
+            "role": "text",
+            "name": "Lunch plans"
+          },
+          {
+            "role": "button",
+            "name": "Actions for Lunch plans"
+          }
+        ]
+      }
+    },
+    {
+      "id": "named-actions-button",
+      "props": {
+        "label": "Lunch plans",
+        "actionsLabel": "More for lunch",
+        "leading": "Pin"
+      },
+      "slots": {
+        "content": "Lunch plans"
+      },
+      "person": "The same row, with a Pin action to its start.",
+      "agent": {
+        "role": "group",
+        "name": "Lunch plans",
+        "focusable": false,
+        "children": [
+          {
+            "role": "text",
+            "name": "Lunch plans"
+          },
+          {
+            "role": "button",
+            "name": "More for lunch"
+          }
+        ]
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "SwipeActions (registry/ouro/components/ouro/swipe-actions)",
+      "deviations": [
+        "Web takes the actions as arrays of { label, onClick, tone }; the spec lists them by label, each platform's host supplies the handlers, and one tone colours each side's first action while the rest are secondary."
+      ]
+    },
+    "apple": {
+      "type": "OuroSwipeActions (not yet built)"
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroSwipeActions, a templated WinUI Control; not yet built"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroSwipeActions, in Jetpack Compose (ourostack/ouro-ui-android); not yet built"
+    }
+  }
+}

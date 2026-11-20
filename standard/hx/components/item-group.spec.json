@@ -1,0 +1,130 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "item-group",
+  "version": "1.0.0",
+  "summary": "A labelled list of Items, with a line between the rows, an optional numbering and a message when it has none.",
+  "role": "group",
+  "properties": [
+    {
+      "name": "label",
+      "type": "string",
+      "description": "A short label above the list that also names it for assistive technology, such as \"Recipes\". Without one the host names the list another way."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": [
+        "divided",
+        "plain",
+        "outline"
+      ],
+      "default": "divided",
+      "description": "divided draws a line between rows; plain draws none; outline puts the whole list in one bordered box."
+    },
+    {
+      "name": "ordered",
+      "type": "boolean",
+      "default": false,
+      "description": "The order matters: assistive technology says each row's place (\"2 of 5\") and the list is a numbered one."
+    },
+    {
+      "name": "empty",
+      "type": "string",
+      "description": "What to show in place of the list when there are no rows, such as \"No recipes yet\"."
+    }
+  ],
+  "slots": [
+    {
+      "name": "items",
+      "description": "The Items. Each is one row of the list, so a screen reader counts them."
+    }
+  ],
+  "events": [],
+  "states": [
+    {
+      "name": "rest",
+      "description": "The variant's lines or frame."
+    }
+  ],
+  "tokens": {
+    "divider": "border",
+    "frame": "border",
+    "emptyText": "muted-foreground"
+  },
+  "metrics": {
+    "dividerWidth": 1,
+    "outlineRadius": 12,
+    "emptyPadding": 24
+  },
+  "claims": [
+    "contrast.text",
+    "name.spoken",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "Its label, with the count of rows (\"Recipes, list, 3 items\"); an ordered list also gives each row's place.",
+    "keyboard": "The group is not a tab stop. Each pressable row is its own tab stop, in order.",
+    "web": "A <ul> (an <ol> when ordered) named by its label or an aria-label, each Item wrapped in an <li>; with no rows and an empty message, the message replaces the list.",
+    "apple": "A container of OuroItems, with the label as the accessibility label of the group.",
+    "windows": "UI Automation ControlType.List named by its label, each row a ControlType.ListItem; the Items keep their own Invoke pattern.",
+    "android": "A collection (CollectionInfo with the row count) named by its label, each row a collection item; an ordered list adds each row's position."
+  },
+  "cases": [
+    {
+      "id": "divided-three-rows",
+      "props": {
+        "label": "Recipes"
+      },
+      "slots": {
+        "items": "Braised short ribs, Lemon orzo, Miso soup"
+      },
+      "person": "The label \"Recipes\" above three rows with a hairline between each.",
+      "agent": {
+        "role": "group",
+        "name": "Recipes",
+        "focusable": false,
+        "children": [
+          {
+            "role": "listitem",
+            "name": "Braised short ribs"
+          },
+          {
+            "role": "listitem",
+            "name": "Lemon orzo"
+          },
+          {
+            "role": "listitem",
+            "name": "Miso soup"
+          }
+        ]
+      }
+    },
+    {
+      "id": "empty-message",
+      "props": {
+        "label": "Recipes",
+        "empty": "No recipes yet"
+      },
+      "person": "No rows: the words \"No recipes yet\" in muted text take the list's place.",
+      "agent": {
+        "role": "text",
+        "name": "No recipes yet",
+        "focusable": false
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "ItemGroup (registry/ouro/components/ouro/item)"
+    },
+    "apple": {
+      "type": "OuroItemGroup (not yet built)"
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroItemGroup, a templated WinUI Control; not yet built"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroItemGroup, in Jetpack Compose (ourostack/ouro-ui-android); not yet built"
+    }
+  }
+}

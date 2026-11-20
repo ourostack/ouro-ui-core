@@ -1,0 +1,184 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "reorderable",
+  "version": "1.0.0",
+  "summary": "A list the person puts in order: a drag handle on each row and a menu of moves, so dragging is never the only way, and each move is announced.",
+  "role": "group",
+  "properties": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "What the list is, such as \"Playlist\". It names the list and the move announcements."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "description": "The order is locked: handles stay in the tab order but do nothing, and are marked unavailable."
+    },
+    {
+      "name": "disabledReason",
+      "type": "string",
+      "description": "Why the order is locked, such as \"Sorted by date\"; read out as the handles' description. Setting it alone locks the order, and it wins over disabled."
+    }
+  ],
+  "slots": [
+    {
+      "name": "rows",
+      "description": "The rows, each with an id, a label and its content."
+    }
+  ],
+  "events": [
+    {
+      "name": "reorder",
+      "description": "A row moved: the new order of ids and the move { id, from, to }."
+    }
+  ],
+  "states": [
+    {
+      "name": "rest",
+      "description": "Rows in order, each with a handle."
+    },
+    {
+      "name": "pressed",
+      "description": "A row picked up: it follows the pointer and the others make room, with reduced motion the other rows jump aside and the dropped row is already in place, with no scale."
+    },
+    {
+      "name": "focused",
+      "description": "A handle with keyboard focus: the platform's focus ring."
+    },
+    {
+      "name": "disabled",
+      "description": "The order is locked: the handles are dimmed and cannot be used."
+    }
+  ],
+  "tokens": {
+    "handle": "muted-foreground",
+    "lifted": "accent",
+    "edge": "border",
+    "focus": "ring"
+  },
+  "metrics": {
+    "handleTarget": 44,
+    "handleIcon": 20
+  },
+  "claims": [
+    "contrast.text",
+    "motion.reduced",
+    "name.spoken",
+    "target.touch",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "The list is named by its label; each handle \"Reorder {row}\"; a move is announced with its position (\"Position 2 of 5\").",
+    "keyboard": "A handle is a tab stop. Space picks the row up, the arrow keys move it, Space drops it and Escape puts it back (a handle is named \"Reorder\" and its row, with no position; the position is announced as the row moves); Enter opens a menu with Move up, Move down, Move to top and Move to bottom.",
+    "web": "A list of rows; each handle is a button with aria-roledescription \"sortable\", and every move is announced in a polite live region.",
+    "apple": "A list with accessibility custom actions (Move up, Move down, Move to top, Move to bottom) on each row; the move is announced.",
+    "windows": "A ListView with CanReorderItems and CanDragItems; each row's handle is a ControlType.Button that opens a MenuFlyout of moves, and a move is announced through UI Automation notifications.",
+    "android": "A column whose rows carry custom accessibility actions for each move, plus a handle button that opens the moves menu; a move is announced with a live region."
+  },
+  "cases": [
+    {
+      "id": "three-rows",
+      "props": {
+        "label": "Playlist"
+      },
+      "slots": {
+        "rows": "Intro, Verse, Chorus"
+      },
+      "person": "Three rows, each with a grip on its end.",
+      "agent": {
+        "role": "group",
+        "name": "Playlist",
+        "focusable": false,
+        "children": [
+          {
+            "role": "text",
+            "name": "Intro"
+          },
+          {
+            "role": "button",
+            "name": "Reorder Intro"
+          },
+          {
+            "role": "text",
+            "name": "Verse"
+          },
+          {
+            "role": "button",
+            "name": "Reorder Verse"
+          },
+          {
+            "role": "text",
+            "name": "Chorus"
+          },
+          {
+            "role": "button",
+            "name": "Reorder Chorus"
+          }
+        ]
+      }
+    },
+    {
+      "id": "locked",
+      "props": {
+        "label": "Playlist",
+        "disabled": true,
+        "disabledReason": "Sorted by date"
+      },
+      "slots": {
+        "rows": "Intro, Verse, Chorus"
+      },
+      "person": "The same rows with dimmed grips; the order cannot be changed, and the reason is read out with each grip.",
+      "agent": {
+        "role": "group",
+        "name": "Playlist",
+        "focusable": false,
+        "children": [
+          {
+            "role": "text",
+            "name": "Intro"
+          },
+          {
+            "role": "button",
+            "name": "Reorder Intro, Sorted by date"
+          },
+          {
+            "role": "text",
+            "name": "Verse"
+          },
+          {
+            "role": "button",
+            "name": "Reorder Verse, Sorted by date"
+          },
+          {
+            "role": "text",
+            "name": "Chorus"
+          },
+          {
+            "role": "button",
+            "name": "Reorder Chorus, Sorted by date"
+          }
+        ]
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "Reorderable (registry/ouro/components/ouro/reorderable)",
+      "deviations": [
+        "Web takes items as { id, label, content } and reports onReorder(ids, move); native kits take the rows as content with an id each."
+      ]
+    },
+    "apple": {
+      "type": "OuroReorderable (not yet built)"
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroReorderable, a templated WinUI Control; not yet built"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroReorderable, in Jetpack Compose (ourostack/ouro-ui-android); not yet built"
+    }
+  }
+}
