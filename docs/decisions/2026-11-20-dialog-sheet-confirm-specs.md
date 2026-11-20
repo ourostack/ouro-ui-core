@@ -12,7 +12,6 @@ Web has Dialog, Sheet and ConfirmDialog; Windows and Android have none, and core
 - The three join the claims they share with `alert` and `sheet` (touch target, reduced motion, spoken name, text reflow, contrast; dismiss reachable for Dialog and Sheet). ConfirmDialog has no dismiss claim: an outside press never closes it, and Cancel and Escape do.
 - No `dialog` role exists in a case's `agent.role`, so each case uses `group`, and each platform's accessibility text says the native role.
 - ConfirmDialog's `action` property reads the description from `actionText(action).confirm`, so the dialog, the consent sheet and an agent's confirm prompt say the same words.
-- The test that listed every spec file by name now checks the list is sorted and holds the three new names, so a lane adding a component adds its spec file and nothing else.
 
 ## Prior art
 
