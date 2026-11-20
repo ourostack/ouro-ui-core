@@ -32,3 +32,4 @@ New decision records go here. Each has a "Prior art" section linking every find 
 | 2026-11-19 | [Proposal: what Ouro's checks prove, and how an agent gets evidence from people](2026-11-19-evidence-from-people.md) |
 | 2026-11-20 | [An app extends the composed-UI catalog with its own validated components](2026-11-20-local-composed-components.md) |
 | 2026-11-20 | [Hover is a quiet raised row, derived from the theme, and never the selected colour](2026-11-20-hover-and-selected-states.md) |
+| 2026-11-20 | [Focus rings for keyboard focus, and a border tone on a pressed text field](2026-11-20-keyboard-focus-rings.md) |
