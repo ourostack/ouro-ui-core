@@ -35,3 +35,4 @@ New decision records go here. Each has a "Prior art" section linking every find 
 | 2026-11-20 | [Focus rings for keyboard focus, and a border tone on a pressed text field](2026-11-20-keyboard-focus-rings.md) |
 | 2026-11-20 | [Dialog, Sheet and ConfirmDialog are specs in core, one file each, before any kit builds them](2026-11-20-dialog-sheet-confirm-specs.md) |
 | 2026-11-21 | [Select, Switch and Field are specs in core, and TextField and Checkbox gain Android entries, before any kit builds them](2026-11-21-form-specs.md) |
+| 2026-11-20 | [ItemGroup, SwipeActions, Reorderable and ConversationList are specs in core, one file each, before any kit builds them](2026-11-20-list-specs.md) |

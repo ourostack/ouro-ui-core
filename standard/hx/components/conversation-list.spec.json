@@ -1,0 +1,172 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "conversation-list",
+  "version": "1.0.0",
+  "summary": "A long list of conversations that builds only the rows in view: title, time, preview and an unread dot, with the open one marked.",
+  "role": "group",
+  "properties": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "What the list is, such as \"Conversations\"."
+    },
+    {
+      "name": "selectedId",
+      "type": "string",
+      "description": "The id of the open conversation; its row is marked current."
+    },
+    {
+      "name": "density",
+      "type": "enum",
+      "values": [
+        "comfortable",
+        "compact"
+      ],
+      "default": "comfortable",
+      "description": "comfortable shows a preview line under the title; compact shows the title and time only."
+    },
+    {
+      "name": "empty",
+      "type": "string",
+      "description": "What to show in place of the list when there are no conversations. Defaults to \"Nothing here yet\"."
+    },
+    {
+      "name": "moreLabel",
+      "type": "string",
+      "default": "More options for",
+      "description": "Names each row's more button: the label, then the row's title."
+    },
+    {
+      "name": "unreadLabel",
+      "type": "string",
+      "default": "Unread",
+      "description": "The word read out for a row with new messages."
+    }
+  ],
+  "slots": [
+    {
+      "name": "rows",
+      "description": "The conversations, one per line as \"id: title | time | preview | unread\" (preview and the word unread are optional). A line \"# Heading\" starts a section whose header opens and closes it; its title names its list."
+    }
+  ],
+  "events": [
+    {
+      "name": "select",
+      "description": "A row was chosen; carries its id."
+    },
+    {
+      "name": "sectionOpenChange",
+      "description": "A section header opened or closed it; carries the section id and whether it is open."
+    }
+  ],
+  "states": [
+    {
+      "name": "rest",
+      "description": "The rows in view. The open row has an accent fill and the platform's current marker; a row with new messages has a dot before the title and the title in bold."
+    },
+    {
+      "name": "pressed",
+      "description": "A row held down: the accent fill a step stronger."
+    },
+    {
+      "name": "focused",
+      "description": "A row with keyboard focus: the platform's focus ring."
+    }
+  ],
+  "tokens": {
+    "title": "foreground",
+    "preview": "muted-foreground",
+    "time": "muted-foreground",
+    "unreadDot": "primary",
+    "selectedFill": "accent",
+    "draft": "destructive",
+    "focus": "ring"
+  },
+  "metrics": {
+    "rowMinHeight": 44,
+    "rowHeightComfortable": 72,
+    "rowHeightCompact": 48,
+    "unreadDot": 8
+  },
+  "claims": [
+    "contrast.text",
+    "name.spoken",
+    "target.touch",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "The list by its label; each row by its title, then the unread label when it has new messages, then its time and preview; the open row is current; each row has a more button named by moreLabel and the title.",
+    "keyboard": "The list is one tab stop and the stop lands on the open row; the arrow keys move between rows, Home and End go to the first and last, Enter or Space opens one.",
+    "web": "A list that builds only the rows in view once it has more than 20 rows (fewer are all built); the open row has aria-current.",
+    "apple": "A List with the open row selected; each row one element with the title, unread state and preview in its label.",
+    "windows": "A ListView, virtualised by its ItemsStackPanel; each row a ControlType.ListItem with the SelectionItem pattern, the open one selected; the full count is available to UI Automation.",
+    "android": "A LazyColumn with CollectionInfo for the full count; each row one merged node with the SelectionItem state for the open one, named by its title, unread state and time."
+  },
+  "cases": [
+    {
+      "id": "unread-and-selected",
+      "props": {
+        "label": "Conversations",
+        "selectedId": "b"
+      },
+      "slots": {
+        "rows": "a: Ari | 9:41 | Lunch at noon? | unread; b: Sam | Mon | Notes from Monday"
+      },
+      "person": "Two rows: Ari's with a dot and a bold title, and Sam's marked as the open one.",
+      "agent": {
+        "role": "group",
+        "name": "Conversations",
+        "focusable": false,
+        "children": [
+          {
+            "role": "listitem",
+            "name": "Ari, Unread, 9:41, Lunch at noon?"
+          },
+          {
+            "role": "button",
+            "name": "More options for Ari"
+          },
+          {
+            "role": "listitem",
+            "name": "Sam, Mon, Notes from Monday, current"
+          },
+          {
+            "role": "button",
+            "name": "More options for Sam"
+          }
+        ]
+      }
+    },
+    {
+      "id": "empty-list",
+      "props": {
+        "label": "Conversations",
+        "empty": "No conversations yet"
+      },
+      "person": "No rows: the words \"No conversations yet\".",
+      "agent": {
+        "role": "text",
+        "name": "No conversations yet",
+        "focusable": false
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "ConversationList (registry/ouro/components/ouro/conversation-list)",
+      "deviations": [
+        "Web takes items and sections as arrays and reports onSelect(id); the spec's rows slot is that data."
+      ]
+    },
+    "apple": {
+      "type": "OuroConversationList (not yet built)"
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroConversationList, a templated WinUI Control; not yet built"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroConversationList, in Jetpack Compose (ourostack/ouro-ui-android); not yet built"
+    }
+  }
+}

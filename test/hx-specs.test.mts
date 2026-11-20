@@ -14,7 +14,7 @@ const specs = await Promise.all(names.map(read)) as ComponentSpec[];
 const validate = new Ajv2020({ strict: true, allowUnionTypes: true, allErrors: true }).compile(schema);
 
 test("each component a platform has built or specified has a spec", () => {
-  assert.deepEqual(names, ["avatar.spec.json", "badge.spec.json", "button.spec.json", "card.spec.json", "checkbox.spec.json", "confirm-dialog.spec.json", "description-list.spec.json", "dialog.spec.json", "field.spec.json", "item.spec.json", "page-header.spec.json", "progress.spec.json", "segmented-control.spec.json", "select.spec.json", "separator.spec.json", "sheet.spec.json", "sidebar.spec.json", "skeleton.spec.json", "spinner.spec.json", "switch.spec.json", "sync-status.spec.json", "tab-bar.spec.json", "tabs.spec.json", "text-field.spec.json"]);
+  assert.deepEqual(names, ["avatar.spec.json", "badge.spec.json", "button.spec.json", "card.spec.json", "checkbox.spec.json", "confirm-dialog.spec.json", "conversation-list.spec.json", "description-list.spec.json", "dialog.spec.json", "field.spec.json", "item-group.spec.json", "item.spec.json", "page-header.spec.json", "progress.spec.json", "reorderable.spec.json", "segmented-control.spec.json", "select.spec.json", "separator.spec.json", "sheet.spec.json", "sidebar.spec.json", "skeleton.spec.json", "spinner.spec.json", "swipe-actions.spec.json", "switch.spec.json", "sync-status.spec.json", "tab-bar.spec.json", "tabs.spec.json", "text-field.spec.json"]);
   for (const s of specs) assert.ok((HX_COMPONENTS as readonly string[]).includes(s.name), s.name);
   for (const [i, s] of specs.entries()) assert.equal(`${s.name}.spec.json`, names[i]);
 });
