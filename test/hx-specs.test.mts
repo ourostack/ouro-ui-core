@@ -13,8 +13,8 @@ const names = (await readdir(dir)).filter((n) => n.endsWith(".spec.json")).sort(
 const specs = await Promise.all(names.map(read)) as ComponentSpec[];
 const validate = new Ajv2020({ strict: true, allowUnionTypes: true, allErrors: true }).compile(schema);
 
-test("each component Apple has built has a spec: Button, Badge, Card, Item, TextField, Avatar, PageHeader, Skeleton, Spinner and Progress", () => {
-  assert.deepEqual(names, ["avatar.spec.json", "badge.spec.json", "button.spec.json", "card.spec.json", "checkbox.spec.json", "description-list.spec.json", "item.spec.json", "page-header.spec.json", "progress.spec.json", "segmented-control.spec.json", "separator.spec.json", "skeleton.spec.json", "spinner.spec.json", "sync-status.spec.json", "text-field.spec.json"]);
+test("each component a platform has built or specified has a spec", () => {
+  assert.deepEqual(names, ["avatar.spec.json", "badge.spec.json", "button.spec.json", "card.spec.json", "checkbox.spec.json", "description-list.spec.json", "item.spec.json", "page-header.spec.json", "progress.spec.json", "segmented-control.spec.json", "separator.spec.json", "sidebar.spec.json", "skeleton.spec.json", "spinner.spec.json", "sync-status.spec.json", "tab-bar.spec.json", "tabs.spec.json", "text-field.spec.json"]);
   for (const s of specs) assert.ok((HX_COMPONENTS as readonly string[]).includes(s.name), s.name);
   for (const [i, s] of specs.entries()) assert.equal(`${s.name}.spec.json`, names[i]);
 });

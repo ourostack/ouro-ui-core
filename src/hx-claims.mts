@@ -4,7 +4,7 @@
 import { claimSetHash, claimSetText } from "./ax-claims.mts";
 
 /** The components the set covers, by web's names (Apple's OuroEmptyState is `empty`; its OuroBanner is `alert`). */
-export const HX_COMPONENTS = Object.freeze(["button", "empty", "alert", "sheet", "toast", "badge", "card", "item", "text-field", "avatar", "page-header", "skeleton", "spinner", "progress", "separator", "description-list", "segmented-control", "checkbox", "sync-status"] as const);
+export const HX_COMPONENTS = Object.freeze(["button", "empty", "alert", "sheet", "toast", "badge", "card", "item", "text-field", "avatar", "page-header", "skeleton", "spinner", "progress", "separator", "description-list", "segmented-control", "checkbox", "sync-status", "tabs", "tab-bar", "sidebar"] as const);
 export type HxComponent = (typeof HX_COMPONENTS)[number];
 export const HX_PLATFORMS = Object.freeze(["web", "apple", "windows", "android"] as const);
 export type HxPlatform = (typeof HX_PLATFORMS)[number];

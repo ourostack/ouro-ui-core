@@ -1,0 +1,165 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "tab-bar",
+  "version": "1.0.0",
+  "summary": "The bar of tabs at the bottom of a phone screen: two to five of an app's top-level pages, each an icon over a short label, with the current one marked.",
+  "role": "group",
+  "properties": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "Names the navigation for screen readers; not shown."
+    },
+    {
+      "name": "current",
+      "type": "string",
+      "description": "The label of the item that is the current page."
+    }
+  ],
+  "slots": [
+    {
+      "name": "items",
+      "description": "Two to five tabs: a short label and an icon each. The icon is decorative; the label names the tab."
+    },
+    {
+      "name": "accessory",
+      "description": "One optional item that sits apart in a circle of its own at the end of the bar, such as Search. Only its icon shows; its label names it for screen readers."
+    }
+  ],
+  "events": [
+    {
+      "name": "press",
+      "description": "A tab or the accessory is pressed, with its label."
+    }
+  ],
+  "states": [
+    {
+      "name": "rest",
+      "description": "Muted icon and label; the current tab in the accent colours on an accent wash."
+    },
+    {
+      "name": "focused",
+      "description": "A ring around the focused tab."
+    },
+    {
+      "name": "pressed",
+      "description": "The tab scales to the press scale, never under reduced motion."
+    }
+  ],
+  "tokens": {
+    "wash": "accent",
+    "current": "accent-foreground",
+    "label": "muted-foreground",
+    "edge": "border",
+    "focus": "ring"
+  },
+  "metrics": {
+    "height": 64,
+    "heightTouch": 44,
+    "iconSize": 24
+  },
+  "claims": [
+    "contrast.text",
+    "motion.reduced",
+    "name.spoken",
+    "target.touch",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "Its label names the navigation; each tab by its label, never its icon; the current one marked.",
+    "keyboard": "Each tab is its own tab stop; Enter and Space press it.",
+    "web": "A <nav> named by its label, of links named by their labels, the current one with aria-current=\"page\"; icons are aria-hidden.",
+    "apple": "A container named by its label, of buttons named by their labels with the selected trait on the current one; icons are hidden from VoiceOver.",
+    "windows": "A UI Automation ControlType.List named by its label, of ListItems named by their labels with SelectionItem, the current one selected, like a NavigationView's top-level items.",
+    "android": "A selectableGroup named by its label, of NavigationBarItem nodes with Role.Tab, the selected state on the current one and a click action, named by their labels; icons carry no content description."
+  },
+  "cases": [
+    {
+      "id": "main-with-search",
+      "props": {
+        "label": "Main",
+        "current": "Recipes"
+      },
+      "slots": {
+        "items": "Home; Recipes; Shopping",
+        "accessory": "Search"
+      },
+      "person": "Three icons over short words along the bottom, Recipes on an accent wash, and a Search circle apart at the end.",
+      "agent": {
+        "role": "group",
+        "name": "Main",
+        "children": [
+          {
+            "role": "button",
+            "name": "Home"
+          },
+          {
+            "role": "button",
+            "name": "Recipes"
+          },
+          {
+            "role": "button",
+            "name": "Shopping"
+          },
+          {
+            "role": "button",
+            "name": "Search"
+          }
+        ]
+      }
+    },
+    {
+      "id": "two-tabs",
+      "props": {
+        "label": "Main",
+        "current": "Home"
+      },
+      "slots": {
+        "items": "Home; Settings"
+      },
+      "person": "Two icons over short words, Home on an accent wash.",
+      "agent": {
+        "role": "group",
+        "name": "Main",
+        "children": [
+          {
+            "role": "button",
+            "name": "Home"
+          },
+          {
+            "role": "button",
+            "name": "Settings"
+          }
+        ]
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "TabBar (registry/ouro/components/ouro/tab-bar)",
+      "deviations": [
+        "Web's items are links (href, paths) and the current one follows currentPath; native kits take a current label and a press handler, as an app navigates itself.",
+        "Web hides it from a breakpoint and slides it away under the on-screen keyboard (hideFrom); native bars leave both to the platform."
+      ]
+    },
+    "apple": {
+      "type": "OuroTabBar (not yet built)",
+      "deviations": [
+        "Drawn rather than the system's TabView bar, so it matches web's accent wash; its tabs are buttons with the selected trait."
+      ]
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroTabBar (not yet built)",
+      "deviations": [
+        "A bottom bar is not a Windows pattern: on a desktop the app uses Sidebar, which maps to NavigationView, and this bar only on a phone-sized window."
+      ]
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroTabBar (not yet built)",
+      "deviations": [
+        "Drawn rather than Material's NavigationBar, to keep web's 64 dp height and accent wash; its items carry Role.Tab as NavigationBarItem's do."
+      ]
+    }
+  }
+}

@@ -1,0 +1,173 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "tabs",
+  "version": "1.0.0",
+  "summary": "A row or column of tabs that switches which panel of content shows in place, with a line that slides to the selected tab.",
+  "role": "control",
+  "properties": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "Names the tab list for screen readers; not shown, since the tabs' own labels are the visible text."
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "description": "The selected tab's value."
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["horizontal", "vertical"],
+      "default": "horizontal",
+      "description": "Horizontal puts the tabs in a row above the panel; vertical in a column beside it. Where the screen is narrow it stays a row."
+    }
+  ],
+  "slots": [
+    {
+      "name": "items",
+      "description": "The tabs, in order: a value, one short label, and whether it is disabled."
+    },
+    {
+      "name": "panel",
+      "description": "The content of the selected tab."
+    }
+  ],
+  "events": [
+    {
+      "name": "press",
+      "description": "A tab is pressed."
+    },
+    {
+      "name": "change",
+      "description": "The selected tab changed, with its value."
+    }
+  ],
+  "states": [
+    {
+      "name": "rest",
+      "description": "Unselected tabs in the muted foreground; the selected tab in the foreground with the line under it (beside it when vertical)."
+    },
+    {
+      "name": "focused",
+      "description": "A ring around the focused tab."
+    },
+    {
+      "name": "pressed",
+      "description": "The tab scales to the press scale, never under reduced motion."
+    },
+    {
+      "name": "disabled",
+      "description": "A disabled tab is faded and can't be pressed."
+    }
+  ],
+  "tokens": {
+    "selected": "foreground",
+    "unselected": "muted-foreground",
+    "line": "primary",
+    "edge": "border",
+    "focus": "ring"
+  },
+  "metrics": {
+    "heightTouch": 44,
+    "heightPointer": 36,
+    "lineThickness": 2
+  },
+  "claims": [
+    "contrast.text",
+    "motion.reduced",
+    "name.spoken",
+    "target.touch",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "Its label names the tab list; each tab by its label, the selected one marked selected.",
+    "keyboard": "One tab stop for the list, on the selected tab; the arrow keys that follow the orientation move to the next enabled tab and select it; Home and End go to the first and last.",
+    "web": "A role=\"tablist\" named by its label, of role=\"tab\" elements with aria-selected, each with aria-controls to its role=\"tabpanel\", which aria-labelledby names by its tab (WAI-ARIA Authoring Practices tabs pattern); aria-orientation when vertical.",
+    "apple": "A container named by its label, of buttons with the selected trait on the selected tab; the panel follows the list. SwiftUI has no tab-list role.",
+    "windows": "UI Automation ControlType.Tab with the Selection pattern, of ControlType.TabItem elements with SelectionItem, named by their labels; the panel is ControlType.Pane.",
+    "android": "A selectableGroup container named by its label, of Role.Tab nodes with the selected state and a click action, named by their labels."
+  },
+  "cases": [
+    {
+      "id": "recipe-sections",
+      "props": {
+        "label": "Recipe",
+        "value": "ingredients"
+      },
+      "slots": {
+        "items": "Ingredients; Method",
+        "panel": "The ingredient list"
+      },
+      "person": "Two tabs in a row, Ingredients in the foreground with a line under it and Method muted, and the ingredient list below.",
+      "agent": {
+        "role": "group",
+        "name": "Recipe",
+        "children": [
+          {
+            "role": "button",
+            "name": "Ingredients"
+          },
+          {
+            "role": "button",
+            "name": "Method"
+          }
+        ]
+      }
+    },
+    {
+      "id": "vertical-with-disabled",
+      "props": {
+        "label": "Settings",
+        "value": "profile",
+        "orientation": "vertical"
+      },
+      "slots": {
+        "items": "Profile; Billing (disabled)"
+      },
+      "person": "Two tabs stacked in a column, Profile selected with the line beside it and Billing faded.",
+      "agent": {
+        "role": "group",
+        "name": "Settings",
+        "children": [
+          {
+            "role": "button",
+            "name": "Profile"
+          },
+          {
+            "role": "button",
+            "name": "Billing"
+          }
+        ]
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "Tabs (registry/ouro/components/ouro/tabs)",
+      "deviations": [
+        "Web's items may instead each be a link to a page of its own (href, currentPath), rendered as a nav of links; native kits have panels only, and a page's own navigation uses TabBar or Sidebar.",
+        "Web also takes activation (automatic or manual); native tabs always select on press."
+      ]
+    },
+    "apple": {
+      "type": "OuroTabs (not yet built)",
+      "deviations": [
+        "Tabs are buttons with the selected trait, as SwiftUI has no tab-list role."
+      ]
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroTabs (not yet built)",
+      "deviations": [
+        "Drawn as a templated control on WinUI's TabView or Pivot semantics without its close and add buttons, which web's Tabs has no equivalent for."
+      ]
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroTabs (not yet built)",
+      "deviations": [
+        "Drawn rather than Material's TabRow, whose indicator and heights differ; its tabs carry Role.Tab as TabRow's do."
+      ]
+    }
+  }
+}
