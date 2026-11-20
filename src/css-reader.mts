@@ -33,6 +33,8 @@ function modeOf(stack: string[]): Mode | typeof RULE | null {
   if (stack.length === 1 && stack[0]!.startsWith("@utility ")) return RULE;
   // One of Ouro's own classes in the static stylesheet (`.ouro-skip-link { --corner-shape: ... }`) sets a property for its elements, not a token.
   if (stack.length === 1 && stack[0]!.startsWith(".ouro-")) return RULE;
+  // A rule scoped by the focus modality (`:root[data-ouro-modality="pointer"] .ouro-field-cue:focus-within { --ouro-bd: ... }`) sets a property for those elements, not a token.
+  if (stack.length === 1 && stack[0]!.startsWith(':root[data-ouro-modality=')) return RULE;
   return null;
 }
 
