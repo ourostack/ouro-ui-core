@@ -1,0 +1,184 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "sidebar",
+  "version": "1.0.0",
+  "summary": "The column of links down the side of an app, in sections, with the current page marked and a rail of icons when collapsed.",
+  "role": "group",
+  "properties": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "Names the navigation for screen readers; not shown."
+    },
+    {
+      "name": "current",
+      "type": "string",
+      "description": "The label of the item that is the current page."
+    },
+    {
+      "name": "collapsed",
+      "type": "boolean",
+      "default": false,
+      "description": "Collapses the sidebar to a rail of icons; each item keeps its label as its name."
+    }
+  ],
+  "slots": [
+    {
+      "name": "sections",
+      "description": "The items, in groups under an optional heading. An item has a label, an optional icon and badge, and is a link (it can be the current page), a button (an action, never current), or a group of nested links and buttons one level deep."
+    },
+    {
+      "name": "header",
+      "description": "Above the items: a logo, product name or workspace menu. Clipped to the rail when collapsed."
+    },
+    {
+      "name": "footer",
+      "description": "Below the items: the signed-in person or an account menu. Clipped to the rail when collapsed."
+    }
+  ],
+  "events": [
+    {
+      "name": "press",
+      "description": "An item is pressed, with its label."
+    },
+    {
+      "name": "collapsedChange",
+      "description": "The person collapsed or expanded the sidebar, with the new state."
+    }
+  ],
+  "states": [
+    {
+      "name": "rest",
+      "description": "Items in the foreground; the current one on an accent wash with a bar at the start edge."
+    },
+    {
+      "name": "hover",
+      "description": "A pointer over an item shows the muted wash, distinct from the current item's."
+    },
+    {
+      "name": "focused",
+      "description": "A ring around the focused item."
+    },
+    {
+      "name": "pressed",
+      "description": "The item takes the muted wash instead of scaling, as a full-width row that shrinks reads as a jump."
+    }
+  ],
+  "tokens": {
+    "surface": "background",
+    "label": "foreground",
+    "section": "muted-foreground",
+    "current": "accent-foreground",
+    "wash": "accent",
+    "hover": "muted",
+    "edge": "border",
+    "focus": "ring"
+  },
+  "metrics": {
+    "width": 256,
+    "railWidth": 64,
+    "heightTouch": 44,
+    "heightPointer": 36,
+    "currentBar": 3
+  },
+  "claims": [
+    "contrast.text",
+    "name.spoken",
+    "target.touch",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "Its label names the navigation; each item by its label, a badge read after it (\"Inbox 12\"), the current one marked; a collapsed item by its label alone.",
+    "keyboard": "Each item is a tab stop; Enter and Space press it; a group's button shows or hides its nested items and reports whether it is expanded.",
+    "web": "A <nav> named by its label, of lists of links, the current one with aria-current=\"page\"; a button item is a <button>; a group is a button with aria-expanded; section headings label their lists; collapsed, each icon item keeps its name and a tooltip.",
+    "apple": "A container named by its label, of sections whose headings are headers, of buttons named by their labels with the selected trait on the current one; a group is a button reading expanded or collapsed.",
+    "windows": "Like a NavigationView's list: UI Automation ControlType.List named by its label, of ListItems with SelectionItem, the current one selected, section headings as header items; a group is a ListItem with the ExpandCollapse pattern; a button item has the Invoke pattern.",
+    "android": "A list of nodes with Role.Button (a link and a button item alike, as Compose has no link role), the current one with the selected state, each named by its label with its badge, a click action and focus; section headings are headings; a group node has an expanded state."
+  },
+  "cases": [
+    {
+      "id": "sections-and-badge",
+      "props": {
+        "label": "Main",
+        "current": "Recipes"
+      },
+      "slots": {
+        "sections": "Recipes; Inbox (badge 12); Library: Cookbooks",
+        "header": "Spoonjoy"
+      },
+      "person": "Spoonjoy at the top, then Recipes on an accent wash with a bar at its start edge, Inbox with a 12 badge, and a Library heading over Cookbooks.",
+      "agent": {
+        "role": "group",
+        "name": "Main",
+        "children": [
+          {
+            "role": "button",
+            "name": "Recipes"
+          },
+          {
+            "role": "button",
+            "name": "Inbox 12"
+          },
+          {
+            "role": "button",
+            "name": "Cookbooks"
+          }
+        ]
+      }
+    },
+    {
+      "id": "collapsed-rail",
+      "props": {
+        "label": "Main",
+        "current": "Recipes",
+        "collapsed": true
+      },
+      "slots": {
+        "sections": "Recipes; Cookbooks"
+      },
+      "person": "A narrow rail of two icons, the Recipes icon on an accent wash.",
+      "agent": {
+        "role": "group",
+        "name": "Main",
+        "children": [
+          {
+            "role": "button",
+            "name": "Recipes"
+          },
+          {
+            "role": "button",
+            "name": "Cookbooks"
+          }
+        ]
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "Sidebar (registry/ouro/components/ouro/sidebar)",
+      "deviations": [
+        "Web's items are links (href) and the current one follows currentPath; native kits take a current label and a press handler, as an app navigates itself.",
+        "Below 640px web turns it into a menu button that opens a Sheet drawer; native kits leave that to the platform's own navigation."
+      ]
+    },
+    "apple": {
+      "type": "OuroSidebar (not yet built)",
+      "deviations": [
+        "On iPhone the app uses OuroTabBar; on iPad and Mac this is the sidebar column. Items are buttons with the selected trait, as SwiftUI has no link role."
+      ]
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroSidebar (not yet built)",
+      "deviations": [
+        "Built on WinUI's NavigationView semantics, whose compact pane is the collapsed rail."
+      ]
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroSidebar (not yet built)",
+      "deviations": [
+        "Drawn as a list of Role.Button nodes rather than Material's NavigationDrawerItem, which has no link role either; used on tablets and foldables, where a phone uses OuroTabBar."
+      ]
+    }
+  }
+}
