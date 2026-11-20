@@ -994,6 +994,19 @@ test("check accepts projections an older ouro-actions stamped, so updating the g
   assert.match(checkGenerated(shopping, edited)[0]!, /^mcp\.json:\d+: drifted from its declaration/);
 });
 
+test("check names the first real difference in a projection an older ouro-actions stamped, not its generator line (ouro-ui-core#123)", async () => {
+  const { readFile: read } = await import("node:fs/promises");
+  const current = await read(new URL("./fixtures/actions/generated/mcp.json", import.meta.url), "utf8");
+  const older = current.replace(/ouro-actions \d+\.\d+\.\d+/g, "ouro-actions 0.16.0");
+  const at = older.split("\n").findIndex((line) => line.includes("shopping") && !line.includes("generator"));
+  assert.ok(at > 1, "the fixture names the set after its generator line");
+  const lines = older.split("\n");
+  lines[at] = lines[at]!.replace("shopping", "shoping");
+  const [problem] = checkGenerated(shopping, new Map([["mcp.json", lines.join("\n")]]), new Set(["mcp.json"]));
+  assert.match(problem!, new RegExp(`^mcp\\.json:${at + 1}: drifted from its declaration: expected ".*shopping.*", found ".*shoping.*"`));
+  assert.doesNotMatch(problem!, /generator/);
+});
+
 test("a default appears typed in commands.json, MCP and WebMCP, and only where it is declared", () => {
   const defaultOf = (property: unknown) => (property as { default?: unknown }).default;
   const commands = JSON.parse(renderActions(shopping).get("commands.json")!);
