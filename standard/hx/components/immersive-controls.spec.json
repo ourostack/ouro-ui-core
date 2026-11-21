@@ -1,0 +1,120 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "immersive-controls",
+  "version": "1.0.0",
+  "summary": "Controls shown over content that fills the screen (a book's page, a photo, a video, a map): a bar at the top and a bar at the foot, laid over the content, which never moves for them.",
+  "role": "group",
+  "properties": [
+    {
+      "name": "presented",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the bars show. The app turns it on and off, usually on a tap in the middle of the content."
+    }
+  ],
+  "slots": [
+    {
+      "name": "top",
+      "description": "The top bar's controls, such as Close at the leading end and one action at the trailing end. It stands in the status bar's band, beside any camera housing."
+    },
+    {
+      "name": "bottom",
+      "description": "The bottom bar's controls, such as a scrubber and a group of actions. It stands in the home indicator's band, across the width under any housing."
+    }
+  ],
+  "events": [],
+  "states": [
+    {
+      "name": "rest",
+      "description": "Hidden: the content alone fills the screen. Presented: both bars over the content, each slid in from its own edge, or faded in under reduced motion, and the content where it was, unscaled and undimmed."
+    }
+  ],
+  "tokens": {},
+  "metrics": {
+    "edgeGap": 8,
+    "sideGap": 16,
+    "homeIndicatorBand": 13
+  },
+  "claims": [
+    "content.holds-still",
+    "motion.reduced"
+  ],
+  "accessibility": {
+    "name": "Each bar's controls are named by their own labels; the bars add no name of their own.",
+    "keyboard": "The bars' controls follow the content in the tab order while presented, and leave it when hidden.",
+    "web": "Two fixed-position toolbars (role=\"toolbar\", named by the app) over the content, which keeps its own layout; hidden ones are removed, not only made transparent.",
+    "apple": "An overlay on the content: VoiceOver reads the top bar's controls, then the bottom bar's, and the content under them is still reachable.",
+    "windows": "Two overlaid panels of controls on the content, each a UI Automation group, removed from the tree when hidden."
+  },
+  "cases": [
+    {
+      "id": "photo",
+      "props": {
+        "presented": true
+      },
+      "slots": {
+        "top": "Close; Share",
+        "bottom": "Edit; Favourite"
+      },
+      "person": "A picture that fills the screen, where it was before the tap; Close and Share float at the top corners in the status band, and Edit and Favourite float along the foot, each in a glass capsule.",
+      "agent": {
+        "role": "group",
+        "name": "",
+        "children": [
+          {
+            "role": "button",
+            "name": "Close"
+          },
+          {
+            "role": "button",
+            "name": "Share"
+          },
+          {
+            "role": "button",
+            "name": "Edit"
+          },
+          {
+            "role": "button",
+            "name": "Favourite"
+          }
+        ]
+      }
+    },
+    {
+      "id": "hidden",
+      "props": {
+        "presented": false
+      },
+      "slots": {
+        "top": "Close; Share",
+        "bottom": "Edit; Favourite"
+      },
+      "person": "The picture alone, filling the screen, in the same place.",
+      "agent": {
+        "role": "group",
+        "name": ""
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "ImmersiveControls (not yet built)",
+      "deviations": [
+        "A browser reports no camera housing, so web's bars stand in env(safe-area-inset-*) and the page's own margins."
+      ]
+    },
+    "apple": {
+      "type": ".ouroImmersiveControls(isPresented:safeArea:occlusions:top:bottom:) (ouro-ui-apple)",
+      "deviations": [
+        "Each bar is one Liquid Glass container on iOS 26 and later, so its pieces of glass blend as the system's toolbars do; the app draws its controls in squircle glass shapes.",
+        "Reads the camera housing from reservedRegions(kind: .occlusion) on iOS 27.1 and later; an app can pass its own occlusions and safe area."
+      ]
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroImmersiveControls (not yet built)",
+      "deviations": [
+        "A desktop window has no status or home-indicator band, so the bars stand a gap in from the window's edges."
+      ]
+    }
+  }
+}
