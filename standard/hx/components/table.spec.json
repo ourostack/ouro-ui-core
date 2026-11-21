@@ -128,8 +128,7 @@
     "touchRow": 44,
     "denseRow": 32,
     "row": 40,
-    "cellPaddingX": 16,
-    "wrapMinWidth": 192
+    "cellPaddingX": 16
   },
   "claims": [
     "contrast.text",
@@ -138,12 +137,12 @@
     "text.reflows"
   ],
   "accessibility": {
-    "name": "The table is named by its caption; each column by its header; each row by its row header cell; a sorted column reads as sorted, ascending or descending; a linked row is named by its row header and opens its destination.",
+    "name": "The table is named by its caption; each column by its header; a sorted column reads as sorted, ascending or descending. The agent tree flattens a row into one node named by its cells in order, joined by commas, and a header is a heading (a button when it sorts) there: the native kits keep the real header, row and cell roles. A linked row is named by its row header and opens its destination.",
     "keyboard": "A sortable header and a linked row are each one tab stop; Enter or Space presses a header, Enter follows a row's link. Buttons and links inside cells keep their own tab stops.",
     "web": "A table with a caption, th scope=col column headers, a th scope=row row header per row, aria-sort on the sorted header, the sort announced in a polite live region, and a scroll region named by the caption.",
     "apple": "A table of rows with accessibility headers; the sorted column announces its direction.",
-    "windows": "A UI Automation Table: ControlType.Table with the Grid and Table patterns, a header row of ControlType.Header items (RowOrColumnMajor, ColumnHeaders), a row per ControlType.DataItem, and a sort announced through UI Automation notifications.",
-    "android": "A column with CollectionInfo of the row and column counts and a CollectionItemInfo per row and cell (header cells with isHeading), a sorted header with a stateDescription, and a sort announced with a live region."
+    "windows": "A UI Automation Table: ControlType.Table with the Grid and Table patterns (RowOrColumnMajor, ColumnHeaders), a ControlType.Header row holding one ControlType.HeaderItem per column (a sortable one also takes the Invoke pattern), a ControlType.DataItem per row, and ControlType.Text cells. The sorted direction is in the header's name (\", sorted ascending\") and the sort is announced through UI Automation notifications.",
+    "android": "A column with CollectionInfo of the row and column counts; each cell, header cells included, carries a CollectionItemInfo with its row and column index (header cells with isHeading), and a row groups its cells with mergeDescendants so TalkBack reads it in one stop, or for a linked row presses as a button named by its row header. A sorted header has a stateDescription, and a sort is announced with a live region."
   },
   "cases": [
     {
