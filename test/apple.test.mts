@@ -74,9 +74,18 @@ test("pearl has empty extras", async () => {
 test("every theme carries its heading's font families, aliases resolved", async () => {
   const swift = await renderApple("test");
   assert.match(swift, /public let heading: \[String\]/);
-  assert.match(swift, /extras: OuroThemeExtras = \.empty, heading: \[String\] = \[\]\)/);
+  assert.match(swift, /extras: OuroThemeExtras = \.empty, heading: \[String\] = \[\], controlRadius: Double\? = nil\)/);
   // Cookbook's font-heading is {font-sj-display}: Fraunces, then Georgia.
-  assert.match(swift, /name: \.cookbook,[\s\S]*?heading: \["Fraunces", "Georgia", "Times New Roman", "serif"\]\n    \)/);
-  assert.match(swift, /name: \.pearl,[\s\S]*?heading: \["-apple-system", "BlinkMacSystemFont", "SF Pro Display", "Geist", "ui-sans-serif", "system-ui", "sans-serif"\]\n    \)/);
+  assert.match(swift, /name: \.cookbook,[\s\S]*?heading: \["Fraunces", "Georgia", "Times New Roman", "serif"\],\n        controlRadius: /);
+  assert.match(swift, /name: \.pearl,[\s\S]*?heading: \["-apple-system", "BlinkMacSystemFont", "SF Pro Display", "Geist", "ui-sans-serif", "system-ui", "sans-serif"\],\n        controlRadius: /);
   assert.equal((swift.match(/^        heading: \[/gm) ?? []).length, 6, "one heading line per theme");
+});
+
+test("a theme's control radius is nil until it sets ouro.control-radius", async () => {
+  const swift = await renderApple("test");
+  assert.match(swift, /public let controlRadius: Double\?/);
+  for (const theme of ["pearl", "cookbook", "abyss", "brass", "chart", "coral"]) {
+    const block = swift.slice(swift.indexOf(`public static let ${theme} = OuroTheme(`));
+    assert.match(block.slice(0, block.indexOf("\n    )\n")), /controlRadius: nil$/m, `${theme} sets a control radius`);
+  }
 });
