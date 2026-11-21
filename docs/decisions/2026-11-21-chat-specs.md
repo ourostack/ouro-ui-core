@@ -20,7 +20,7 @@ Web has the chat components, and Windows and Android have none. A kit that build
 
 Read on 2026-11-21.
 
-- [WAI-ARIA log role](https://www.w3.org/TR/wai-aria-1.2/#log): adopt, the web form of MessageList's polite announcement.
+- [WAI-ARIA log role](https://www.w3.org/TR/wai-aria-1.2/#log): borrow, for the polite announcement; web uses a region with a separate live region.
 - [WinUI ListView](https://learn.microsoft.com/en-us/windows/apps/design/controls/listview-and-gridview) and [UIA notifications](https://learn.microsoft.com/en-us/windows/apps/design/accessibility/ui-automation-notification-events): adopt, the Windows list and the announcement.
 - [Compose lists and grids (LazyColumn)](https://developer.android.com/develop/ui/compose/lists) and [live regions](https://developer.android.com/develop/ui/compose/accessibility/semantics): adopt, the Android list and the announcement.
 - [WinUI TextBox](https://learn.microsoft.com/en-us/windows/apps/design/controls/text-box): borrow, the Composer's multi-line box; the frame and Send button are ours.

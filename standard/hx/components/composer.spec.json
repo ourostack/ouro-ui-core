@@ -111,7 +111,7 @@
     "text.reflows"
   ],
   "accessibility": {
-    "name": "The box is named by its label; Send by its sendLabel, and \"Sending\" while it is on its way. A reason is read with the box.",
+    "name": "The box is named by its label; Send by its sendLabel, which it keeps while sending; \"Sending\" is announced once when sending turns on. A reason is read with the box.",
     "keyboard": "Tab reaches the box, then Send. Enter sends, or Ctrl+Enter with sendOn modenter; an input method composing a word is never cut off.",
     "web": "A <textarea> named by its label with aria-describedby for the reason, and a Send <button>.",
     "apple": "A text field with the label, and a Send button, in one group.",

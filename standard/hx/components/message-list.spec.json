@@ -76,7 +76,7 @@
   "accessibility": {
     "name": "The group's label; each message is read as Message does, in the order sent.",
     "keyboard": "Messages are read in order; Tab reaches the load-older and jump buttons, which appear only when they apply.",
-    "web": "A role=log region named by its label, with a polite live announcement of each new message.",
+    "web": "A region named by its label, with a separate polite live region for each new message.",
     "apple": "A container with a label whose messages are elements in order; a new message posts one polite announcement.",
     "windows": "UI Automation ControlType.List named by its label, its items ListItems in order; a new message raises one UIA notification with Importance=Other (polite, as the web's).",
     "android": "A container with a collection role named by its label, its items in order, and a polite live region for each new message; the buttons have click actions."
@@ -138,6 +138,7 @@
     "web": {
       "type": "MessageList (registry/ouro/components/ouro/message-list)",
       "deviations": [
+        "Web has no load-older button, olderLabel or loadOlder event: hasOlder only reserves room above the first message and a status line says older messages are loading. The native load-older button is a native-only addition.",
         "Web also windows long histories, follows streaming text and takes a conversation key; native kits use their platform's lazy list and follow the same read-once rule.",
         "Web announces through its own live region; native kits use the platform's announcement (UIA notification, live-region semantics)."
       ]

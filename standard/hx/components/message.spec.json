@@ -149,6 +149,8 @@
       "type": "Message (registry/ouro/components/ouro/message)",
       "deviations": [
         "Web also has the post and reply variants, avatars, quotes, attachments, footers and actions; native kits draw the chat variant's text, author, time and state, and take the rest as later slots.",
+        "Web draws failed as a Not sent marker with Retry and Delete buttons, read as the message's description, not its name; native kits fold Not sent into the spoken name and draw no buttons yet.",
+        "Web shows pending only after a send has taken more than a second; native kits show it as soon as it is set.",
         "Web names the author through `name` and the picture through `avatar`; native kits draw no picture yet."
       ]
     },
