@@ -1,5 +1,5 @@
 {
-  "$description": "The Cookbook theme: the tokens it sets over tokens/ouro.tokens.json. DTCG 2025.10. Derived from ourostack/ouro-ui@v1.3.362.",
+  "$description": "The Cookbook theme: the tokens it sets over tokens/ouro.tokens.json. DTCG 2025.10. Derived from ourostack/ouro-ui@v1.3.412.",
   "font-sans": {
     "$type": "fontFamily",
     "$value": ["Geist", "ui-sans-serif", "system-ui", "sans-serif"]
@@ -745,27 +745,37 @@
       "$type": "number",
       "$value": 1
     },
-    "control-radius": {
-      "$type": "dimension",
-      "$value": {
-        "value": 9999,
-        "unit": "px"
+    "cover-from": {
+      "$type": "color",
+      "$value": "{sj-vellum}",
+      "$extensions": {
+        "mode": {
+          "dark": "{sj-vellum}"
+        }
       }
     },
-    "control-corner-shape": {
-      "$type": "string",
-      "$value": "round"
-    },
-    "check-radius": {
-      "$type": "dimension",
+    "cover-to": {
+      "$type": "color",
       "$value": {
-        "value": 9999,
-        "unit": "px"
+        "colorSpace": "srgb",
+        "components": [0.6078, 0.4078, 0.2039],
+        "alpha": 0.32,
+        "hex": "#9b6834"
+      },
+      "$extensions": {
+        "mode": {
+          "dark": {
+            "colorSpace": "srgb",
+            "components": [0.7686, 0.5804, 0.3608],
+            "alpha": 0.32,
+            "hex": "#c4945c"
+          }
+        },
+        "bot.ouro": {
+          "css": "color-mix(in srgb, var(--sj-brass) 32%, transparent)",
+          "cssDark": "color-mix(in srgb, var(--sj-brass) 32%, transparent)"
+        }
       }
-    },
-    "check-corner-shape": {
-      "$type": "string",
-      "$value": "round"
     }
   },
   "background": {

@@ -7,6 +7,10 @@
  *   theme overrides them like any other variable.
  * - Avatar's eight initials hues, --avatar-1 to --avatar-8, which Avatar mixes toward the
  *   background (the tint) and the foreground (the letters).
+ * - --ouro-size-*: the fixed sizes of icons, avatars, thumbs and the like, in rem on Tailwind's
+ *   quarter-rem steps (--ouro-size-8 is 2rem), named for their step with a dot as an underscore
+ *   (--ouro-size-2_5). Density is --spacing, and these do not follow it, so a compact app keeps
+ *   its avatars and icons their size; an app sets one to theme that size.
  * - Motion: a Motion spring(0.4, 0.15) as CSS, quick ease durations, the press scale and
  *   the dimming behind sheets and dialogs. These are not colors, so they keep the
  *   --ouro- prefix.
@@ -47,6 +51,42 @@
  * Load it before the app's theme so a theme's values win.
  */
 @theme inline {
+  /* The fixed sizes as named spacing utilities (size-ouro-8, w-ouro-10, -ms-ouro-2): one rule each, and a short class.
+     Each reads its --ouro-size-* token, so an app themes the token and --spacing never changes it (ourostack/ouro-ui#417). */
+  --spacing-ouro-0_5: {{spacing-ouro-0_5}};
+  --spacing-ouro-1: {{spacing-ouro-1}};
+  --spacing-ouro-1_5: {{spacing-ouro-1_5}};
+  --spacing-ouro-2: {{spacing-ouro-2}};
+  --spacing-ouro-2_5: {{spacing-ouro-2_5}};
+  --spacing-ouro-3: {{spacing-ouro-3}};
+  --spacing-ouro-3_5: {{spacing-ouro-3_5}};
+  --spacing-ouro-4: {{spacing-ouro-4}};
+  --spacing-ouro-5: {{spacing-ouro-5}};
+  --spacing-ouro-5_5: {{spacing-ouro-5_5}};
+  --spacing-ouro-6: {{spacing-ouro-6}};
+  --spacing-ouro-7: {{spacing-ouro-7}};
+  --spacing-ouro-8: {{spacing-ouro-8}};
+  --spacing-ouro-9: {{spacing-ouro-9}};
+  --spacing-ouro-10: {{spacing-ouro-10}};
+  --spacing-ouro-11: {{spacing-ouro-11}};
+  --spacing-ouro-12: {{spacing-ouro-12}};
+  --spacing-ouro-13: {{spacing-ouro-13}};
+  --spacing-ouro-14: {{spacing-ouro-14}};
+  --spacing-ouro-16: {{spacing-ouro-16}};
+  --spacing-ouro-17: {{spacing-ouro-17}};
+  --spacing-ouro-18: {{spacing-ouro-18}};
+  --spacing-ouro-20: {{spacing-ouro-20}};
+  --spacing-ouro-24: {{spacing-ouro-24}};
+  --spacing-ouro-28: {{spacing-ouro-28}};
+  --spacing-ouro-32: {{spacing-ouro-32}};
+  --spacing-ouro-40: {{spacing-ouro-40}};
+  --spacing-ouro-48: {{spacing-ouro-48}};
+  --spacing-ouro-56: {{spacing-ouro-56}};
+  --spacing-ouro-64: {{spacing-ouro-64}};
+  --spacing-ouro-72: {{spacing-ouro-72}};
+  --spacing-ouro-80: {{spacing-ouro-80}};
+  --spacing-ouro-96: {{spacing-ouro-96}};
+  --spacing-ouro-144: {{spacing-ouro-144}};
   --color-input: {{color-input}};
   /* Components round with the --radius-ouro-* steps (rounded-ouro-lg). shadcn init writes its own
      --radius-* steps into an app's theme, and shadcn add never replaces a variable the app has, so
@@ -93,6 +133,41 @@
   --avatar-6: {{avatar-6}};
   --avatar-7: {{avatar-7}};
   --avatar-8: {{avatar-8}};
+  /* Fixed sizes (ourostack/ouro-ui#417): density is --spacing, and these never follow it, so a compact --spacing leaves icons and avatars their size. */
+  --ouro-size-0_5: {{ouro.size-0_5}};
+  --ouro-size-1: {{ouro.size-1}};
+  --ouro-size-1_5: {{ouro.size-1_5}};
+  --ouro-size-2: {{ouro.size-2}};
+  --ouro-size-2_5: {{ouro.size-2_5}};
+  --ouro-size-3: {{ouro.size-3}};
+  --ouro-size-3_5: {{ouro.size-3_5}};
+  --ouro-size-4: {{ouro.size-4}};
+  --ouro-size-5: {{ouro.size-5}};
+  --ouro-size-5_5: {{ouro.size-5_5}};
+  --ouro-size-6: {{ouro.size-6}};
+  --ouro-size-7: {{ouro.size-7}};
+  --ouro-size-8: {{ouro.size-8}};
+  --ouro-size-9: {{ouro.size-9}};
+  --ouro-size-10: {{ouro.size-10}};
+  --ouro-size-11: {{ouro.size-11}};
+  --ouro-size-12: {{ouro.size-12}};
+  --ouro-size-13: {{ouro.size-13}};
+  --ouro-size-14: {{ouro.size-14}};
+  --ouro-size-16: {{ouro.size-16}};
+  --ouro-size-17: {{ouro.size-17}};
+  --ouro-size-18: {{ouro.size-18}};
+  --ouro-size-20: {{ouro.size-20}};
+  --ouro-size-24: {{ouro.size-24}};
+  --ouro-size-28: {{ouro.size-28}};
+  --ouro-size-32: {{ouro.size-32}};
+  --ouro-size-40: {{ouro.size-40}};
+  --ouro-size-48: {{ouro.size-48}};
+  --ouro-size-56: {{ouro.size-56}};
+  --ouro-size-64: {{ouro.size-64}};
+  --ouro-size-72: {{ouro.size-72}};
+  --ouro-size-80: {{ouro.size-80}};
+  --ouro-size-96: {{ouro.size-96}};
+  --ouro-size-144: {{ouro.size-144}};
   --ouro-spring-duration: {{ouro.spring.duration}};
   --ouro-ease-spring: {{ouro.ease.spring}};
   --ouro-ease-out: {{ouro.ease.out}}; /* {{ouro.ease.out|description}} */
@@ -177,6 +252,17 @@
   [data-ouro-surface] {
     display: none;
   }
+  /* Body copy in an Ouro component avoids a last line of one word, and its headings balance their lines. In the base layer, so a text-wrap utility on the element, or the app's own rule, wins. */
+  [data-ouro] {
+    text-wrap-style: pretty;
+  }
+  [data-ouro] :is(h1, h2, h3, h4, h5, h6, [role="heading"]), :is(h1, h2, h3, h4, h5, h6, [role="heading"])[data-ouro] {
+    text-wrap-style: balance;
+  }
+  /* A message list measures and scrolls to row heights, and WebKit's pretty wrapping shifts them by a pixel or two, so its rows keep the browser's own wrapping. */
+  [data-ouro="message-list"] :is([data-ouro], [role="heading"]) {
+    text-wrap-style: auto;
+  }
   /* A very wide screen at 1x (a 4K display at 100%, 3840px across) reads at a laptop's size: the root grows one step
      at 150rem (2400px) and another at 200rem (3200px), then stops, so rem-sized type, gutters and columns grow a
      little and never past 125% (20px). An app's own `html { font-size }` outside any layer wins. */
@@ -189,6 +275,19 @@
     html {
       font-size: 125%;
     }
+  }
+}
+
+/* Keyboard-only focus rings. Ouro's last-input tracker marks the focused element with data-ouro-pressed-focus, and each element around it with data-ouro-pressed-within, while focus came from a press, and takes the mark off after a key that moves focus (Tab, the arrows, Home, End, Page Up or Down), so a ring follows the keyboard, including focus a script moves after such a key, and never a press. The marks sit on the focused element and its ancestors, not on <html>, and the fields' rules read the ancestors' mark rather than a :has() on the focused element's, which restyles far more, so a press after a key restyles that element and the fields around it, not every Ouro element on the page (#2524). A text field's own box is covered by ouro-field-cue, which marks it with a border tone instead. Outside any layer (the @supports only gives a theme file a place for them), so it beats the utilities that draw the ring; a borderless field (variant plain) keeps its ring, since it has no border to carry the cue. It never reaches a ring that a keyboard drew. */
+@supports selector(:focus-visible) {
+  :is([data-ouro], [data-ouro-control], [data-ouro-part], [data-ouro-input-group], [data-ouro-composer-frame], [data-ouro-number-field-group]):not([data-variant="plain"])[data-ouro-pressed-focus]:focus-visible,
+  :is([data-ouro], [data-ouro-control], [data-ouro-part], [data-ouro-input-group], [data-ouro-composer-frame], [data-ouro-number-field-group]):not([data-variant="plain"])[data-ouro-pressed-within]:has(> :is(input, textarea):focus-visible),
+  :is([data-ouro], [data-ouro-control], [data-ouro-part], [data-ouro-input-group], [data-ouro-composer-frame], [data-ouro-number-field-group]):not([data-variant="plain"])[data-ouro-pressed-within]:has(> * > :is(input, textarea):focus-visible) {
+    outline-style: none;
+  }
+  .ouro-field-cue[data-ouro-pressed-within]:not([aria-invalid="true"]):not(:has([aria-invalid="true"])) {
+    --ouro-bd: var(--ring);
+    border-color: var(--ring);
   }
 }
 
@@ -219,6 +318,12 @@
   }
   [data-ouro-avatar-surface] {
     clip-path: var(--ouro-sq-path, polygon(var(--ouro-sq-o)));
+  }
+  /* A card's backdrop is its picture alone: the squircle clip is its only edge, with no circular corner or overflow clip under it, which would cut inside the squircle's corners. It covers the box the card's surface paints, so it lines up with the cards beside it. */
+  [data-card-backdrop] {
+    --ouro-card-backdrop-inset: 0;
+    border-radius: 0;
+    overflow: visible;
   }
   [data-ouro-surface] {
     --ouro-sq-m: max(0px, calc(var(--ouro-sq-r) - var(--ouro-sq-w)));
@@ -296,6 +401,13 @@
   --corner-shape: var(--ouro-control-corner-shape, var(--ouro-corner-shape));
   border-radius: var(--ouro-control-r);
   corner-shape: var(--ouro-control-corner-shape, var(--ouro-corner-shape));
+}
+
+/* The corner of a frame inside a frame: the outer radius less the room between the two, never under the sm step, so the
+   inner curve runs concentric with the outer one. The outer frame says its own with --ouro-fr (a --radius-ouro-*
+   step) and --ouro-fi (its padding and border); with neither set it is the md step. */
+@utility rounded-ouro-inner {
+  border-radius: max(var(--radius-ouro-sm), calc(var(--ouro-fr, var(--radius-ouro-md)) - var(--ouro-fi, 0px)));
 }
 
 @utility rounded-ouro-check {
