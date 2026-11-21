@@ -77,6 +77,12 @@ const get = (map: Map<string, Resolved>, id: string, where: string) => {
 };
 
 
+/** A theme's \`ouro.control-radius\` in points, or \`nil\` where it sets none and its controls follow \`radius\`. */
+const controlRadius = (map: Map<string, Resolved>, theme: string): string => {
+  const r = map.get("ouro.control-radius");
+  return r ? points(r.light, `${theme} ouro.control-radius`) : "nil";
+};
+
 /** Apple's Dynamic Type styles, which a typography token's `appleTextStyle` names. */
 export const APPLE_TEXT_STYLES = ["largeTitle", "title", "title2", "title3", "headline", "body", "callout", "subheadline", "footnote", "caption", "caption2"] as const;
 
@@ -344,6 +350,10 @@ public struct OuroTheme: Sendable {
     public let dark: OuroColors
     /// The base corner radius in points (CSS \`--radius\` at ${POINTS_PER_REM} points per rem).
     public let radius: Double
+    /// The corner of the controls a person presses or types into, in points (CSS \`--ouro-control-radius\`, token
+    /// \`ouro.control-radius\`), or nil where the theme leaves them at its \`lg\` step, \`radius\`. A value of at least
+    /// half a control's height makes it a capsule: draw it clamped to half the height, as CSS clamps a radius.
+    public let controlRadius: Double?
     /// The tokens only this theme defines, such as Cookbook's \`sj-*\`. Empty for the others.
     public let extras: OuroThemeExtras
     /// The heading's font families (CSS \`--font-heading\`), most preferred first, as CSS lists them: the font of
@@ -351,11 +361,12 @@ public struct OuroTheme: Sendable {
     /// such as \`system-ui\` or \`serif\` stand for the system's own faces. Empty means the system font.
     public let heading: [String]
 
-    public init(name: OuroThemeName, light: OuroColors, dark: OuroColors, radius: Double, extras: OuroThemeExtras = .empty, heading: [String] = []) {
+    public init(name: OuroThemeName, light: OuroColors, dark: OuroColors, radius: Double, extras: OuroThemeExtras = .empty, heading: [String] = [], controlRadius: Double? = nil) {
         self.name = name
         self.light = light
         self.dark = dark
         self.radius = radius
+        self.controlRadius = controlRadius
         self.extras = extras
         self.heading = heading
     }
@@ -437,7 +448,8 @@ ${THEMES.map((t) => `        case .${t}: return ${t}`).join("\n")}
         dark: ${colors("dark")},
         radius: ${points(get(tokens, "radius", theme).light, `${theme} radius`)},
         extras: ${swiftExtras(allExtras.get(theme)!)},
-        heading: [${headingFamilies(get(tokens, "font-heading", theme).light, theme).map((f) => JSON.stringify(f)).join(", ")}]
+        heading: [${headingFamilies(get(tokens, "font-heading", theme).light, theme).map((f) => JSON.stringify(f)).join(", ")}],
+        controlRadius: ${controlRadius(tokens, theme)}
     )
 `);
   }
