@@ -1,6 +1,6 @@
 # Decision: responsiveness, native
 
-Status: proposed, 2026-11-04. It designs [the responsiveness issue](https://github.com/ourostack/ouro-ui/issues/501) in web, `ourostack/ouro-ui`, where the code it plans will live; it was first proposed there as a guide in [ourostack/ouro-ui#518](https://github.com/ourostack/ouro-ui/pull/518) and moved here, since new decision records live in core.
+Status: proposed, 2026-11-04; its first open question is settled by [2026-11-21's ownership record](2026-11-21-responsiveness-ownership.md). It designs [the responsiveness issue](https://github.com/ourostack/ouro-ui/issues/501) in web, `ourostack/ouro-ui`, where the code it plans will live; it was first proposed there as a guide in [ourostack/ouro-ui#518](https://github.com/ourostack/ouro-ui/pull/518) and moved here, since new decision records live in core.
 
 The goal is that apps built on Ouro UI feel alive by default, and that code, not taste, decides whether they are fast enough. It is a proposal: the primitives below are planned to land in small pull requests and release waves, with their HX side, their AX side, docs and tests, and any of it can change in review.
 
