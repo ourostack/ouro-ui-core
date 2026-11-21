@@ -34,6 +34,8 @@ The first pieces have merged in web. With [the Skeleton shapes PR](https://githu
 
 ### Stale-while-revalidate cache
 
+Superseded by [the ownership record](2026-11-21-responsiveness-ownership.md): the app owns the cache, and Ouro draws the age and refreshing state it reports. The plan below is kept as history.
+
 - **HX:** `createResourceCache()` once per app, and `useResource(key, load)` in a view. It returns `{ data, age, refreshing, error }`. Views that share a key share its entry, so panes showing the same thing agree. While a refresh runs, the old data stays, and its age shows with RelativeTime where the app chooses to show it.
 - **AX:** the resource's age and whether a refresh is running are in the AX state.
 - **Tests:** a second view of the same key reads the cache without a second request; a failed refresh keeps the old data and reports the error.
@@ -44,6 +46,8 @@ The first pieces have merged in web. With [the Skeleton shapes PR](https://githu
 - **Tests:** a navigation with view transitions and one without leave the same focus and the same announced title.
 
 ### Background sync
+
+Who stores queued writes is settled by [the ownership record](2026-11-21-responsiveness-ownership.md): the app's data layer.
 
 - **HX:** a write queue under SyncStatus. Writes made offline are kept across a reload, per account and cleared on sign-out, and sent in order when the connection returns, with backoff. A queued write is planned to carry an idempotency key, so a retry after a lost reply doesn't apply it twice. SyncStatus shows how many are waiting, and a waiting item shows as pending, as in the optimistic updates above.
 - **AX:** an agent can list the queue, retry it and cancel a queued write. These actions name their actor through the AX kit's work events.
@@ -62,6 +66,8 @@ The budgets live in the check's own settings, so changing a number there moves t
 
 ## Order of work
 
+Superseded by [the ownership record](2026-11-21-responsiveness-ownership.md), which sets the order web builds in.
+
 1. Skeletons sized to the content (merged).
 2. The measured checks, now that `ouro-check` has landed, so the next primitives are measured from their first PR.
 3. Optimistic updates with rollback, then the cache, then prefetch, which uses it.
@@ -71,7 +77,7 @@ The first adopters are a chat app built on Ouro UI, through its polish pass, and
 
 ## Not decided here
 
-- Should the cache live in Ouro UI, or should Ouro UI define the interface and let the app bring its own store?
+- ~~Should the cache live in Ouro UI, or should Ouro UI define the interface and let the app bring its own store?~~ Settled: the app's. See [the ownership record](2026-11-21-responsiveness-ownership.md).
 - What is the budget for `first-content` on an app whose first content depends on a slow service? The check could measure from the service's answer instead of from navigation.
 - How much of the AX side of pending changes belongs in the AX kit, and how much in each component's AX declaration?
 
