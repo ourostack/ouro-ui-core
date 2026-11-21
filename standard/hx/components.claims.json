@@ -1,5 +1,5 @@
 {
-  "version": "0.6.0",
+  "version": "0.7.0",
   "claims": [
     {
       "id": "target.touch",
@@ -23,7 +23,10 @@
         "switch",
         "swipe-actions",
         "reorderable",
-        "conversation-list"
+        "conversation-list",
+        "reaction-bar",
+        "message-list",
+        "composer"
       ],
       "rule": "On a touch screen, every control a component draws (its button, action, dismiss or close control) can be pressed anywhere in a target at least 44 by 44 points (CSS pixels on web).",
       "why": "A smaller target is missed by people with a tremor or limited dexterity, and by everyone on the move.",
@@ -108,7 +111,11 @@
         "item-group",
         "swipe-actions",
         "reorderable",
-        "conversation-list"
+        "conversation-list",
+        "message",
+        "reaction-bar",
+        "message-list",
+        "composer"
       ],
       "rule": "Every control has a name a screen reader speaks and the role it plays (button, heading); a component's title is a heading; decorative icons are hidden from the screen reader.",
       "why": "A control without a name is announced as \"button\" or skipped, so a blind person cannot tell what it does.",
@@ -153,7 +160,11 @@
         "item-group",
         "swipe-actions",
         "reorderable",
-        "conversation-list"
+        "conversation-list",
+        "message",
+        "reaction-bar",
+        "message-list",
+        "composer"
       ],
       "rule": "At the largest text size the platform offers (Apple's accessibility sizes, 200% text on web), titles, messages and action labels wrap onto more lines; none is truncated or clipped.",
       "why": "People who need large text lose the words that tell them what an action does when a label is cut off.",
@@ -200,7 +211,11 @@
         "item-group",
         "swipe-actions",
         "reorderable",
-        "conversation-list"
+        "conversation-list",
+        "message",
+        "reaction-bar",
+        "message-list",
+        "composer"
       ],
       "rule": "Text and icons that carry meaning reach 4.5:1 against what is behind them in every theme, light and dark, and 7:1 when the platform's increased-contrast setting is on.",
       "why": "Low-contrast text cannot be read by people with low vision, or by anyone in sunlight.",
@@ -222,9 +237,10 @@
       "appliesTo": [
         "alert",
         "toast",
-        "sync-status"
+        "sync-status",
+        "message-list"
       ],
-      "rule": "A banner or toast is announced once when it appears. A destructive banner or toast interrupts what the screen reader is saying, and so does a warning banner; the others, warning toasts included, wait their turn.",
+      "rule": "A banner or toast is announced once when it appears. A destructive banner or toast interrupts what the screen reader is saying, and so does a warning banner; the others, warning toasts included, wait their turn. A message list announces each new message from someone else once, politely, and never the history it opens with or the person's own messages.",
       "why": "A message that is never announced is never heard, and one that always interrupts trains people to ignore it.",
       "evidence": {
         "basis": "principle",

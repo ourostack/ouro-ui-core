@@ -1,0 +1,185 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "reaction-bar",
+  "version": "1.0.0",
+  "summary": "The reactions on a message: each an emoji and a count, that a person can press to add theirs or take it back.",
+  "role": "group",
+  "properties": [
+    {
+      "name": "label",
+      "type": "string",
+      "description": "What the group is, spoken: \"Reactions\".",
+      "default": "Reactions"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "description": "Keeps the counts but turns off reacting, for example while offline."
+    },
+    {
+      "name": "moreLabel",
+      "type": "string",
+      "description": "The add-reaction button's name, for other languages.",
+      "default": "Add reaction"
+    },
+    {
+      "name": "showMore",
+      "type": "boolean",
+      "description": "Shows the add-reaction button after the counts."
+    }
+  ],
+  "slots": [
+    {
+      "name": "reactions",
+      "description": "The reactions, one per line as \"key: emoji | name | count | mine\" (the word mine is optional and means the person has reacted this way)."
+    }
+  ],
+  "events": [
+    {
+      "name": "react",
+      "description": "A reaction was pressed; carries its key. The host adds or removes the person's own."
+    },
+    {
+      "name": "more",
+      "description": "The add-reaction button was pressed."
+    }
+  ],
+  "states": [
+    {
+      "name": "rest",
+      "description": "One pill per reaction; the person's own is tinted with the accent and pressed."
+    },
+    {
+      "name": "pressed",
+      "description": "The pill held down: the accent fill a step stronger."
+    },
+    {
+      "name": "focused",
+      "description": "The platform's focus ring."
+    },
+    {
+      "name": "disabled",
+      "description": "Counts stay readable; the pills cannot be pressed."
+    }
+  ],
+  "tokens": {
+    "text": "foreground",
+    "count": "muted-foreground",
+    "edge": "border",
+    "mineFill": "accent",
+    "mineText": "accent-foreground",
+    "focus": "ring"
+  },
+  "metrics": {
+    "pillMinHeight": 44,
+    "pillHeight": 28,
+    "pillGap": 4,
+    "pillPaddingX": 8
+  },
+  "claims": [
+    "contrast.text",
+    "name.spoken",
+    "target.touch",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "Each pill is named by its reaction and its count: \"Like, 3\". The group is named by its label.",
+    "keyboard": "One tab stop per pill; Space or Enter toggles it.",
+    "web": "A role=group of toggle buttons with aria-pressed, each named \"Like, 3\".",
+    "apple": "Each pill is a button with the selected trait when it is the person's, named \"Like, 3\".",
+    "windows": "UI Automation ControlType.Button with the Toggle pattern (On, Off), named \"Like, 3\", inside a group.",
+    "android": "Each pill is a toggleable node with Role.Checkbox's on or off state and a click action, named \"Like, 3\", in a labelled container; its 44 dp frame is the hit area."
+  },
+  "cases": [
+    {
+      "id": "two-reactions",
+      "props": {
+        "label": "Reactions"
+      },
+      "slots": {
+        "reactions": "like: 👍 | Like | 3 | mine; heart: ❤️ | Love | 1"
+      },
+      "person": "Two pills, 👍 3 tinted as yours and ❤️ 1.",
+      "agent": {
+        "role": "group",
+        "name": "Reactions",
+        "focusable": false,
+        "children": [
+          {
+            "role": "button",
+            "name": "Like, 3"
+          },
+          {
+            "role": "button",
+            "name": "Love, 1"
+          }
+        ]
+      }
+    },
+    {
+      "id": "with-add",
+      "props": {
+        "label": "Reactions",
+        "showMore": true
+      },
+      "slots": {
+        "reactions": "like: 👍 | Like | 2"
+      },
+      "person": "A 👍 2 pill and a plus button after it.",
+      "agent": {
+        "role": "group",
+        "name": "Reactions",
+        "focusable": false,
+        "children": [
+          {
+            "role": "button",
+            "name": "Like, 2"
+          },
+          {
+            "role": "button",
+            "name": "Add reaction"
+          }
+        ]
+      }
+    },
+    {
+      "id": "disabled",
+      "props": {
+        "label": "Reactions",
+        "disabled": true
+      },
+      "slots": {
+        "reactions": "like: 👍 | Like | 2"
+      },
+      "person": "A faded 👍 2 pill that does not respond.",
+      "agent": {
+        "role": "group",
+        "name": "Reactions",
+        "focusable": false,
+        "children": [
+          {
+            "role": "button",
+            "name": "Like, 2"
+          }
+        ]
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "ReactionBar (registry/ouro/components/ouro/reaction-bar)",
+      "deviations": [
+        "Web also takes quick reactions, a catalogue, tooltips naming who reacted and a read-only mode; native kits take the counts and the add button, and the host opens its own picker on `more`."
+      ]
+    },
+    "apple": {
+      "type": "OuroReactionBar (not yet built)"
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroReactionBar, a templated WinUI Control; not yet built"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroReactionBar, in Jetpack Compose (ourostack/ouro-ui-android); not yet built"
+    }
+  }
+}

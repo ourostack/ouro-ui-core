@@ -1,0 +1,156 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "message-list",
+  "version": "1.0.0",
+  "summary": "A conversation: the messages in order in a labeled, scrolling region that opens at the newest one and announces each new message from someone else once.",
+  "role": "group",
+  "properties": [
+    {
+      "name": "label",
+      "type": "string",
+      "description": "What the conversation is, spoken: \"Conversation with Ouro\".",
+      "required": true
+    },
+    {
+      "name": "jumpLabel",
+      "type": "string",
+      "description": "The button that appears once the reader scrolls up, for other languages.",
+      "default": "Jump to latest"
+    },
+    {
+      "name": "hasOlder",
+      "type": "boolean",
+      "description": "Older messages can be loaded: a button above the first message asks for them."
+    },
+    {
+      "name": "olderLabel",
+      "type": "string",
+      "description": "The load-older button's name, for other languages.",
+      "default": "Load older messages"
+    }
+  ],
+  "slots": [
+    {
+      "name": "messages",
+      "description": "The messages, one per line as \"id: author | time | text | mine\" (mine is optional and marks the person's own, which are never announced)."
+    }
+  ],
+  "events": [
+    {
+      "name": "loadOlder",
+      "description": "The load-older button was pressed."
+    },
+    {
+      "name": "newMessage",
+      "description": "A message from someone else arrived while the list is in use; the list announces \"author: text\" once, politely. History the list mounts with is never announced."
+    }
+  ],
+  "states": [
+    {
+      "name": "rest",
+      "description": "The newest message in view; a short conversation sits at the bottom."
+    },
+    {
+      "name": "focused",
+      "description": "The platform's focus ring on the jump and load-older buttons."
+    }
+  ],
+  "tokens": {
+    "text": "foreground",
+    "jumpFill": "primary",
+    "jumpText": "primary-foreground",
+    "focus": "ring"
+  },
+  "metrics": {
+    "jumpMinHeight": 44,
+    "jumpMinWidth": 44,
+    "messageGap": 8
+  },
+  "claims": [
+    "announce.urgency",
+    "contrast.text",
+    "name.spoken",
+    "target.touch",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "The group's label; each message is read as Message does, in the order sent.",
+    "keyboard": "Messages are read in order; Tab reaches the load-older and jump buttons, which appear only when they apply.",
+    "web": "A region named by its label, with a separate polite live region for each new message.",
+    "apple": "A container with a label whose messages are elements in order; a new message posts one polite announcement.",
+    "windows": "UI Automation ControlType.List named by its label, its items ListItems in order; a new message raises one UIA notification with Importance=Other (polite, as the web's).",
+    "android": "A container with a collection role named by its label, its items in order, and a polite live region for each new message; the buttons have click actions."
+  },
+  "cases": [
+    {
+      "id": "two-messages",
+      "props": {
+        "label": "Conversation with Ana"
+      },
+      "slots": {
+        "messages": "a: Ana | 9:41 | See you at noon.; b: You | 9:42 | On my way. | mine"
+      },
+      "person": "Two messages in order, Ana's on the leading side and yours on the trailing side, the newest in view.",
+      "agent": {
+        "role": "group",
+        "name": "Conversation with Ana",
+        "focusable": false,
+        "children": [
+          {
+            "role": "listitem",
+            "name": "Ana, 9:41, See you at noon."
+          },
+          {
+            "role": "listitem",
+            "name": "You, 9:42, On my way."
+          }
+        ]
+      }
+    },
+    {
+      "id": "older-available",
+      "props": {
+        "label": "Team chat",
+        "hasOlder": true
+      },
+      "slots": {
+        "messages": "a: Ana | 9:41 | Morning."
+      },
+      "person": "A Load older messages button above one message.",
+      "agent": {
+        "role": "group",
+        "name": "Team chat",
+        "focusable": false,
+        "children": [
+          {
+            "role": "button",
+            "name": "Load older messages"
+          },
+          {
+            "role": "listitem",
+            "name": "Ana, 9:41, Morning."
+          }
+        ]
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "MessageList (registry/ouro/components/ouro/message-list)",
+      "deviations": [
+        "Web has no load-older button, olderLabel or loadOlder event: hasOlder only reserves room above the first message and a status line says older messages are loading. The native load-older button is a native-only addition.",
+        "Web also windows long histories, follows streaming text and takes a conversation key; native kits use their platform's lazy list and follow the same read-once rule.",
+        "Web announces through its own live region; native kits use the platform's announcement (UIA notification, live-region semantics)."
+      ]
+    },
+    "apple": {
+      "type": "OuroMessageList (not yet built)"
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroMessageList, a templated WinUI Control; not yet built"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroMessageList, in Jetpack Compose (ourostack/ouro-ui-android); not yet built"
+    }
+  }
+}

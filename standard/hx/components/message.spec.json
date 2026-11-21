@@ -1,0 +1,167 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "message",
+  "version": "1.0.0",
+  "summary": "One message in a conversation: who wrote it, when, and what it says.",
+  "role": "label",
+  "properties": [
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Who wrote it: its spoken author.",
+      "required": true
+    },
+    {
+      "name": "role",
+      "type": "enum",
+      "description": "Whose message it is: user for the person using the app (their own, on the trailing side), assistant for another person or an agent, system for a notice in the conversation's flow.",
+      "values": [
+        "user",
+        "assistant",
+        "system"
+      ],
+      "default": "assistant"
+    },
+    {
+      "name": "time",
+      "type": "string",
+      "description": "When it was sent, as already written for the reader: \"9:41\"."
+    },
+    {
+      "name": "continued",
+      "type": "boolean",
+      "description": "A follow-on in a run by the same author: the name and time are left out of the picture and kept in the spoken name."
+    },
+    {
+      "name": "streaming",
+      "type": "boolean",
+      "description": "The text is still arriving; it is not announced until it finishes."
+    },
+    {
+      "name": "failed",
+      "type": "boolean",
+      "description": "It did not send: its words end with \"Not sent\" and it draws in the destructive colour."
+    },
+    {
+      "name": "pending",
+      "type": "boolean",
+      "description": "It is on its way: its words end with \"Sending\"."
+    }
+  ],
+  "slots": [
+    {
+      "name": "text",
+      "description": "What was said, as plain text."
+    }
+  ],
+  "events": [],
+  "states": [
+    {
+      "name": "rest",
+      "description": "The text on the side its role gives it, with the author and time above it; the user's own message has the primary fill."
+    },
+    {
+      "name": "busy",
+      "description": "Streaming or sending: the text stays readable and the state is spoken."
+    }
+  ],
+  "tokens": {
+    "text": "foreground",
+    "author": "foreground",
+    "time": "muted-foreground",
+    "ownFill": "primary",
+    "ownText": "primary-foreground",
+    "otherFill": "muted",
+    "failed": "destructive"
+  },
+  "metrics": {
+    "bubblePaddingX": 12,
+    "bubblePaddingY": 8,
+    "bubbleMaxWidthFraction": 0.8,
+    "avatarGap": 8
+  },
+  "claims": [
+    "contrast.text",
+    "name.spoken",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "The author, the time, the text, then its state (\"Not sent\", \"Sending\"), as one phrase.",
+    "web": "An <article> named by its author, with the time in a <time> and the text inside it.",
+    "apple": "One element that combines the author, time, text and state, in that order.",
+    "windows": "UI Automation ControlType.ListItem named \"Author, time, text, state\", so Narrator reads one message in one stop.",
+    "android": "One node whose content description is the author, the time, the text and the state, in that order, with no extra actions."
+  },
+  "cases": [
+    {
+      "id": "received",
+      "props": {
+        "name": "Ana",
+        "time": "9:41"
+      },
+      "slots": {
+        "text": "See you at noon."
+      },
+      "person": "Ana's message in a grey bubble on the leading side, with \"Ana\" and \"9:41\" above it.",
+      "agent": {
+        "role": "listitem",
+        "name": "Ana, 9:41, See you at noon.",
+        "focusable": false
+      }
+    },
+    {
+      "id": "own-failed",
+      "props": {
+        "name": "You",
+        "role": "user",
+        "time": "9:42",
+        "failed": true
+      },
+      "slots": {
+        "text": "On my way."
+      },
+      "person": "Your message in a destructive-coloured bubble on the trailing side, marked not sent.",
+      "agent": {
+        "role": "listitem",
+        "name": "You, 9:42, On my way., Not sent",
+        "focusable": false
+      }
+    },
+    {
+      "id": "system",
+      "props": {
+        "name": "Ouro",
+        "role": "system"
+      },
+      "slots": {
+        "text": "Ana joined the conversation."
+      },
+      "person": "A centred line of muted text with no bubble.",
+      "agent": {
+        "role": "listitem",
+        "name": "Ouro, Ana joined the conversation.",
+        "focusable": false
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "Message (registry/ouro/components/ouro/message)",
+      "deviations": [
+        "Web also has the post and reply variants, avatars, quotes, attachments, footers and actions; native kits draw the chat variant's text, author, time and state, and take the rest as later slots.",
+        "Web draws failed as a Not sent marker with Retry and Delete buttons, read as the message's description, not its name; native kits fold Not sent into the spoken name and draw no buttons yet.",
+        "Web shows pending only after a send has taken more than a second; native kits show it as soon as it is set.",
+        "Web names the author through `name` and the picture through `avatar`; native kits draw no picture yet."
+      ]
+    },
+    "apple": {
+      "type": "OuroMessage (not yet built)"
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroMessage, a templated WinUI Control; not yet built"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroMessage, in Jetpack Compose (ourostack/ouro-ui-android); not yet built"
+    }
+  }
+}

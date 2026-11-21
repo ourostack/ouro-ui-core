@@ -1,0 +1,214 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "composer",
+  "version": "1.0.0",
+  "summary": "The box a person writes a message in, with a Send button.",
+  "role": "group",
+  "properties": [
+    {
+      "name": "label",
+      "type": "string",
+      "description": "What the box is for, spoken: \"Message Mia\". Required, because the placeholder is not a label.",
+      "required": true
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "description": "An example of what to write, shown while the box is empty."
+    },
+    {
+      "name": "sendLabel",
+      "type": "string",
+      "description": "The Send button's name, for other languages.",
+      "default": "Send"
+    },
+    {
+      "name": "sendOn",
+      "type": "enum",
+      "description": "Which key sends: enter sends and Shift+Enter starts a new line; modenter sends on Ctrl+Enter and Enter starts a new line.",
+      "values": [
+        "enter",
+        "modenter"
+      ],
+      "default": "enter"
+    },
+    {
+      "name": "sending",
+      "type": "boolean",
+      "description": "The message is on its way: the button shows a spinner and nothing more sends. \"Sending\" is announced when it turns on."
+    },
+    {
+      "name": "sendDisabledReason",
+      "type": "string",
+      "description": "Sending is off, and why. The person can still write; Send is disabled and the reason shows under the box and is read with it."
+    },
+    {
+      "name": "maxRows",
+      "type": "number",
+      "description": "Lines the box grows to before it scrolls.",
+      "default": 10
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "description": "Disables the box and the Send button."
+    }
+  ],
+  "slots": [
+    {
+      "name": "value",
+      "description": "The text so far."
+    }
+  ],
+  "events": [
+    {
+      "name": "send",
+      "description": "The person sent; carries the text. The host clears the box."
+    },
+    {
+      "name": "valueChange",
+      "description": "The text changed; carries it."
+    }
+  ],
+  "states": [
+    {
+      "name": "rest",
+      "description": "The box in one frame with the Send button at its trailing end."
+    },
+    {
+      "name": "focused",
+      "description": "One focus ring around the whole frame."
+    },
+    {
+      "name": "disabled",
+      "description": "Faded; neither the box nor Send responds. With a reason, only Send is off."
+    },
+    {
+      "name": "busy",
+      "description": "Sending: Send shows a spinner and is off."
+    }
+  ],
+  "tokens": {
+    "text": "foreground",
+    "placeholder": "muted-foreground",
+    "edge": "input",
+    "surface": "background",
+    "focus": "ring",
+    "send": "primary",
+    "sendText": "primary-foreground",
+    "reason": "muted-foreground"
+  },
+  "metrics": {
+    "minHeight": 44,
+    "sendTarget": 44,
+    "paddingX": 12,
+    "edgeContrast": 3
+  },
+  "claims": [
+    "contrast.text",
+    "name.spoken",
+    "target.touch",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "The box is named by its label; Send by its sendLabel, which it keeps while sending; \"Sending\" is announced once when sending turns on. A reason is read with the box.",
+    "keyboard": "Tab reaches the box, then Send. Enter sends, or Ctrl+Enter with sendOn modenter; an input method composing a word is never cut off.",
+    "web": "A <textarea> named by its label with aria-describedby for the reason, and a Send <button>.",
+    "apple": "A text field with the label, and a Send button, in one group.",
+    "windows": "UI Automation ControlType.Edit with the Value pattern, named by its label, and a ControlType.Button named by its send label; help text is the reason.",
+    "android": "An editable-text node named by its label with the reason as its state description, and a Send button with a click action that is disabled while sending or off."
+  },
+  "cases": [
+    {
+      "id": "empty",
+      "props": {
+        "label": "Message Mia",
+        "placeholder": "Write a message"
+      },
+      "person": "An empty box with \"Write a message\" in it and a Send button at its end.",
+      "agent": {
+        "role": "group",
+        "name": "Message Mia",
+        "focusable": false,
+        "children": [
+          {
+            "role": "textbox",
+            "name": "Message Mia"
+          },
+          {
+            "role": "button",
+            "name": "Send"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sending-off",
+      "props": {
+        "label": "Reply in thread",
+        "sendDisabledReason": "You're offline. Sending resumes when you reconnect."
+      },
+      "person": "A box you can write in, a faded Send button, and the reason under it.",
+      "agent": {
+        "role": "group",
+        "name": "Reply in thread",
+        "focusable": false,
+        "children": [
+          {
+            "role": "textbox",
+            "name": "Reply in thread"
+          },
+          {
+            "role": "button",
+            "name": "Send"
+          },
+          {
+            "role": "text",
+            "name": "You're offline. Sending resumes when you reconnect."
+          }
+        ]
+      }
+    },
+    {
+      "id": "sending",
+      "props": {
+        "label": "Message Mia",
+        "sending": true
+      },
+      "person": "A Send button showing a spinner.",
+      "agent": {
+        "role": "group",
+        "name": "Message Mia",
+        "focusable": false,
+        "children": [
+          {
+            "role": "textbox",
+            "name": "Message Mia"
+          },
+          {
+            "role": "button",
+            "name": "Send"
+          }
+        ]
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "Composer (registry/ouro/components/ouro/composer)",
+      "deviations": [
+        "Web also takes actions, a toolbar, attachments, a quote, highlights and an expanded mode; native kits start with the box and Send, and take those as later slots.",
+        "Web's sendOn is \"enter\" or \"mod-enter\"; the spec writes it \"modenter\", because enum values are lowercase letters and digits."
+      ]
+    },
+    "apple": {
+      "type": "OuroComposer (not yet built)"
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroComposer, a templated WinUI Control; not yet built"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroComposer, in Jetpack Compose (ourostack/ouro-ui-android); not yet built"
+    }
+  }
+}
