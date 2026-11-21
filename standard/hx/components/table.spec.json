@@ -1,0 +1,446 @@
+{
+  "$schema": "./component.schema.json",
+  "name": "table",
+  "version": "1.0.0",
+  "summary": "A data grid: a caption, column headers and rows of cells, scrolling sideways inside its own region when it is wider than the screen; rows can be one link each, and columns can sort on a header press.",
+  "role": "group",
+  "properties": [
+    {
+      "name": "caption",
+      "type": "string",
+      "required": true,
+      "description": "What the table is. It names the table, and the caption is shown above it unless hideCaption is set."
+    },
+    {
+      "name": "hideCaption",
+      "type": "boolean",
+      "default": false,
+      "description": "Hides the caption visually and keeps it as the table's name."
+    },
+    {
+      "name": "columns",
+      "type": "string",
+      "required": true,
+      "description": "The column headers, in order, separated by commas. The first column is the rows' header, what each row is."
+    },
+    {
+      "name": "sortable",
+      "type": "string",
+      "description": "The headers of the columns a press sorts, separated by commas. Each is a button; a press sorts ascending and the next press reverses."
+    },
+    {
+      "name": "sortedBy",
+      "type": "string",
+      "description": "The header of the sorted column, if any."
+    },
+    {
+      "name": "sortDirection",
+      "type": "enum",
+      "values": [
+        "ascending",
+        "descending"
+      ],
+      "default": "ascending",
+      "description": "Which way the sorted column is sorted."
+    },
+    {
+      "name": "sortedLabel",
+      "type": "string",
+      "description": "What a screen reader hears after a sort, \"Sorted by {header}, {direction}\" by default."
+    },
+    {
+      "name": "rowHref",
+      "type": "boolean",
+      "default": false,
+      "description": "Makes each row one link, named by its row header, with one tab stop; buttons and links inside a cell keep their own presses. Web takes the address as a string or function; native kits take the press."
+    },
+    {
+      "name": "striped",
+      "type": "boolean",
+      "default": false,
+      "description": "Shades every other body row."
+    },
+    {
+      "name": "dense",
+      "type": "boolean",
+      "default": false,
+      "description": "Tighter cells, for many rows. A linked row is still 44 points tall on a touch screen."
+    },
+    {
+      "name": "stickyHeader",
+      "type": "boolean",
+      "default": false,
+      "description": "Keeps the header row at the top while the rows scroll under it."
+    },
+    {
+      "name": "empty",
+      "type": "string",
+      "description": "What the body shows when there are no rows, in one cell across every column. Default \"Nothing here yet.\"."
+    }
+  ],
+  "slots": [
+    {
+      "name": "rows",
+      "description": "The body: rows separated by semicolons, cells in a row separated by bars. The first cell of a row is its row header."
+    }
+  ],
+  "events": [
+    {
+      "name": "sort",
+      "description": "A sortable header was pressed: the column and its new direction."
+    },
+    {
+      "name": "press",
+      "description": "With rowHref, a row was pressed: its index."
+    }
+  ],
+  "states": [
+    {
+      "name": "rest",
+      "description": "Headers and rows, with the sorted header in the foreground colour and an arrow for its direction."
+    },
+    {
+      "name": "hover",
+      "description": "A pointer over a sortable header or a linked row shades it."
+    },
+    {
+      "name": "pressed",
+      "description": "A header or linked row being pressed is drawn so on its first frame; nothing scales."
+    },
+    {
+      "name": "focused",
+      "description": "A sortable header or linked row with keyboard focus: the platform's focus ring."
+    },
+    {
+      "name": "busy",
+      "description": "Not used: a table shows the rows it is given."
+    }
+  ],
+  "tokens": {
+    "header": "muted-foreground",
+    "sortedHeader": "foreground",
+    "stripe": "muted",
+    "divider": "border",
+    "emptyText": "muted-foreground",
+    "focus": "ring"
+  },
+  "metrics": {
+    "touchRow": 44,
+    "denseRow": 32,
+    "row": 40,
+    "cellPaddingX": 16
+  },
+  "claims": [
+    "contrast.text",
+    "name.spoken",
+    "target.touch",
+    "text.reflows"
+  ],
+  "accessibility": {
+    "name": "The table is named by its caption; each column by its header; a sorted column reads as sorted, ascending or descending. The agent tree flattens a row into one node named by its cells in order, joined by commas, and a header is a heading (a button when it sorts) there: the native kits keep the real header, row and cell roles. A linked row is named by its row header and opens its destination.",
+    "keyboard": "A sortable header and a linked row are each one tab stop; Enter or Space presses a header, Enter follows a row's link. Buttons and links inside cells keep their own tab stops.",
+    "web": "A table with a caption, th scope=col column headers, a th scope=row row header per row, aria-sort on the sorted header, the sort announced in a polite live region, and a scroll region named by the caption.",
+    "apple": "A table of rows with accessibility headers; the sorted column announces its direction.",
+    "windows": "A UI Automation Table: ControlType.Table with the Grid and Table patterns (RowOrColumnMajor, ColumnHeaders), a ControlType.Header row holding one ControlType.HeaderItem per column (a sortable one also takes the Invoke pattern), a ControlType.DataItem per row, and ControlType.Text cells. The sorted direction is in the header's name (\", sorted ascending\") and the sort is announced through UI Automation notifications.",
+    "android": "A column with CollectionInfo of the row and column counts; each cell, header cells included, carries a CollectionItemInfo with its row and column index (header cells with isHeading), and a row groups its cells with mergeDescendants so TalkBack reads it in one stop, or for a linked row presses as a button named by its row header. A sorted header has a stateDescription, and a sort is announced with a live region."
+  },
+  "cases": [
+    {
+      "id": "basic",
+      "props": {
+        "caption": "Recipes",
+        "columns": "Recipe, Time, Serves"
+      },
+      "slots": {
+        "rows": "Braised short ribs | 4 h | 6; Herb salad | 10 min | 2; Rye bread | 18 h | 8"
+      },
+      "person": "A caption above three columns and three rows.",
+      "agent": {
+        "role": "group",
+        "name": "Recipes",
+        "focusable": false,
+        "children": [
+          {
+            "role": "heading",
+            "name": "Recipe"
+          },
+          {
+            "role": "heading",
+            "name": "Time"
+          },
+          {
+            "role": "heading",
+            "name": "Serves"
+          },
+          {
+            "role": "listitem",
+            "name": "Braised short ribs, 4 h, 6"
+          },
+          {
+            "role": "listitem",
+            "name": "Herb salad, 10 min, 2"
+          },
+          {
+            "role": "listitem",
+            "name": "Rye bread, 18 h, 8"
+          }
+        ]
+      }
+    },
+    {
+      "id": "hidden-caption",
+      "props": {
+        "caption": "Recipes",
+        "hideCaption": true,
+        "columns": "Recipe, Time, Serves"
+      },
+      "slots": {
+        "rows": "Braised short ribs | 4 h | 6; Herb salad | 10 min | 2; Rye bread | 18 h | 8"
+      },
+      "person": "The same table with no caption on screen; it is still named Recipes.",
+      "agent": {
+        "role": "group",
+        "name": "Recipes",
+        "focusable": false,
+        "children": [
+          {
+            "role": "heading",
+            "name": "Recipe"
+          },
+          {
+            "role": "heading",
+            "name": "Time"
+          },
+          {
+            "role": "heading",
+            "name": "Serves"
+          },
+          {
+            "role": "listitem",
+            "name": "Braised short ribs, 4 h, 6"
+          },
+          {
+            "role": "listitem",
+            "name": "Herb salad, 10 min, 2"
+          },
+          {
+            "role": "listitem",
+            "name": "Rye bread, 18 h, 8"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sortable",
+      "props": {
+        "caption": "Recipes",
+        "columns": "Recipe, Time, Serves",
+        "sortable": "Recipe, Serves"
+      },
+      "slots": {
+        "rows": "Braised short ribs | 4 h | 6; Herb salad | 10 min | 2; Rye bread | 18 h | 8"
+      },
+      "person": "Recipe and Serves headers have an arrow; Time is plain. Nothing is sorted yet.",
+      "agent": {
+        "role": "group",
+        "name": "Recipes",
+        "focusable": false,
+        "children": [
+          {
+            "role": "button",
+            "name": "Recipe"
+          },
+          {
+            "role": "heading",
+            "name": "Time"
+          },
+          {
+            "role": "button",
+            "name": "Serves"
+          },
+          {
+            "role": "listitem",
+            "name": "Braised short ribs, 4 h, 6"
+          },
+          {
+            "role": "listitem",
+            "name": "Herb salad, 10 min, 2"
+          },
+          {
+            "role": "listitem",
+            "name": "Rye bread, 18 h, 8"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sorted",
+      "props": {
+        "caption": "Recipes",
+        "columns": "Recipe, Time, Serves",
+        "sortable": "Recipe, Serves",
+        "sortedBy": "Serves",
+        "sortDirection": "descending"
+      },
+      "slots": {
+        "rows": "Rye bread | 18 h | 8; Braised short ribs | 4 h | 6; Herb salad | 10 min | 2"
+      },
+      "person": "Serves is sorted high to low, with a down arrow, and its header reads in the foreground colour.",
+      "agent": {
+        "role": "group",
+        "name": "Recipes",
+        "focusable": false,
+        "children": [
+          {
+            "role": "button",
+            "name": "Recipe"
+          },
+          {
+            "role": "heading",
+            "name": "Time"
+          },
+          {
+            "role": "button",
+            "name": "Serves, sorted descending"
+          },
+          {
+            "role": "listitem",
+            "name": "Rye bread, 18 h, 8"
+          },
+          {
+            "role": "listitem",
+            "name": "Braised short ribs, 4 h, 6"
+          },
+          {
+            "role": "listitem",
+            "name": "Herb salad, 10 min, 2"
+          }
+        ]
+      }
+    },
+    {
+      "id": "row-links",
+      "props": {
+        "caption": "Recipes",
+        "columns": "Recipe, Time, Serves",
+        "rowHref": true
+      },
+      "slots": {
+        "rows": "Braised short ribs | 4 h | 6; Herb salad | 10 min | 2; Rye bread | 18 h | 8"
+      },
+      "person": "Each row is one link, named by its recipe.",
+      "agent": {
+        "role": "group",
+        "name": "Recipes",
+        "focusable": false,
+        "children": [
+          {
+            "role": "heading",
+            "name": "Recipe"
+          },
+          {
+            "role": "heading",
+            "name": "Time"
+          },
+          {
+            "role": "heading",
+            "name": "Serves"
+          },
+          {
+            "role": "button",
+            "name": "Braised short ribs"
+          },
+          {
+            "role": "button",
+            "name": "Herb salad"
+          },
+          {
+            "role": "button",
+            "name": "Rye bread"
+          }
+        ]
+      }
+    },
+    {
+      "id": "empty",
+      "props": {
+        "caption": "Recipes",
+        "columns": "Recipe, Time, Serves"
+      },
+      "person": "The headers, and one cell across them reading Nothing here yet.",
+      "agent": {
+        "role": "group",
+        "name": "Recipes",
+        "focusable": false,
+        "children": [
+          {
+            "role": "heading",
+            "name": "Recipe"
+          },
+          {
+            "role": "heading",
+            "name": "Time"
+          },
+          {
+            "role": "heading",
+            "name": "Serves"
+          },
+          {
+            "role": "listitem",
+            "name": "Nothing here yet."
+          }
+        ]
+      }
+    },
+    {
+      "id": "empty-custom",
+      "props": {
+        "caption": "Recipes",
+        "columns": "Recipe, Time, Serves",
+        "empty": "No recipes match."
+      },
+      "person": "One cell across every column with the app's message.",
+      "agent": {
+        "role": "group",
+        "name": "Recipes",
+        "focusable": false,
+        "children": [
+          {
+            "role": "heading",
+            "name": "Recipe"
+          },
+          {
+            "role": "heading",
+            "name": "Time"
+          },
+          {
+            "role": "heading",
+            "name": "Serves"
+          },
+          {
+            "role": "listitem",
+            "name": "No recipes match."
+          }
+        ]
+      }
+    }
+  ],
+  "platforms": {
+    "web": {
+      "type": "Table (registry/ouro/components/ouro/table)",
+      "deviations": [
+        "Web takes columns as { key, header, cell, align, sortable, sortValue } and rows as objects, sorts them itself or reports onSortChange, and takes rowHref as an address; native kits take string cells and report press and sort.",
+        "Web's alignment, wrap, rowKey and external-link options (rowExternal, externalLabel) are not part of the native spec."
+      ]
+    },
+    "apple": {
+      "type": "OuroTable (not yet built)"
+    },
+    "windows": {
+      "type": "Ouro.UI.Windows.OuroTable, a templated WinUI Control; not yet built"
+    },
+    "android": {
+      "type": "bot.ouro.ui.hx.OuroTable, in Jetpack Compose (ourostack/ouro-ui-android); not yet built"
+    }
+  }
+}

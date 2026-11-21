@@ -12,7 +12,7 @@ The claims section below is generated from the data with `pnpm hx:page`; edit th
 
 ### `target.touch`
 
-**must**, for button, empty, alert, sheet, toast, text-field, segmented-control, checkbox, sync-status, tabs, tab-bar, sidebar, dialog, confirm-dialog, select, switch, swipe-actions, reorderable, conversation-list, reaction-bar, message-list, composer. On a touch screen, every control a component draws (its button, action, dismiss or close control) can be pressed anywhere in a target at least 44 by 44 points (CSS pixels on web).
+**must**, for button, empty, alert, sheet, toast, text-field, segmented-control, checkbox, sync-status, tabs, tab-bar, sidebar, dialog, confirm-dialog, select, switch, swipe-actions, reorderable, conversation-list, reaction-bar, message-list, composer, table. On a touch screen, every control a component draws (its button, action, dismiss or close control) can be pressed anywhere in a target at least 44 by 44 points (CSS pixels on web).
 
 - Why: A smaller target is missed by people with a tremor or limited dexterity, and by everyone on the move.
 - Source: <https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced.html>. Targets under 44 by 44 fail WCAG 2.5.5 (level AAA, chosen on purpose above 2.5.8's AA floor of 24) and Apple's HIG minimum (https://developer.apple.com/design/human-interface-guidelines/accessibility#Buttons-and-controls).
@@ -36,7 +36,7 @@ The claims section below is generated from the data with `pnpm hx:page`; edit th
 
 ### `name.spoken`
 
-**must**, for button, empty, alert, sheet, toast, badge, card, item, text-field, avatar, page-header, skeleton, spinner, progress, separator, description-list, segmented-control, checkbox, sync-status, tabs, tab-bar, sidebar, dialog, confirm-dialog, select, switch, field, item-group, swipe-actions, reorderable, conversation-list, message, reaction-bar, message-list, composer. Every control has a name a screen reader speaks and the role it plays (button, heading); a component's title is a heading; decorative icons are hidden from the screen reader.
+**must**, for button, empty, alert, sheet, toast, badge, card, item, text-field, avatar, page-header, skeleton, spinner, progress, separator, description-list, segmented-control, checkbox, sync-status, tabs, tab-bar, sidebar, dialog, confirm-dialog, select, switch, field, item-group, swipe-actions, reorderable, conversation-list, message, reaction-bar, message-list, composer, table. Every control has a name a screen reader speaks and the role it plays (button, heading); a component's title is a heading; decorative icons are hidden from the screen reader.
 
 - Why: A control without a name is announced as "button" or skipped, so a blind person cannot tell what it does.
 - Source: <https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html>. WCAG 4.1.2. Apple: https://developer.apple.com/documentation/accessibility/supporting-voiceover-in-your-app.
@@ -48,7 +48,7 @@ The claims section below is generated from the data with `pnpm hx:page`; edit th
 
 ### `text.reflows`
 
-**must**, for button, empty, alert, sheet, toast, badge, card, item, text-field, page-header, progress, description-list, segmented-control, checkbox, tabs, tab-bar, sidebar, dialog, confirm-dialog, select, switch, field, item-group, swipe-actions, reorderable, conversation-list, message, reaction-bar, message-list, composer. At the largest text size the platform offers (Apple's accessibility sizes, 200% text on web), titles, messages and action labels wrap onto more lines; none is truncated or clipped.
+**must**, for button, empty, alert, sheet, toast, badge, card, item, text-field, page-header, progress, description-list, segmented-control, checkbox, tabs, tab-bar, sidebar, dialog, confirm-dialog, select, switch, field, item-group, swipe-actions, reorderable, conversation-list, message, reaction-bar, message-list, composer, table. At the largest text size the platform offers (Apple's accessibility sizes, 200% text on web), titles, messages and action labels wrap onto more lines; none is truncated or clipped.
 
 - Why: People who need large text lose the words that tell them what an action does when a label is cut off.
 - Source: <https://www.w3.org/WAI/WCAG22/Understanding/resize-text.html>. WCAG 1.4.4. Apple: https://developer.apple.com/design/human-interface-guidelines/typography#Supporting-Dynamic-Type.
@@ -59,7 +59,7 @@ The claims section below is generated from the data with `pnpm hx:page`; edit th
 
 ### `contrast.text`
 
-**must**, for button, empty, alert, sheet, toast, badge, card, item, text-field, avatar, page-header, progress, separator, description-list, segmented-control, checkbox, sync-status, tabs, tab-bar, sidebar, dialog, confirm-dialog, select, switch, field, item-group, swipe-actions, reorderable, conversation-list, message, reaction-bar, message-list, composer. Text and icons that carry meaning reach 4.5:1 against what is behind them in every theme, light and dark, and 7:1 when the platform's increased-contrast setting is on.
+**must**, for button, empty, alert, sheet, toast, badge, card, item, text-field, avatar, page-header, progress, separator, description-list, segmented-control, checkbox, sync-status, tabs, tab-bar, sidebar, dialog, confirm-dialog, select, switch, field, item-group, swipe-actions, reorderable, conversation-list, message, reaction-bar, message-list, composer, table. Text and icons that carry meaning reach 4.5:1 against what is behind them in every theme, light and dark, and 7:1 when the platform's increased-contrast setting is on.
 
 - Why: Low-contrast text cannot be read by people with low vision, or by anyone in sunlight.
 - Source: <https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html>. WCAG 1.4.3 (4.5:1 for text) and 1.4.6 (7:1, the enhanced level). Ouro chooses 7:1 for increased contrast, and holds meaningful icons to the text ratio, above 1.4.11's 3:1 for graphics.
