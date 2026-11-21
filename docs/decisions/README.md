@@ -39,3 +39,4 @@ New decision records go here. Each has a "Prior art" section linking every find 
 | 2026-11-21 | [Message, ReactionBar, MessageList and Composer are specs in core, one file each, before any kit builds them](2026-11-21-chat-specs.md) |
 | 2026-11-21 | [Table is a spec in core before any kit builds it](2026-11-21-table-spec.md) |
 | 2026-11-20 | [ImmersiveControls is a spec in core, with a claim that the content holds still](2026-11-20-immersive-controls.md) |
+| 2026-11-21 | [Density moves the room, and fixed sizes read their own tokens](2026-11-21-density.md) |
