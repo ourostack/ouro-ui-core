@@ -1,5 +1,5 @@
 {
-  "generator": "ouro-actions-android 1.6.0",
+  "generator": "ouro-actions-android 1.7.0",
   "set": "shopping",
   "actions": {
     "get_shopping_list": {
