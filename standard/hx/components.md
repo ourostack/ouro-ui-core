@@ -24,13 +24,13 @@ The claims section below is generated from the data with `pnpm hx:page`; edit th
 
 ### `motion.reduced`
 
-**must**, for button, alert, sheet, toast, skeleton, segmented-control, checkbox, sync-status, tabs, tab-bar, dialog, confirm-dialog, select, switch, swipe-actions, reorderable. With Reduce Motion on, a component animates no movement: no slide, scale, spring or bounce. What would move crossfades instead, over `ouro.duration.base`, and a press does not scale. A drag may still follow the finger, since the person is moving it.
+**must**, for button, alert, sheet, toast, skeleton, segmented-control, checkbox, sync-status, tabs, tab-bar, dialog, confirm-dialog, select, switch, swipe-actions, reorderable, immersive-controls. With Reduce Motion on, a component animates no movement: no slide, scale, spring or bounce. What would move crossfades instead, over `ouro.duration.base`, and a press does not scale. A drag may still follow the finger, since the person is moving it.
 
 - Why: Movement across the screen can make people with vestibular disorders dizzy or sick.
 - Source: <https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html>. WCAG 2.3.3, and Apple's HIG on Motion (https://developer.apple.com/design/human-interface-guidelines/motion): motion triggered by interaction must be possible to turn off, unless it is essential, as following a finger is.
 
 - Checked on web: The Button test "does not scale with reduced motion", the Sheet test "drops transform motion under reduced motion and keeps an opacity fade" and the Toaster test "slides on the ease-out curve in 300ms or less, never animates height, and only fades with reduced motion". Not yet checked on web: the Alert. The drag allowance: the Toaster test "still follows the finger with reduced motion, then returns or fades with no travel". The web checks for skeleton are not yet listed here. The web checks for segmented-control, checkbox, sync-status, tabs, tab-bar are not yet listed here.
-- Checked on apple: ComponentMotionTests (Tests/OuroHXTests/ComponentTests.swift) read each component's transition and press scale with reduceMotion true and false: a crossfade with it on, never a move or a scale. The Skeleton: LoadingMetricsTests.aSkeletonHoldsStillUnderReduceMotion asserts it never breathes under Reduce Motion. The SegmentedControl, Checkbox and SyncStatus: ChoiceMetricsTests asserts no press scale or thumb slide under Reduce Motion, and SyncStatusTests asserts the saving arrows hold still (OuroSyncStatusMetrics.spins).
+- Checked on apple: ComponentMotionTests (Tests/OuroHXTests/ComponentTests.swift) read each component's transition and press scale with reduceMotion true and false: a crossfade with it on, never a move or a scale. The Skeleton: LoadingMetricsTests.aSkeletonHoldsStillUnderReduceMotion asserts it never breathes under Reduce Motion. The SegmentedControl, Checkbox and SyncStatus: ChoiceMetricsTests asserts no press scale or thumb slide under Reduce Motion, and SyncStatusTests asserts the saving arrows hold still (OuroSyncStatusMetrics.spins). ImmersiveControls: ImmersiveControlsTests.motion asserts each bar slides in from its own edge, and crossfades over ouro.duration.base under Reduce Motion.
 - Checked on android: ouro-ui-android's ClaimsTest reads every Button's reported press scale: 0.97 with animations on, 1 with Remove animations. Not yet the other components this claim covers.
 - Fix: Pick the animation from the Reduce Motion setting: OuroMotion's step on Apple, `motion-reduce:` on web.
 
@@ -101,3 +101,13 @@ The claims section below is generated from the data with `pnpm hx:page`; edit th
 - Checked on web: The Sheet test "renders a Close button last in the sheet, hidden until keyboard focus, that closes it", the Alert test "shows a dismiss button with onDismiss, named by dismissLabel" and the Toaster test "closes from the dismiss button".
 - Checked on apple: The gallery's ComponentClaimTests.testCloseControlsClose finds the sheet's, the banner's and a toast's close control by its label, presses it and checks the surface is gone.
 - Fix: Render a labelled close button ("Close", "Dismiss") inside the surface.
+
+### `content.holds-still`
+
+**must**, for immersive-controls. Showing or hiding controls over content that fills the screen never moves, scales, reflows, covers with a fill, or dims the content: every line and picture stands where it stood, and the controls stand in the bands the system already takes (the status bar's, a camera housing's side, the home indicator's).
+
+- Why: A reader taps for the controls in the middle of a page; when the page steps back, reflows or is papered over, the words they were reading move or go, and they lose their place.
+- Source: <Gatefold build 53 on the iPhone Duo's cover screen and an iPad Pro 13-inch simulator, 2026-11-20 (ourostack/gatefold ControlsOverPageUITests)>. Showing the reader's controls moved every line on the page (19 of 19 on the Duo, 29 of 29 on the iPad), and paper laid behind the controls hid 7 of 19 and 16 of 29 lines.
+
+- Checked on apple: ImmersiveControlsTests (Tests/OuroHXTests/ImmersiveControlsTests.swift): contentHoldsStill measures the content with the bars shown and hidden and finds the same size, and the placement tests put each bar in its band, beside a housing.
+- Fix: Lay the controls over the content (an overlay, never a stack or a padding), give them no backing fill or dim, and keep the content's words out of the bands the controls stand in, as a book's margins do.
