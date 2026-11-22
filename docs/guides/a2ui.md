@@ -70,6 +70,23 @@ server.registerTool("show_recipe", { /* ... */ _meta: mcpAppToolMeta("ui://kitch
 
 The view renders `structuredContent.a2ui` with Ouro HX. A server that builds Ouro's composed tree itself, with no A2UI, returns `mcpAppTreeResult({ text, catalog: loadCatalog(catalog), tree })` from `ouro-mcp-app.mts` instead, and the view draws `structuredContent.ouro` the same way (web's `OuroMcpApp` from the release after core 0.11.0). Either way, and when the person presses a button it calls that action's own MCP tool through the host (after they confirm, for a consequential one). If your cards show images from your own site, add that origin to the contents: `{ ...card.contents, _meta: { ui: { csp: { resourceDomains: ["https://kitchen.example.com"] } } } }`. Web's [`OuroMcpApp` docs](https://ui.ouroboros.bot/docs/ouro-mcp-app/) have the rest.
 
+## Approval cards in a chat
+
+When an agent prepares a consequential action in a chat, it asks with the same card every surface draws. Vendor `ouro-chat-approval.mts` beside `ouro-composed.mts` ([decision](../decisions/2026-11-22-chat-approval-cards.md)):
+
+```ts
+import { approvalCard, readApproval, telegramApproval } from "./ouro-chat-approval.mts";
+
+const card = approvalCard(catalog, "share_shopping_list", prepared, { id: approvalId });
+await bot.sendMessage(chatId, telegramApproval(card)); // or teamsApproval(card), or textApproval(card) for iMessage and SMS
+
+// When the person answers (a button's callback data, a Teams submit, or a text reply):
+const answer = readApproval(card, { callbackData: query.data });
+if (answer.decision === "approve") await run(answer.press); // the card's exact input, pressed by the person
+```
+
+The card shows the action's label, its `confirm` question word for word and a row for every value it sends. It is frozen with that input, so an agent that wants to change a value asks again with a new card. `approvalCard` throws, with the fix, for an action that doesn't ask, for a value the card has no row for, and for a missing required value. `telegramApproval` throws rather than cut a card past Telegram's 4,096 characters. `readApproval` approves only a plain yes to this card's id. A stale card's button gives `not-this-card`, and anything else gives `unclear`. Both run nothing.
+
 ## What every renderer must do
 
 `standard/hx/a2ui/conformance/cases/` holds message streams and the tree each must resolve to, including each button's label, consent, press (`run`, `confirm`, `handoff`) and resolved input, or the problems an invalid stream gives. Each valid case's `expect` is Ouro's composed tree (`ComposedNode` in `src/composed.mts`), which `validateTree` accepts; a renderer's tree view draws that tree whatever format it came from. `pnpm a2ui:generate` writes the `expect` of each case from the A2UI adapter's resolver in `src/a2ui.mts`; `pnpm a2ui:check` fails when they drift. `recipe-card-agent.json` is a card a model composed, unedited; its `source` names the model and the prompt.
