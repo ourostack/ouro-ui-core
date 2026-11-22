@@ -157,6 +157,26 @@ node tools/ouro-actions/ouro-actions.mts check actions/shopping.actions.mts acti
 
 The report has the X-ray's shape (`summary.must`, `summary.mustHolding`, each claim with its problems), so the [adoption ledger](https://ui.ouroboros.bot/adoption/) counts its `must` claims. Each claim is proved from what the files say: projections equal to their declaration, every person-only action refused on every agent door and offered on none, and every consequential action marked so on MCP, WebMCP and the CLI and confirmed in its App Intent. `--claims` reads the claim set from another path, `--app` names the app (the set's `tool` otherwise). A drifted folder still exits 1, after the report is written.
 
+## In-turn tools, for an agent harness
+
+A harness that hands its model function tools inside a turn takes them, and their Ouro AX cards, from the same declaration ([decision](../decisions/2026-11-22-in-turn-tools.md)). Vendor `ouro-actions-tools.mts` beside `ouro-actions.mts`, give each action an agent may call its card's `when` line and any `errors`, and generate:
+
+```ts
+export const addShoppingListItem = defineAction({
+  // ...as in section 2
+  when: "Pick this to put one new thing the person asked for on their list; to take one off, use remove_shopping_list_item.",
+  errors: [{ code: "name-too-long", means: "The item's name is over 200 characters.", fix: "Send the item's name alone, and put any detail in quantity and unit." }],
+});
+export const tools = { group: "turn-shopping" }; // the cards' Ouro AX group; the set's name when left out
+```
+
+```sh
+node tools/ouro-actions/ouro-actions-tools.mts generate actions/shopping.actions.mts actions/generated-tools
+node tools/ouro-actions/ouro-actions-tools.mts check actions/shopping.actions.mts actions/generated-tools
+```
+
+`tools.json` holds `tools`, one `{ type: "function", function: { name, description, parameters }, ax }` per action an agent may call, where `ax` is the census's `DoorCard` (`tool:<id>`, the group, `when`, `effect`, `errors`, `destructive`, `idempotent` and a consequential action's `confirm`); `errors`, the cards every tool shares; and `refusals`, which the harness answers when a model calls a person-only action by name. Generate fails on an agent door without `when`. Bind each tool's handler by `function.name`, and leave the schema and card as they are. See [the fixture's output](../../test/fixtures/actions/generated-tools/tools.json).
+
 ## What Spoonjoy changes to adopt it
 
 1. Vendor `ouro-actions.mts` from the release, by hash.

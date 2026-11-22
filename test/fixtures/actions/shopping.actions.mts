@@ -8,6 +8,8 @@ export const getShoppingList = defineAction({
   label: "Shopping list",
   description: "See what's on your shopping list.",
   agent: "Read the person's shopping list: each item's id, name, quantity, unit and whether it is checked.",
+  when: "Pick this to see what is on the person's list, and to find an item's id before you remove it.",
+  errors: [{ code: "no-list", means: "The person has no shopping list yet.", fix: "Add an item with add_shopping_list_item, which starts the list." }],
   input: {
     show: field.enum({ label: "Show", description: "Which items to list; all of them when left out.", values: ["all", "unchecked"], optional: true }),
     sort: field.enum({ label: "Sort", description: "How to order the items.", values: ["added", "name"], optional: true, arg: true, default: "added" }),
@@ -27,6 +29,8 @@ export const addShoppingListItem = defineAction({
   label: "Add to list",
   description: "Add an item to your shopping list.",
   agent: "Add one item to the person's shopping list. Give the name as the person said it; leave quantity and unit out when they gave none.",
+  when: "Pick this to put one new thing the person asked for on their list; to take one off, use remove_shopping_list_item.",
+  errors: [{ code: "name-too-long", means: "The item's name is over 200 characters.", fix: "Send the item's name alone, and put any detail in quantity and unit." }],
   input: {
     name: field.string({ label: "Item", description: "What to buy, as the person said it, such as \"oat milk\".", arg: true, ask: "What should I add to your list?" }),
     quantity: field.number({ label: "Quantity", description: "How many or how much.", optional: true, min: 0 }),
@@ -46,6 +50,7 @@ export const removeShoppingListItem = defineAction({
   label: "Remove",
   description: "Take an item off your shopping list.",
   agent: "Remove one item from the person's shopping list by its id. Removing an item that is already gone changes nothing.",
+  when: "Pick this to take an item off the list once get_shopping_list has given you its id.",
   input: {
     id: field.string({ label: "Item", description: "The item's id, from get_shopping_list.", arg: true }),
     alsoIds: field.list({
@@ -68,6 +73,8 @@ export const shareShoppingList = defineAction({
   label: "Share list",
   description: "Share your shopping list with someone in your household.",
   agent: "Share the person's shopping list with another person, who can then see and change it.",
+  when: "Pick this only when the person asked to share their list with someone by email.",
+  errors: [{ code: "not-in-household", means: "No one in the person's household has that email address.", fix: "Ask the person for the email address of someone in their household." }],
   confirm: "Share your list with this person? They will be able to see it and change it.",
   input: {
     with: field.string({ label: "With", description: "The email address of the person to share with.", arg: true, entity: "HouseholdMemberEntity" }),
@@ -102,3 +109,6 @@ export const windows = { scheme: "ouro-shop", server: "OuroShop.Mcp", version: "
 
 /** The Android projection's options (src/actions-android.mts): the Kotlin package of OuroActions.kt. */
 export const android = { package: "bot.ouro.shop.actions" };
+
+/** The in-turn tools projection's options (src/actions-tools.mts): the Ouro AX group its cards belong to. */
+export const tools = { group: "turn-shopping" };

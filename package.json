@@ -24,6 +24,8 @@
     "actions:windows:check": "node src/actions-windows.mts check test/fixtures/actions/shopping.actions.mts test/fixtures/actions/generated-windows",
     "actions:android:generate": "node src/actions-android.mts generate test/fixtures/actions/shopping.actions.mts test/fixtures/actions/generated-android",
     "actions:android:check": "node src/actions-android.mts check test/fixtures/actions/shopping.actions.mts test/fixtures/actions/generated-android",
+    "actions:tools:generate": "node src/actions-tools.mts generate test/fixtures/actions/shopping.actions.mts test/fixtures/actions/generated-tools",
+    "actions:tools:check": "node src/actions-tools.mts check test/fixtures/actions/shopping.actions.mts test/fixtures/actions/generated-tools",
     "actions:page": "node scripts/actions-page.mts",
     "a2ui:generate": "node scripts/a2ui-conformance.mts",
     "a2ui:check": "node scripts/a2ui-conformance.mts --check"
