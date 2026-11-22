@@ -90,3 +90,14 @@ test("a theme's control radius is nil until it sets ouro.control-radius, and Coo
     assert.match(block.slice(0, block.indexOf("\n    )\n")), new RegExp(`controlRadius: ${radius.replace(".", "\\.")}$`, "m"), `${theme}'s control radius`);
   }
 });
+
+test("Cookbook's control corner shape stays on the web: Apple keeps its continuous capsule", async () => {
+  // Web v1.3.444 (#2905) gives Cookbook's controls `--ouro-control-corner-shape: superellipse(1.05)`, its stand-in for
+  // Apple's continuous capsule. Apple draws `.continuous` corners already, so the token adds nothing to Swift.
+  const cookbook = await readSet("cookbook");
+  assert.equal(cookbook.get("ouro.control-corner-shape")?.$value, "superellipse(1.05)");
+  const swift = await renderApple("test");
+  assert.doesNotMatch(swift, /superellipse|cornerShape|corner-shape/);
+  const block = swift.slice(swift.indexOf("public static let cookbook = OuroTheme("));
+  assert.match(block.slice(0, block.indexOf("\n    )\n")), /controlRadius: 9999\.0$/m);
+});

@@ -255,6 +255,7 @@
   --shadow-xl: {{shadow-xl}};
   --ouro-action: {{ouro.action}};
   --ouro-control-radius: {{ouro.control-radius}};
+  --ouro-control-corner-shape: {{ouro.control-corner-shape}};
   --ouro-cover-from: {{ouro.cover-from}};
   --ouro-cover-to: {{ouro.cover-to}};
   --ouro-action-foreground: {{ouro.action-foreground}};

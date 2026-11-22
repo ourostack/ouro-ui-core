@@ -1,5 +1,5 @@
 {
-  "$description": "The Cookbook theme: the tokens it sets over tokens/ouro.tokens.json. DTCG 2025.10. Derived from ourostack/ouro-ui@v1.3.434.",
+  "$description": "The Cookbook theme: the tokens it sets over tokens/ouro.tokens.json. DTCG 2025.10. Derived from ourostack/ouro-ui@v1.3.444.",
   "font-sans": {
     "$type": "fontFamily",
     "$value": ["Geist", "ui-sans-serif", "system-ui", "sans-serif"]
@@ -751,6 +751,10 @@
         "value": 9999,
         "unit": "px"
       }
+    },
+    "control-corner-shape": {
+      "$type": "string",
+      "$value": "superellipse(1.05)"
     },
     "cover-from": {
       "$type": "color",
