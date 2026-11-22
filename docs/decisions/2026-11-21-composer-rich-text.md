@@ -32,7 +32,7 @@ Four spikes, each the smallest editor with rich text, built with esbuild 0.x in 
 
 ## Why Lexical
 
-It ships what the issue lists, as parts: markdown import and export, shortcuts as you type, lists, history, paste handling, and a token node for mentions and emoji. Tiptap is 15 kB smaller and also complete, but its schema, input rules and markdown layer would be more code of ours, and its Markdown support is an extension we would pin as a second dependency. Slate is half the size and leaves markdown, lists and shortcuts to us, the work most likely to be wrong around IME. Plain contenteditable is the work of every one of them plus undo and the composition cases. The 145 kB is paid only by a page that renders `format="rich"`, after first paint.
+It ships what the issue lists, as parts: markdown import and export, shortcuts as you type, lists, history, paste handling, and a token node for mentions and emoji. Tiptap is 15 kB smaller and also complete, and its StarterKit spike also had lists, history and typed-markdown rules. Neither spike had markdown export or a mention token; we judged Lexical's markdown package and node model the closer fit, and that judgement is unmeasured. Slate is half the size and leaves markdown, lists and shortcuts to us, the work most likely to be wrong around IME. Plain contenteditable is the work of every one of them plus undo and the composition cases. The 145 kB is paid only by a page that renders `format="rich"`, after first paint.
 
 ## Alternatives not taken
 
@@ -50,7 +50,7 @@ Read on 2026-11-21.
 | Find | Verdict | Why |
 | --- | --- | --- |
 | [Lexical](https://lexical.dev/) ([source](https://github.com/facebook/lexical)) | **Adopt** | The measured choice above: complete, framework-free core, markdown and token nodes included. |
-| [Tiptap](https://tiptap.dev/) on [ProseMirror](https://prosemirror.net/) | **Watch** | Passed the IME spike and is smaller. We would build more of the markdown and token layer; revisit if Lexical's size or releases become a problem. |
+| [Tiptap](https://tiptap.dev/) on [ProseMirror](https://prosemirror.net/) | **Watch** | Passed the IME spike and is smaller. Markdown export and the token node would be ours to add (unmeasured); revisit if Lexical's size or releases become a problem. |
 | [Slate](https://docs.slatejs.org/) | **Ignore** | Smallest, but markdown, lists and shortcuts are ours to write. |
 | Plain `contenteditable` | **Ignore** | Reimplements undo, composition and paste for every browser. |
 | [React Aria's TextField](https://react-spectrum.adobe.com/react-aria/TextField.html) and [Base UI's Field](https://base-ui.com/react/components/field) | **Borrow** | Neither has rich text; Composer keeps their labelling, `aria-multiline` and focus behaviour. |
