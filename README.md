@@ -60,6 +60,7 @@ docs/decisions/                   decision records, with their history from ouro
 - `dist/actions/ouro-actions.mts`: the one action model's generator, byte for byte from `src/actions.mts`, which apps vendor and run with Node; [the adopter guide](docs/guides/actions.md) says how.
 - `dist/actions/ouro-actions-tools.mts`: the in-turn tools projection, vendored beside it: `tools.json`, the function tools an agent harness hands its model, each with its Ouro AX card ([the adopter guide](docs/guides/actions.md#in-turn-tools-for-an-agent-harness)).
 - `dist/ax/actions.claims.json`: Ouro AX's action claims, byte for byte.
+- `dist/composed/ouro-chat-approval.mts`: the chat adapter for approval cards. A consequential action's card, from its catalog entry and the prepared input, drawn for Telegram, Teams or plain text, with the reply read back into the person's press ([the adopter guide](docs/guides/a2ui.md#approval-cards-in-a-chat)).
 - `dist/composed/ouro-composed.mts`, `dist/composed/ouro-mcp-app.mts`, `dist/a2ui/ouro-a2ui.mts` and `dist/a2ui/ouro-a2ui-catalog.mts`: Ouro's composed UI, its MCP Apps and A2UI adapters, and the catalog generator, which apps vendor beside `ouro-actions.mts`; `dist/hx/a2ui/catalog.json` is HX's A2UI catalog. [The adopter guide](docs/guides/a2ui.md) says how.
 - `dist/feel/feel.spec.json`: Ouro Feel's spec, byte for byte, which every Feel driver (web now, Apple and Windows later) reports under.
 - `dist/swatches.html`: every theme's colours in light and dark, to look at.

@@ -16,6 +16,7 @@
 //   dist/ax/actions.claims.json   Ouro AX's action claims, byte for byte from standard/ax/
 //   dist/composed/ouro-composed.mts  Ouro's composed UI: components, consent rules, the tree and its validator, byte for byte from src/composed.mts
 //   dist/composed/ouro-mcp-app.mts   the MCP Apps adapter, from src/mcp-app.mts with its imports renamed to the vendored files
+//   dist/composed/ouro-chat-approval.mts  the chat adapter for approval cards (Telegram, Teams, text), from src/chat-approval.mts
 //   dist/a2ui/ouro-a2ui.mts       the A2UI adapter, from src/a2ui.mts with its imports renamed to the vendored files
 //   dist/a2ui/ouro-a2ui-catalog.mts  the catalog generator, from src/a2ui-catalog.mts with its imports renamed to the vendored files
 //   dist/hx/a2ui/catalog.json     Ouro HX's A2UI catalog, byte for byte from standard/hx/a2ui/
@@ -80,6 +81,7 @@ const vendored = async (src: string, allowed: readonly string[]): Promise<string
 };
 files.set("composed/ouro-composed.mts", await vendored("src/composed.mts", []));
 files.set("composed/ouro-mcp-app.mts", await vendored("src/mcp-app.mts", ["composed"]));
+files.set("composed/ouro-chat-approval.mts", await vendored("src/chat-approval.mts", ["composed"]));
 files.set("a2ui/ouro-a2ui.mts", await vendored("src/a2ui.mts", ["composed", "mcp-app"]));
 // The Windows projection runs as a CLI, so it imports node: modules too, and otherwise only the action model.
 const actionsWindows = (await readFile(new URL("src/actions-windows.mts", root), "utf8")).replace('from "./actions.mts"', 'from "./ouro-actions.mts"');
