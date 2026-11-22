@@ -31,6 +31,8 @@ function modeOf(stack: string[]): Mode | typeof RULE | null {
   if (selector === ":root:where(:not(.light, .dark))" && stack.at(-2) === "@media (prefers-color-scheme: dark)") return "dark";
   if (stack.length === 2 && (stack[0] === "@layer base" || stack[0]!.startsWith("@supports "))) return RULE;
   if (stack.length === 1 && stack[0]!.startsWith("@utility ")) return RULE;
+  // A container style query (`@container style(--corner-shape: superellipse(1.05)) { [data-ouro-squircle] > [data-ouro-surface] { --ouro-sq-o: ... } }`, web v1.3.444) sets properties for the elements it matches, not tokens.
+  if (stack.length === 2 && stack[0]!.startsWith("@container ")) return RULE;
   // One of Ouro's own classes in the static stylesheet (`.ouro-skip-link { --corner-shape: ... }`) sets a property for its elements, not a token.
   if (stack.length === 1 && stack[0]!.startsWith(".ouro-")) return RULE;
   // A rule scoped by the focus modality (`:root[data-ouro-modality="pointer"] .ouro-field-cue:focus-within { --ouro-bd: ... }`) sets a property for those elements, not a token.

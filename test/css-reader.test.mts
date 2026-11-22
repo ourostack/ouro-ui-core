@@ -25,6 +25,11 @@ test("one of Ouro's own classes that sets element-level properties is not a toke
   assert.deepEqual(readDeclarations(css).declarations.map((d) => d.name), ["--ouro-x"]);
 });
 
+test("a container style query that sets element-level properties is not a token (web's capsule clip, v1.3.444)", () => {
+  const css = [":root {", "  --ouro-x: 1px;", "}", "@container style(--corner-shape: superellipse(1.05)) {", "  [data-ouro-squircle] > [data-ouro-surface] {", "    --ouro-sq-o: 0 0;", "  }", "}"].join("\n");
+  assert.deepEqual(readDeclarations(css).declarations.map((d) => d.name), ["--ouro-x"]);
+});
+
 test("a custom property in any other block is refused, naming the block", () => {
   assert.throws(() => readDeclarations(".other {\n  --x: 1;\n}"), /--x sits in a block with no colour mode: \.other/);
   assert.throws(() => readDeclarations("@media print {\n  .a {\n    --x: 1;\n  }\n}"), /no colour mode/);
