@@ -42,3 +42,4 @@ New decision records go here. Each has a "Prior art" section linking every find 
 | 2026-11-21 | [Density moves the room, and fixed sizes read their own tokens](2026-11-21-density.md) |
 | 2026-11-21 | [Ouro owns how responsiveness looks and reads, and the app owns the data](2026-11-21-responsiveness-ownership.md) |
 | 2026-11-21 | [Composer's rich-text mode is a mode of Composer, built on Lexical and loaded lazily](2026-11-21-composer-rich-text.md) |
+| 2026-11-22 | [ouro-actions emits in-turn tools, each with its Ouro AX card](2026-11-22-in-turn-tools.md) |
