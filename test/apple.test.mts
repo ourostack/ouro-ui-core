@@ -81,11 +81,12 @@ test("every theme carries its heading's font families, aliases resolved", async 
   assert.equal((swift.match(/^        heading: \[/gm) ?? []).length, 6, "one heading line per theme");
 });
 
-test("a theme's control radius is nil until it sets ouro.control-radius", async () => {
+test("a theme's control radius is nil until it sets ouro.control-radius, and Cookbook's is a capsule", async () => {
   const swift = await renderApple("test");
   assert.match(swift, /public let controlRadius: Double\?/);
-  for (const theme of ["pearl", "cookbook", "abyss", "brass", "chart", "coral"]) {
+  const radii: Record<string, string> = { pearl: "nil", cookbook: "9999.0", abyss: "nil", brass: "nil", chart: "nil", coral: "nil" };
+  for (const [theme, radius] of Object.entries(radii)) {
     const block = swift.slice(swift.indexOf(`public static let ${theme} = OuroTheme(`));
-    assert.match(block.slice(0, block.indexOf("\n    )\n")), /controlRadius: nil$/m, `${theme} sets a control radius`);
+    assert.match(block.slice(0, block.indexOf("\n    )\n")), new RegExp(`controlRadius: ${radius.replace(".", "\\.")}$`, "m"), `${theme}'s control radius`);
   }
 });
