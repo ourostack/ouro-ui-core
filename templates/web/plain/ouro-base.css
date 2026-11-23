@@ -136,6 +136,7 @@
   --ouro-shadow-sheet-left: {{ouro.shadow.sheet-left}};
   --ouro-shadow-sheet-right: {{ouro.shadow.sheet-right}};
   --ouro-layer: {{ouro.layer}};
+  --ouro-scroller-surface: var(--background);
   --ouro-glass: {{ouro.glass}};
   --ouro-glass-tint: {{ouro.glass-tint}};
   --ouro-glass-rim: {{ouro.glass-rim}};
@@ -153,6 +154,7 @@
 }
 
 .dark {
+  --ouro-scroller-surface: var(--background);
   --ouro-row-radius: {{ouro.row-radius@dark}};
   --ouro-row-hover: {{defaults.ouro.row-hover@dark}};
   --ouro-row-pressed: {{defaults.ouro.row-pressed@dark}};
@@ -185,6 +187,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root:where(:not(.light, .dark)) {
+    --ouro-scroller-surface: var(--background);
     --ouro-row-radius: {{ouro.row-radius@dark}};
     --ouro-row-hover: {{defaults.ouro.row-hover@dark}};
     --ouro-row-pressed: {{defaults.ouro.row-pressed@dark}};

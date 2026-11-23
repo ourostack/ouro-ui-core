@@ -245,6 +245,38 @@
       }
     }
   },
+  "success": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.49, 0.12, 150]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "srgb",
+          "components": [0.2902, 0.8706, 0.502],
+          "hex": "#4ade80"
+        }
+      }
+    }
+  },
+  "warning": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "oklch",
+      "components": [0.52, 0.14, 50]
+    },
+    "$extensions": {
+      "mode": {
+        "dark": {
+          "colorSpace": "srgb",
+          "components": [0.9843, 0.749, 0.1412],
+          "hex": "#fbbf24"
+        }
+      }
+    }
+  },
   "border": {
     "$type": "color",
     "$value": {
