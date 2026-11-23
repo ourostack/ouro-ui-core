@@ -58,6 +58,8 @@
   --accent: {{accent}};
   --accent-foreground: {{accent-foreground}};
   --destructive: {{destructive}};
+  --success: {{success}};
+  --warning: {{warning}};
   --border: {{border}};
   --input: {{input}};
   --ring: {{ring}};
@@ -99,6 +101,8 @@
   --accent: {{accent@dark}};
   --accent-foreground: {{accent-foreground@dark}};
   --destructive: {{destructive@dark}};
+  --success: {{success@dark}};
+  --warning: {{warning@dark}};
   --border: {{border@dark}};
   --input: {{input@dark}};
   --ring: {{ring@dark}};
@@ -140,6 +144,8 @@
     --accent: {{accent@dark}};
     --accent-foreground: {{accent-foreground@dark}};
     --destructive: {{destructive@dark}};
+    --success: {{success@dark}};
+    --warning: {{warning@dark}};
     --border: {{border@dark}};
     --input: {{input@dark}};
     --ring: {{ring@dark}};
