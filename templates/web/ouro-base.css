@@ -11,9 +11,10 @@
  *   quarter-rem steps (--ouro-size-8 is 2rem), named for their step with a dot as an underscore
  *   (--ouro-size-2_5). Density is --spacing, and these do not follow it, so a compact app keeps
  *   its avatars and icons their size; an app sets one to theme that size.
- * - Motion: a Motion spring(0.4, 0.15) as CSS, quick ease durations, the press scale and
- *   the dimming behind sheets and dialogs. These are not colors, so they keep the
- *   --ouro- prefix.
+ * - Motion: a Motion spring(0.4, 0.15) as CSS (retiring), a fixed bouncy curve for one thing that
+ *   should feel bouncy (--ouro-ease-bounce, --ouro-duration-bounce), quick ease durations, the
+ *   press scale and the dimming behind sheets and dialogs. These are not colors, so they keep
+ *   the --ouro- prefix.
  * - --ouro-corner-shape: the shape of every corner, a squircle (CSS corner-shape, n=4), applied to each
  *   Ouro element; set it to round to go back to circular arcs. Switch, radios, slider thumbs,
  *   presence dots and spinners stay round.
@@ -32,6 +33,8 @@
  *   muted text inside it mix toward the resolved text color too. Unset by default, so the bubble
  *   follows the muted surface; set both as a pair that passes 4.5:1.
  * - --ouro-layer: the z-index of sheet and dialog portals.
+ * - --ouro-gap-min: the least gap between two separate surfaces that don't touch (0.5rem); Ouro check's
+ *   near-miss rule reads it.
  * - --ouro-scroller-surface: the opaque fill of the surface a scroller sits on, the page's background
  *   by default. ScrollArea and MessageList paint their scroll viewport with it, so Chromium on Windows
  *   (which keeps LCD text on a see-through scroller by not promoting it to the compositor) promotes it
@@ -43,6 +46,9 @@
  *   fields draw their border in --input and round their corners on the --radius-ouro-* steps.
  *   shadcn add writes a variable only when the app's stylesheet lacks it, and a theme
  *   loaded after this file wins, so an app that has them keeps its own.
+ * - --ouro-message-run-gap, the space between consecutive messages from one sender (--ouro-size-1), and
+ *   --ouro-message-joined-radius, the corner where two bubbles of a run meet (unset, --radius-ouro-xl, a step
+ *   under the outer --radius-ouro-2xl). A lone bubble has four equal corners.
  * - The press transition and the keyframes for spinners, indeterminate progress, skeletons and the
  *   scroll fade drawn with no script.
  * - The shadow under each side of a sheet, --ouro-shadow-sheet-<side>, which shadcn's
@@ -129,6 +135,7 @@
   --ouro-corner-shape: {{ouro.corner-shape}};
   --ouro-radius-scale: {{ouro.radius-scale}};
   --ouro-corner-fallback: {{ouro.corner-fallback}};
+  --ouro-message-run-gap: var(--ouro-size-1);
   --destructive-foreground: {{destructive-foreground}};
   --success: {{success}};
   --success-foreground: {{success-foreground}};
@@ -143,6 +150,8 @@
   --avatar-6: {{avatar-6}};
   --avatar-7: {{avatar-7}};
   --avatar-8: {{avatar-8}};
+  /* The least gap between two separate surfaces that don't touch: they touch at 0 or sit at least this far apart, never in between. */
+  --ouro-gap-min: var(--ouro-size-2);
   /* Fixed sizes (ourostack/ouro-ui#417): density is --spacing, and these never follow it, so a compact --spacing leaves icons and avatars their size. */
   --ouro-size-0_5: {{ouro.size-0_5}};
   --ouro-size-1: {{ouro.size-1}};
@@ -183,6 +192,15 @@
   --ouro-ease-out: {{ouro.ease.out}}; /* {{ouro.ease.out|description}} */
   --ouro-ease-in-out: {{ouro.ease.in-out}}; /* {{ouro.ease.in-out|description}} */
   --ouro-ease-drawer: {{ouro.ease.drawer}}; /* {{ouro.ease.drawer|description}} */
+  /*
+   * A fixed CSS curve, not a revival of the spring tokens above: a damping 0.6, response
+   * 0.35s spring, sampled the same way, for one thing that should feel bouncy, a new
+   * message's bubble growing in (MessageList). It peaks at 1.0947 before settling, so a
+   * growing bubble overshoots and springs back, unlike --ouro-ease-spring's 1.006 (which
+   * reads as an ease-out). No component reads this with the `motion` package at runtime.
+   */
+  --ouro-duration-bounce: 650ms; /* a new message's bubble growing in (MessageList) */
+  --ouro-ease-bounce: linear(0, 0.1221, 0.3776, 0.6454, 0.8608, 1.002, 1.074, 1.0947, 1.0845, 1.0608, 1.0352, 1.0144, 1.0005, 0.9933, 0.991, 0.9919, 0.9941, 0.9965, 0.9985, 0.9999, 1.0006, 1);
   --ouro-duration-press: {{ouro.duration.press}}; /* {{ouro.duration.press|description}} */
   --ouro-duration-fast: {{ouro.duration.fast}}; /* {{ouro.duration.fast|description}} */
   --ouro-duration-base: {{ouro.duration.base}}; /* {{ouro.duration.base|description}} */
