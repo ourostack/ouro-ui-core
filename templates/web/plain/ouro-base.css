@@ -83,6 +83,7 @@
   --avatar-6: {{avatar-6}};
   --avatar-7: {{avatar-7}};
   --avatar-8: {{avatar-8}};
+  --ouro-gap-min: var(--ouro-size-2);
   --ouro-size-0_5: {{ouro.size-0_5}};
   --ouro-size-1: {{ouro.size-1}};
   --ouro-size-1_5: {{ouro.size-1_5}};

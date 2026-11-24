@@ -32,6 +32,8 @@
  *   muted text inside it mix toward the resolved text color too. Unset by default, so the bubble
  *   follows the muted surface; set both as a pair that passes 4.5:1.
  * - --ouro-layer: the z-index of sheet and dialog portals.
+ * - --ouro-gap-min: the least gap between two separate surfaces that don't touch (0.5rem); Ouro check's
+ *   near-miss rule reads it.
  * - --ouro-scroller-surface: the opaque fill of the surface a scroller sits on, the page's background
  *   by default. ScrollArea and MessageList paint their scroll viewport with it, so Chromium on Windows
  *   (which keeps LCD text on a see-through scroller by not promoting it to the compositor) promotes it
@@ -143,6 +145,8 @@
   --avatar-6: {{avatar-6}};
   --avatar-7: {{avatar-7}};
   --avatar-8: {{avatar-8}};
+  /* The least gap between two separate surfaces that don't touch: they touch at 0 or sit at least this far apart, never in between. */
+  --ouro-gap-min: var(--ouro-size-2);
   /* Fixed sizes (ourostack/ouro-ui#417): density is --spacing, and these never follow it, so a compact --spacing leaves icons and avatars their size. */
   --ouro-size-0_5: {{ouro.size-0_5}};
   --ouro-size-1: {{ouro.size-1}};
